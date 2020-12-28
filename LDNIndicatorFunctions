@@ -1,0 +1,108 @@
+/*
+*   Function that computes all LDN sub indicators and returns the images and a feature collection
+*/
+// Select year images
+// Remap each year
+// Calculate transitions
+// Classify transitions
+// Ouput Image
+// Output FeatureCollection
+
+//Testing
+var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
+var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
+var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
+
+var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
+var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
+var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
+
+var RegionsOverlay = function(baseImage, regions, subRegions) {
+    var output = baseImage.paint({
+        featureCollection: subRegions, 
+        color: 4, 
+        width: 1
+    }).paint({
+        featureCollection: regions, 
+        color: 4, 
+        width: 2
+    });
+    return output
+}
+
+/*
+*   Datasets
+*/
+var landCoverCollection = ee.ImageCollection("MODIS/006/MCD12Q1")
+    .select('LC_Type1');
+
+var soilCarbonTop = ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02")
+  .select(['b0']);
+
+var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
+.clip(countryGeometry);
+
+var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
+.clip(countryGeometry);
+
+/*
+*   Land Cover
+*/
+
+// Re-maps Modis classes to those in Trends.Earth
+// tree-cover (1-9) = 1
+// grasslands (10) = 2
+// cropland (12 and 14) = 3
+// wetland (11) = 4
+// artificial (13) = 5
+// bare land (15-16) = 6
+// water bodies (18) = 7
+var remapLandCoverYear1 = function(startImage) {
+    return startImage.remap([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        [10,10,10,10,10,10,10,10,10,20,40,30,50,30,60,60,70]);
+}
+
+var remapLandCoverYear2 = function(endImage) {
+    return endImage.remap([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        [1,1,1,1,1,1,1,1,1,2,4,3,5,3,6,6,7]);
+}
+
+var LandCoverTransistions = function(startImage, endImage) {
+    // remap individually the land classes for both years
+    var landCoverYear1 = remapLandCoverYear1(startImage);
+    // NOTE: becasue direction matters, eg 2 to 1 diff than 1 to 2
+    // year 1 is reclassified to year*10 to that transitions 12 and 21 are discernible
+    var landCoverYear2 = remapLandCoverYear2(endImage)
+    return landCoverYear1.add(landCoverYear2);
+}
+
+var LandCoverChangeImage = function(transitions) {
+    // remaps transitions according to Earth trends
+    // http://trends.earth/docs/en/training/tutorial_run_all_subindicators.html
+    // Step 7
+    var remapped_transitions = transitions.remap(
+        [11,12,13,14,15,16,17,
+        21,22,23,24,25,26,27,
+        31,32,33,34,35,36,37,
+        41,42,43,44,45,46,47,
+        51,52,53,54,55,56,57,
+        61,62,63,64,65,66,67,
+        71,72,73,74,75,76,77],
+        [0,-1,-1,-1,-1,-1,0,    //Tree-cover
+        1,0,1,-1,-1,-1,0,       //Grassland
+        1,-1,0,-1,-1,-1,0,      //Cropland
+        -1,-1,-1,0,-1,-1,0,     //Wetland
+        1,1,1,1,0,1,0,          //Artificial
+        1,1,1,1,-1,0,0,         //Bareland
+        0,0,0,0,0,0,0]          //Water
+    );
+    return remapped_transitions
+}
+
+landCoverChange = LandCoverChangeImage(LandCoverTransistions(landCoverStartImage, landCoverEndImage))
+
+// caclulateLandDegredationLayers(startYear, endYear, adminLevelGeometry)
+// return Images, FeatureCollection
+
+var landCover = RegionsOverlay(landCoverChange, regions, subRegions);
+Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', false, 0.75);
