@@ -36,7 +36,8 @@ Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850'
 var regionalLandCoverChange = outputImages[2].clip(countryGeometry);
 // Map.addLayer(regionalLandCoverChange,{min: -1, max: 2, palette: ['fc8d59', 'ffffbf', '1a9850', '808080']}, 'Regional Degredation', true, 0.9)
 // Map.addLayer(regionalLandCoverChange,{min: -1, max: 1, palette: ['808080', 'fc8d59', 'ffffbf', '1a9850', '808080']}, 'Regional Degredation', true, 0.9)
-Map.addLayer(regionalLandCoverChange,{min: -1, max: 1, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Regional Degredation', true, 0.9)
+// Thoughts on -1 to 1 vs -0.2 to 0.2, the latter makes all changes much more easily identified?
+Map.addLayer(regionalLandCoverChange,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Regional Degredation', true, 0.9)
 
 var soilOrganicCarbonChange = outputImages[1].clip(countryGeometry);
 var soilOrganicCarbon = HelperFunctions.RegionsOverlay(soilOrganicCarbonChange, regions, subRegions);
