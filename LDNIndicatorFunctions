@@ -170,9 +170,6 @@ var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCover
 
 var landCoverChange = LandCoverChangeImage(landCoverTransistions);
 
-caclulateLandDegredationLayers(startYear, endYear, adminLevelGeometry)
-return Images, FeatureCollection
-
 var landCover = RegionsOverlay(landCoverChange, regions, subRegions);
 Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', true, 0.75);
 
