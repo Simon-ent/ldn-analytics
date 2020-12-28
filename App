@@ -25,8 +25,8 @@ var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicator
 var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers');
 
-// var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear)
-var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
+var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear, subRegions)
+// var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
 var landCoverChange = outputImages[0].clip(countryGeometry);
 
