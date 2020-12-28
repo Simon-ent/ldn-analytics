@@ -132,48 +132,48 @@ exports.LDNIndicatorImages = function(startYear, targetYear) {
 }
 
 /*
- * Outputs
+ * Testing
  */
 
-var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
-var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
-var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
+// var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
+// var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
+// var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
 
-var country = 'Ghana';
-var startYear = '2009';
-var targetYear = '2019';
+// var country = 'Ghana';
+// var startYear = '2009';
+// var targetYear = '2019';
 
-var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
-var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
-var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+// var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
+// var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+// var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
 
-var RegionsOverlay = function(baseImage, regions, subRegions) {
-    var output = baseImage.paint({
-        featureCollection: subRegions, 
-        color: 4, 
-        width: 1
-    }).paint({
-        featureCollection: regions, 
-        color: 4, 
-        width: 2
-    });
-    return output
-}
+// var RegionsOverlay = function(baseImage, regions, subRegions) {
+//     var output = baseImage.paint({
+//         featureCollection: subRegions, 
+//         color: 4, 
+//         width: 1
+//     }).paint({
+//         featureCollection: regions, 
+//         color: 4, 
+//         width: 2
+//     });
+//     return output
+// }
 
-var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
-.clip(countryGeometry);
+// var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
+// .clip(countryGeometry);
 
-var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
-.clip(countryGeometry);
+// var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
+// .clip(countryGeometry);
 
-var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
+// var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
 
-var landCoverChange = LandCoverChangeImage(landCoverTransistions);
+// var landCoverChange = LandCoverChangeImage(landCoverTransistions);
 
-var landCover = RegionsOverlay(landCoverChange, regions, subRegions);
-Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', true, 0.75);
+// var landCover = RegionsOverlay(landCoverChange, regions, subRegions);
+// Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', true, 0.75);
 
-var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
-var soilOrganicCarbon = RegionsOverlay(soilOrganicCarbonChange, regions, subRegions);
-Map.addLayer(soilOrganicCarbon,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Soil Organic Carbon', false, 0.75);
-Map.addLayer(soilOrganicCarbonChange,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
+// var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
+// var soilOrganicCarbon = RegionsOverlay(soilOrganicCarbonChange, regions, subRegions);
+// Map.addLayer(soilOrganicCarbon,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Soil Organic Carbon', false, 0.75);
+// Map.addLayer(soilOrganicCarbonChange,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
