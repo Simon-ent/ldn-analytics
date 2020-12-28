@@ -1,12 +1,6 @@
 /*
 *   Function that computes all LDN sub indicators and returns the images and a feature collection
 */
-// Select year images
-// Remap each year
-// Calculate transitions
-// Classify transitions
-// Ouput Image
-// Output FeatureCollection
 
 /*
 *   Datasets
@@ -145,16 +139,6 @@ var RegionalScoresImage = function(regionScores) {
         featureCollection: regionScores,
         color: 'Degraded_State'
     })
-    // .paint({
-    //     featureCollection: regionScores, 
-    //     color: 4, 
-    //     width: 1
-    // })
-    // .paint({
-    //     featureCollection: regions, 
-    //     color: 4, 
-    //     width: 2
-    // });
     return canvas
 }
 
@@ -196,13 +180,15 @@ var RegionalScoresImage = function(regionScores) {
  * Outputs
  */
 
-exports.LDNIndicatorImages = function(startYear, targetYear) {
+exports.LDNIndicatorImages = function(startYear, targetYear, subRegions) {
     var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
     var landCoverChange = LandCoverChangeImage(landCoverTransistions);
     var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
-    return [landCoverChange, soilOrganicCarbonChange]
+    var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
+    var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
+    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage]
 }
 
 exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
