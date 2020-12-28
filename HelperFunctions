@@ -1,0 +1,16 @@
+/*
+*   Helper Functions
+*/
+
+exports.RegionsOverlay = function(baseImage, regions, subRegions) {
+    var output = baseImage.paint({
+        featureCollection: subRegions, 
+        color: 4, 
+        width: 1
+    }).paint({
+        featureCollection: regions, 
+        color: 4, 
+        width: 2
+    });
+    return output
+}
