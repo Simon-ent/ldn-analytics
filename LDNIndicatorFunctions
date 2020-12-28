@@ -13,9 +13,13 @@ var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
 var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
 var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
 
-var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
-var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
-var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', 'Ghana'));
+var country = 'Ghana';
+var startYear = '2009';
+var targetYear = '2019';
+
+var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
+var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
 
 var RegionsOverlay = function(baseImage, regions, subRegions) {
     var output = baseImage.paint({
