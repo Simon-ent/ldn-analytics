@@ -145,11 +145,11 @@ var RegionalScoresImage = function(regionScores) {
         featureCollection: regionScores,
         color: 'Degraded_State'
     })
-    .paint({
-        featureCollection: regionScores, 
-        color: 4, 
-        width: 1
-    })
+    // .paint({
+    //     featureCollection: regionScores, 
+    //     color: 4, 
+    //     width: 1
+    // })
     // .paint({
     //     featureCollection: regions, 
     //     color: 4, 
