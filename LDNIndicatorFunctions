@@ -119,6 +119,80 @@ var SoilOrganicCarbonChange = function(landCoverTransistions, SoilTopImage) {
 }
 
 /*
+ * Consolidated Regional Data
+ */
+
+var RegionalScores = function(remapped_transitions, subRegions) {
+    var regionScore = remapped_transitions.reduceRegions({
+        collection: subRegions,
+        reducer: ee.Reducer.sum().combine(
+            ee.Reducer.count(), '', true),
+        scale: 500
+    });
+    var calculatePercentageDegraded = function(feature) {
+        var state = ee.Number(feature.get('sum'));
+        var area = ee.Number(feature.get('count'));
+        return feature.set({Degraded_State: state.divide(area)})
+      }
+      
+    regionScore = regionScore.map(calculatePercentageDegraded);
+    return regionScore
+}
+
+var RegionalScoresImage = function(regionScores) {
+    var canvas = ee.Image().byte()
+    canvas = canvas.paint({
+        featureCollection: regionScores,
+        color: 'Degraded_State'
+    })
+    .paint({
+        featureCollection: regionScores, 
+        color: 4, 
+        width: 1
+    })
+    // .paint({
+    //     featureCollection: regions, 
+    //     color: 4, 
+    //     width: 2
+    // });
+    return canvas
+}
+
+/*
+ * Table Data
+ */
+
+// function generateLandCoverTypeSummaryFeature(baseImage, year, target, subRegions) {
+//     var regionalData =
+//         baseImage.reduceRegions({
+//             'collection': subRegions,
+//             'reducer': ee.Reducer.frequencyHistogram(),
+//             'scale': 500
+//         })
+//         .map(function(feature) {
+//             // map through feature collection and unpack histogram values
+//             var histogramResults = ee.Dictionary(feature.get('histogram'));
+//             return ee.Feature(null, {
+//                 'system:index': feature.get('system:index'),
+//                 'ADM0_NAME': feature.get('ADM0_NAME'),
+//                 'ADM1_NAME': feature.get('ADM1_NAME'),
+//                 'ADM2_NAME': feature.get('ADM2_NAME'),
+//                 'Shape_Area': feature.get('Shape_Area'),
+//                 'Year': year,
+//                 'Target': target,
+//                 'Tree_Cover': ee.Number(histogramResults.get('1', 0)).toFloat(),
+//                 'Grasslands': ee.Number(histogramResults.get('2', 0)).toFloat(),
+//                 'Croplands': ee.Number(histogramResults.get('3', 0)).toFloat(),
+//                 'Wetlands': ee.Number(histogramResults.get('4', 0)).toFloat(),
+//                 'Artificial': ee.Number(histogramResults.get('5', 0)).toFloat(),
+//                 'Bare_Land': ee.Number(histogramResults.get('6', 0)).toFloat(),
+//                 'Water_Bodies': ee.Number(histogramResults.get('7', 0)).toFloat(),
+//             })
+//         })
+//     return regionalData
+// }
+
+/*
  * Outputs
  */
 
@@ -129,6 +203,21 @@ exports.LDNIndicatorImages = function(startYear, targetYear) {
     var landCoverChange = LandCoverChangeImage(landCoverTransistions);
     var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
     return [landCoverChange, soilOrganicCarbonChange]
+}
+
+exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
+    var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
+    var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
+    var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
+    var landCoverChange = LandCoverChangeImage(landCoverTransistions);
+    var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
+
+    var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
+    var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
+    // var LDNSummaryData = subRegions;
+    // LDNSummaryData
+
+    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage]
 }
 
 /*
