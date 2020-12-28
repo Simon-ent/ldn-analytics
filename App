@@ -25,12 +25,16 @@ var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicator
 var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers');
 
-var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear)
+// var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear)
+var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
 var landCoverChange = outputImages[0].clip(countryGeometry);
 
 var landCover = HelperFunctions.RegionsOverlay(landCoverChange, regions, subRegions);
-Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', true, 0.75);
+Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', false, 0.75);
+
+var regionalLandCoverChange = outputImages[0].clip(countryGeometry);
+Map.addLayer(regionalLandCoverChange,{min: -1, max: 1, palette: ['808080', 'fc8d59', 'ffffbf', '1a9850', '808080']}, 'Regional Degredation', true, 0.9)
 
 var soilOrganicCarbonChange = outputImages[1].clip(countryGeometry);
 var soilOrganicCarbon = HelperFunctions.RegionsOverlay(soilOrganicCarbonChange, regions, subRegions);
