@@ -1,0 +1,43 @@
+/*
+* Load Datasets
+*/
+
+// Geomtery in Main App
+// Analysis in functions
+
+var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
+var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
+var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
+
+//Testing
+var country = 'Ghana';
+var startYear = '2009';
+var targetYear = '2019';
+
+var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
+var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+
+// var fireLocations = ee.ImageCollection('ESA/CCI/FireCCI/5_1')
+//     .select('BurnDate'); // Move to Analysis Layers
+
+/* 
+ *   Functions
+ */
+var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions');
+var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
+
+// caclulateLandDegredationLayers(startYear, endYear, adminLevelGeometry)
+// return Images, FeatureCollection
+
+var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear)
+
+var landCoverChange = outputImages[0];
+
+var landCover = HelperFunctions.RegionsOverlay(landCoverChange, regions, subRegions);
+Map.addLayer(landCover,{min: -1, max: 2, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Land Cover', true, 0.75);
+
+var soilOrganicCarbonChange = outputImages[1];
+var soilOrganicCarbon = HelperFunctions.RegionsOverlay(soilOrganicCarbonChange, regions, subRegions);
+Map.addLayer(soilOrganicCarbon,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850', '808080']}, 'Soil Organic Carbon', false, 0.75);
+Map.addLayer(soilOrganicCarbonChange,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
