@@ -27,9 +27,6 @@ var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
 var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions');
 var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
 
-// caclulateLandDegredationLayers(startYear, endYear, adminLevelGeometry)
-// return Images, FeatureCollection
-
 var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear)
 
 var landCoverChange = outputImages[0].clip(countryGeometry);
