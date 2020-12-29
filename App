@@ -24,7 +24,7 @@ var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
 var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions');
 var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers');
-var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles');
+var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles.js');
 
 /*
 * Constants & Variables
@@ -293,7 +293,7 @@ uiPanel.add(countryPanel);
 
 countryPanel.add(ui.Label({
     value: app.setup.country + ' LDN Analysis',
-    style: HEADER_STYLE_1
+    style: Styles.HEADER_STYLE_1
 }))
 
 // Start Instructions
@@ -302,7 +302,7 @@ countryPanel.add(countryStartInstructions);
 
 countryStartInstructions.add(ui.Label({
     value: 'Please click on a region on the map to begin analysis.',
-    style: INTRO_STYLE
+    style: Styles.INTRO_STYLE
 }))
 
 // Regional Data
@@ -311,7 +311,7 @@ var regionalDataPanel = ui.Panel({
 });
 countryPanel.add(regionalDataPanel);
 
-var regionName = ui.Label('', HEADER_STYLE_2);
+var regionName = ui.Label('', Styles.HEADER_STYLE_2);
 
 var regionalDataEditButton = ui.Button({
     label: 'Edit',
@@ -383,7 +383,7 @@ regionalEditPanel.add(
 // Indicators
 countryPanel.add(ui.Label({
   value: 'Key Indicators',
-  style: HEADER_STYLE_2,
+  style: Styles.HEADER_STYLE_2,
 }));
 
 var SDGIndicatorWidget = ui.Panel([
@@ -412,14 +412,14 @@ var indicatorsDegredationStatePanel = ui.Panel({
         subRegionIndicatorWidget
     ],
     layout: ui.Panel.Layout.flow('vertical'),
-    style: SECTION_STYLE
+    style: Styles.SECTION_STYLE
   });
 countryPanel.add(indicatorsDegredationStatePanel)
 
 // Analysis Layers
 countryPanel.add(ui.Label({
     value: 'Analysis Layers',
-    style: HEADER_STYLE_2,
+    style: Styles.HEADER_STYLE_2,
 }));
 
 // Toggle between the Land Cover Mode map and the Pixel Layer. Default to Land Cover Mode
@@ -450,13 +450,13 @@ var settingsPanelContents = ui.Panel({
   layout: ui.Panel.Layout.flow('vertical'),
   // style: {position: 'bottom-left'}
 //   style: {margin: 'auto,0px,0px,0px', stretch: 'vertical'},
-  style: SECTION_STYLE,
+  style: Styles.SECTION_STYLE,
 });
 settingsPanel.add(settingsPanelContents)
 
 settingsPanelContents.add(ui.Label({
     value: 'Settings',
-    style: HEADER_STYLE_2,
+    style: Styles.HEADER_STYLE_2,
 }));
 
 // // Toggle between the Land Cover Mode map and the Pixel Layer. Default to Land Cover Mode
