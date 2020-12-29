@@ -14,3 +14,13 @@ exports.RegionsOverlay = function(baseImage, regions, subRegions) {
     });
     return output
 }
+
+exports.highlightRegion = function(region) {
+    var empty = ee.Image().byte();
+    var regionBoundary = empty.paint({
+        featureCollection: region,
+        color: 18,
+        width: 2,
+    });
+    return regionBoundary
+}
