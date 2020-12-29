@@ -10,13 +10,13 @@ var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
 var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
 
 //Testing
-var country = 'Ghana';
-var startYear = '2009';
-var targetYear = '2019';
+// var country = 'Ghana';
+// var startYear = '2009';
+// var targetYear = '2019';
 
-var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
-var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
-var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+// var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
+// var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+// var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
 
 /* 
  *   Function Imports
@@ -83,7 +83,7 @@ function IndicatorLabel(text) {
 
 // Updates the map overlay using the currently-selected region.
 function updateOverlay(region) {
-    var regionHighlight = ui.Map.Layer(highlightRegion(region), {palette: ['8856a7']}, 'Selected Region');
+    var regionHighlight = ui.Map.Layer(HelperFunctions.highlightRegion(region), {palette: ['8856a7']}, 'Selected Region');
     mapPanel.layers().set(4, regionHighlight);
 }
 
@@ -159,7 +159,7 @@ function loadCountry(country, startYear, targetYear) {
     mapPanel.addLayer(HelperFunctions.RegionsOverlay(ee.Image().byte(), regions, subRegions), {palette:['808080']}, 'Regions', true, 0.85);
 
     mapPanel.addLayer(
-        highlightRegion(
+        HelperFunctions.highlightRegion(
             app.datasets.regions.filter(
                 ee.Filter.eq('ADM2_NAME', app.variables.region)
             )
