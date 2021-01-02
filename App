@@ -114,14 +114,14 @@ function regionalChartsBuilder(regionNameText) {
 
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
-    var startRegionalData = app.datasets.startRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
-    var endRegionalData = app.datasets.endRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
     // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
 
-    var startRegionalDataChart = HelperFunctions.extractLandCoverChartData(startRegionalData);
-    var endRegionalDataChart = HelperFunctions.extractLandCoverChartData(endRegionalData);
+    var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
+    var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
     // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
-    var regionLandCoverTimeSeries = ee.FeatureCollection([startRegionalDataChart, endRegionalDataChart]) //, scenarioRegionalDataChart])
+    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
 
     var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
         .setChartType('ColumnChart')
