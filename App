@@ -89,15 +89,12 @@ function regionalChartsBuilder(regionNameText) {
 
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
-    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landTypes.push('Year')).first();
-    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landTypes.push('Year')).first();
-    // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
-
-    // var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
-    // var landCoverStartCountChart = landCoverStartCount.select(landTypes.push('Year'))
-    // var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
-    // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
-    // var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
+    var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
+    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+        .select(landDataProperties).first();
+    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+        .select(landDataProperties).first();
+    
     var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
 
     var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
@@ -113,14 +110,16 @@ function regionalChartsBuilder(regionNameText) {
     regionalChartsPanel.add(landTypesScenarioChart)
 
     // Transitions Chart
-    var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
-    var landCoverTransistionsChartData = HelperFunctions.extractLandCoverTransitionsChartData(landCoverTransistionsCount, 'Predictions');
     var transitionTypes = [
         'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
         'Grasslands to Croplands', 'Grasslands to Artificial',
         'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
     ];
-    var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsChartData]);
+    var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+        .select(transitionTypes).first();
+    landCoverTransistionsCount.set({Series_Name: 'Predictions'})
+    // var landCoverTransistionsChartData = HelperFunctions.extractLandCoverTransitionsChartData(landCoverTransistionsCount, 'Predictions');
+    var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount]);
     var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsSeries, transitionTypes, 'Series_Name')
     // var transitionsChart = ui.Chart.feature.byFeature(landCoverTransistionsCount, 'ADM2_NAME', transitionTypes)
         .setChartType('ColumnChart')
