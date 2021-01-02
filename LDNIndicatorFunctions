@@ -233,8 +233,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
     
-    var landCoverStartCount = generateLandCoverTypeSummaryFeature(landCoverStartImage, startYear, false, subRegions);
-    var landCoverEndCount = generateLandCoverTypeSummaryFeature(landCoverEndImage, targetYear, false, subRegions);
+    var landCoverStartCount = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, false, subRegions);
+    var landCoverEndCount = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, false, subRegions);
     var landCoverTransistionsCount = calculateLandCoverTransistions(landCoverTransistions, subRegions);
 
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
