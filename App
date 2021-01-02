@@ -84,6 +84,7 @@ function handleMapClick(location) {
 }
 
 function regionalChartsBuilder(regionNameText) {
+    regionalChartsPanel.clear()
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
     var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
@@ -106,7 +107,7 @@ function regionalChartsBuilder(regionNameText) {
             orientation: 'vertical',
         });
     regionalChartsPanel.add(landTypesScenarioChart)
-    
+
     // Transitions Chart
     print(regionNameText)
     var regionTransitions = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText));
@@ -123,7 +124,6 @@ function regionalChartsBuilder(regionNameText) {
         hAxis: {title: 'Net Change'},
         orientation: 'vertical',
     });
-    regionalChartsPanel.clear()
     regionalChartsPanel.add(transitionsChart);
 }
 
