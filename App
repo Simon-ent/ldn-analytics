@@ -117,11 +117,10 @@ function regionalChartsBuilder(regionNameText) {
     ];
     var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
         .select(transitionTypes).first();
-    landCoverTransistionsCount.set({Series_Name: 'Predictions'})
-    // var landCoverTransistionsChartData = HelperFunctions.extractLandCoverTransitionsChartData(landCoverTransistionsCount, 'Predictions');
+    landCoverTransistionsCount = landCoverTransistionsCount.set({Series_Name: 'Predictions'});
+    
     var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount]);
     var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsSeries, transitionTypes, 'Series_Name')
-    // var transitionsChart = ui.Chart.feature.byFeature(landCoverTransistionsCount, 'ADM2_NAME', transitionTypes)
         .setChartType('ColumnChart')
         .setOptions({
         title: 'Land Cover Transitions',
