@@ -39,6 +39,7 @@ exports.extractLandCoverChartData = function(feature) {
     })
 }
 
+// ee.Feature.copyProperties(source, properties, exclude) could use instead
 exports.extractLandCoverTransitionsChartData = function(feature, seriesName) {
     return ee.Feature(null, {
         'Series_Name': seriesName,

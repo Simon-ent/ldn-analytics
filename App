@@ -93,7 +93,8 @@ function regionalChartsBuilder(regionNameText) {
     var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
     // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
 
-    var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
+    // var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
+    var landCoverStartCountChart = landCoverStartCount.select(landTypes.add('Year'))
     var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
     // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
     var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
@@ -263,12 +264,7 @@ introPanel.add(ui.Label({
 var countrySelect = ui.Select({
   placeholder: 'Choose a country...',
   onChange: function(country) {
-    // print(country)
     app.setup.country = country;
-    // changeCountry(country)
-    // introPanel.style().set('shown', false);
-    // // loadingPanel.style().set('shown', true);
-    // countryPanel.style().set('shown', true);
   }
 })
 
@@ -289,7 +285,6 @@ var startYearSelect = ui.Select({
     items: yearList,
     value: '2009',
     onChange: function(year) {
-        // print(year)
         app.setup.startYear = year;
     }
 });
@@ -301,7 +296,6 @@ var targetYearSelect = ui.Select({
     items: yearList,
     value: '2019',
     onChange: function(year) {
-        // print(year)
         app.setup.targetYear = year;
     }
 });
