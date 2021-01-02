@@ -175,9 +175,9 @@ function loadCountry(country, startYear, targetYear) {
     var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    var landCoverStartCount = outputImages[3];
-    var landCoverEndCount = outputImages[4];
-    var landCoverTransistionsCount = outputImages[5];
+    app.datasets.landCoverStartCount = outputImages[3];
+    app.datasets.landCoverEndCount = outputImages[4];
+    app.datasets.landCoverTransistionsCount = outputImages[5];
 
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
