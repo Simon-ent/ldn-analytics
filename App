@@ -89,15 +89,16 @@ function regionalChartsBuilder(regionNameText) {
 
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
-    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
-    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landTypes.push('Year')).first();
+    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landTypes.push('Year')).first();
     // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
 
-    var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
-    // var landCoverStartCountChart = landCoverStartCount.select(landTypes.add('Year'))
-    var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
+    // var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
+    // var landCoverStartCountChart = landCoverStartCount.select(landTypes.push('Year'))
+    // var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
     // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
-    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
+    // var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
+    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
 
     var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
         .setChartType('ColumnChart')
