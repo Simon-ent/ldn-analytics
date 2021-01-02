@@ -24,3 +24,17 @@ exports.highlightRegion = function(region) {
     });
     return regionBoundary
 }
+
+exports.extractLandCoverChartData = function(feature) {
+    return ee.Feature(null, {
+        'Year': feature.get('Year'),
+        'Target': feature.get('Target'),
+        'Tree_Cover': feature.get('Tree_Cover'),
+        'Grasslands': feature.get('Grasslands'),
+        'Croplands': feature.get('Croplands'),
+        'Wetlands': feature.get('Wetlands'),
+        'Artificial': feature.get('Artificial'),
+        'Bare_Land': feature.get('Bare_Land'),
+        'Water_Bodies': feature.get('Water_Bodies'),
+    })
+}

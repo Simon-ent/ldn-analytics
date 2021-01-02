@@ -1,10 +1,6 @@
-/*
-* Load Datasets
-*/
-
-// Geomtery in Main App
-// Analysis in functions
-
+/**
+ * Load Datasets
+ */
 var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
 var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
 var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
@@ -26,10 +22,9 @@ var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers');
 var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles.js');
 
-/*
-* Constants & Variables
-*/
-
+/**
+ * Constants & Variables
+ */
 var app = {
     setup: {
         country: 'Ghana',
@@ -39,6 +34,9 @@ var app = {
     datasets: {
         regions: null,
         subRegions: null,
+        landCoverStartCount: null,
+        landCoverEndCount: null,
+        landCoverTransistionsCount: null,
     },
     variables: {
         region: null,
@@ -61,9 +59,9 @@ var yearList = ['2001', '2002', '2003', '2004', '2005', '2006',
                 '2013', '2014', '2015', '2016', '2017', '2018',
                 '2019'];
 
-/*
-* Functions
-*/
+/**
+ * Functions
+ */
 
 function Label(text) {
     var output = ui.Label({
@@ -94,24 +92,68 @@ function handleMapClick(location) {
     updateUI(region)
 }
 
-function calculateSDG(landCoverChange, countryGeometry) {
-    var pixelCount = landCoverChange.reduceRegion(
-        ee.Reducer.fixedHistogram(-1, 1, 3),
-        countryGeometry,
-        500
-    ).get('remapped');
-    var degredationCount = ee.Array(pixelCount).get([0,1])
-    var totalPixel = landCoverChange.reduceRegion(
-        ee.Reducer.count(),
-        countryGeometry,
-        500
-    ).get('remapped');
+function regionalChartsBuilder(regionNameText) {
+    // Transitions Chart
+    print(regionNameText)
+    var regionTransitions = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText));
+    var transitionTypes = [
+        'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
+        'Grasslands to Croplands', 'Grasslands to Artificial',
+        'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
+    ];
+    // var transitionsChart = ui.Chart.feature.byProperty(regionTransitions, transitionTypes, 'ADM2_NAME')
+    var transitionsChart = ui.Chart.feature.byFeature(regionTransitions, 'ADM2_NAME', transitionTypes)
+        .setChartType('ColumnChart')
+        .setOptions({
+        title: 'Land Cover Transitions',
+        hAxis: {title: 'Net Change'},
+        orientation: 'vertical',
+    });
+    regionalChartsPanel.clear()
+    regionalChartsPanel.add(transitionsChart);
 
-    var SDG = ee.Number(degredationCount).divide(totalPixel)
-    var SDGOutput = ee.Number(SDG).format('%.2f').getInfo()
-    SDGIndicatorWidget.widgets().set(1, IndicatorLabel(SDGOutput + ' %'))
-    return SDG
+    // Land Cover Over Time Chart
+    var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
+    var startRegionalData = app.datasets.startRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    var endRegionalData = app.datasets.endRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+
+    var startRegionalDataChart = HelperFunctions.extractLandCoverChartData(startRegionalData);
+    var endRegionalDataChart = HelperFunctions.extractLandCoverChartData(endRegionalData);
+    // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
+    var regionLandCoverTimeSeries = ee.FeatureCollection([startRegionalDataChart, endRegionalDataChart]) //, scenarioRegionalDataChart])
+
+    var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
+        .setChartType('ColumnChart')
+        .setOptions({
+            title: 'Land Types by Year',
+            vAxis: {title: 'Land Type'},
+            hAxis: {title: 'Pixel Count', logScale: true},
+            // isStacked: true,
+            bar: { gap: 0 },
+            orientation: 'vertical',
+        });
+    regionalChartsPanel.add(landTypesScenarioChart)
 }
+
+// function calculateSDG(landCoverChange, countryGeometry) {
+//     var pixelCount = landCoverChange.reduceRegion(
+//         ee.Reducer.fixedHistogram(-1, 1, 3),
+//         countryGeometry,
+//         500
+//     ).get('remapped');
+//     var degredationCount = ee.Array(pixelCount).get([0,1])
+//     var totalPixel = landCoverChange.reduceRegion(
+//         ee.Reducer.count(),
+//         countryGeometry,
+//         500
+//     ).get('remapped');
+
+//     var SDG = ee.Number(degredationCount).divide(totalPixel)
+//     var SDGOutput = ee.Number(SDG).format('%.2f').getInfo()
+//     SDGIndicatorWidget.widgets().set(1, IndicatorLabel(SDGOutput + ' %'))
+//     return SDG
+// }
 
 function loadCountry(country, startYear, targetYear) {
     countryPanel.widgets().set(0, ui.Label({
@@ -125,12 +167,17 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
 
-    /* 
-    *   LDN Indicators
-    */
+    /**
+     * LDN Indicators
+     */
 
-    var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear, subRegions)
-    // var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
+    // var outputImages = LDNIndicatorFunctions.LDNIndicatorImages(startYear, targetYear, subRegions)
+    var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
+
+    // Data
+    var landCoverStartCount = outputImages[3];
+    var landCoverEndCount = outputImages[4];
+    var landCoverTransistionsCount = outputImages[5];
 
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
@@ -157,9 +204,9 @@ function loadCountry(country, startYear, targetYear) {
         ), {palette: ['8856a7']}, 
     'Selected Region');
 
-    /* 
-    *   Analysis Layers
-    */
+    /**
+     * Analysis Layers
+     */
 
     // Fire Frequency (Layer 5)
     var fireFrequency = AnalysisLayers.FireFrequencyAnalysis(startYear, targetYear).clip(countryGeometry)
@@ -185,14 +232,14 @@ function updateUI(region) {
     regionName.setValue(regionNameText);
     app.variables.regionNameText = regionNameText;
     regionalDataEditButton.style().set('shown', true); // Just for development
-    // regionalChartsBuilder(regionNameText);
+    regionalChartsBuilder(regionNameText);
     // updateSubRegionIndicator(regionNameText);
     // updateScenarioEditPanel(regionNameText)
 }
 
-/*
-* Base UI
-*/
+/** 
+ * Base UI
+ */
 
 ui.root.clear()
 var mapPanel = ui.Map()
