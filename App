@@ -93,8 +93,8 @@ function regionalChartsBuilder(regionNameText) {
     var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
     // var scenarioRegionalData = app.scenarios.scenarioRegionalData.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
 
-    // var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
-    var landCoverStartCountChart = landCoverStartCount.select(landTypes.add('Year'))
+    var landCoverStartCountChart = HelperFunctions.extractLandCoverChartData(landCoverStartCount);
+    // var landCoverStartCountChart = landCoverStartCount.select(landTypes.add('Year'))
     var landCoverEndCountChart = HelperFunctions.extractLandCoverChartData(landCoverEndCount);
     // var scenarioRegionalDataChart = HelperFunctions.extractLandCoverChartData(scenarioRegionalData);
     var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCountChart, landCoverEndCountChart]) //, scenarioRegionalDataChart])
