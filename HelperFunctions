@@ -39,9 +39,9 @@ exports.extractLandCoverChartData = function(feature) {
     })
 }
 
-exports.extractLandCoverTransitionsChartData = function(feature) {
+exports.extractLandCoverTransitionsChartData = function(feature, seriesName) {
     return ee.Feature(null, {
-        // 'ADM2_NAME': feature.get('ADM2_NAME'),
+        'Series_Name': seriesName,
         'Tree_Cover to Grasslands': feature.get('Tree_Cover to Grasslands'),
         'Tree_Cover to Croplands': feature.get('Tree_Cover to Croplands'),
         'Tree_Cover to Artificial': feature.get('Tree_Cover to Artificial'),
