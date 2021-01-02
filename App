@@ -111,14 +111,14 @@ function regionalChartsBuilder(regionNameText) {
     regionalChartsPanel.add(landTypesScenarioChart)
 
     // Transitions Chart
-    var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText));
+    var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
     var landCoverTransistionsChartData = HelperFunctions.extractLandCoverTransitionsChartData(landCoverTransistionsCount);
     var transitionTypes = [
         'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
         'Grasslands to Croplands', 'Grasslands to Artificial',
         'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
     ];
-    var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsChartData, transitionTypes, 'ADM2_NAME')
+    var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsChartData, transitionTypes)
     // var transitionsChart = ui.Chart.feature.byFeature(landCoverTransistionsCount, 'ADM2_NAME', transitionTypes)
         .setChartType('ColumnChart')
         .setOptions({
