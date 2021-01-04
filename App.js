@@ -8,9 +8,9 @@ var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
 /* 
  *   Function Imports
  */
-var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions');
-var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions');
-var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers');
+var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions.js');
+var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions.js');
+var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers.js');
 var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles.js');
 
 /**
