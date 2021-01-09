@@ -559,6 +559,15 @@ var createScenarioSelect = ui.Select({
 });
 createScenarioPanel.add(createScenarioSelect);
 
+var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
+    .get('list'));
+    // .distinct();
+
+computedScenarioList.evaluate(function(scenarioList) {
+    createScenarioSelect.items().reset(scenarioList);
+    createScenarioSelect.setValue('predictions')
+});
+
 var createScenaioName = ui.Textbox({
     placeholder: '2019_Scenario_1'
 })
@@ -574,6 +583,8 @@ createScenarioPanel.add(
                 app.scenarios = ScenarioFunctions.createScenario(app.scenarios, createScenarioSelect.getValue(), createScenaioName.getValue());
                 // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 regionalDataEditButton.style().set('shown', true);
+                createScenarioSelect.setValue('predictions');
+                createScenaioName.setValue('');
             }
         }), 
         ui.Button({
