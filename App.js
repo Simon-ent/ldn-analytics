@@ -11,6 +11,7 @@ var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
 var LDNIndicatorFunctions = require('users/ee-simon-ent/geo-ldn-app:LDNIndicatorFunctions.js');
 var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions.js');
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers.js');
+var ScenarioFunctions = require('users/ee-simon-ent/geo-ldn-app:ScenarioPlanner.js');
 var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles.js');
 
 /**
@@ -25,6 +26,7 @@ var app = {
     datasets: {
         regions: null,
         subRegions: null,
+        predictionsData: null,
         landCoverStartCount: null,
         landCoverEndCount: null,
         landCoverTransistionsCount: null,
@@ -33,14 +35,8 @@ var app = {
         region: null,
         regionNameText: null,
         nationalIndicator: null,
-        // scenarioBase: null,
-        // scenarioDict: null
     },
-    // scenarios: {
-    //     // landCoverTransistionsStats: null,
-    //     // regionalScores: null,
-    //     // scenarioRegionalData: null
-    // }
+    scenarios: null
 };
 
 var selectedPoint = [];
@@ -173,8 +169,9 @@ function loadCountry(country, startYear, targetYear) {
     // app.datasets.landCoverStartCount = outputImages[3];
     // app.datasets.landCoverEndCount = outputImages[4];
     // app.datasets.landCoverTransistionsCount = outputImages[5];
-
     var predictionsData = outputImages[6];
+    app.datasets.predictionsData = outputImages[6];
+    app.scenarios = ee.FeatureCollection([predictionsData])
     print(predictionsData)
     app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount'));
     app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount'));
@@ -574,8 +571,8 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
-                // createScenario(createScenarioSelect.getValue(), createScenaioName.getValue())
-                print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
+                app.scenarios = ScenarioFunctions.createScenario(app.scenarios, createScenarioSelect.getValue(), createScenaioName.getValue());
+                // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 regionalDataEditButton.style().set('shown', true);
             }
         }), 

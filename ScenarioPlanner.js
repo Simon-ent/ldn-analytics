@@ -4,4 +4,5 @@
 
 exports.createScenario = function(scenarioCollection, scenarioBase, scenarioName) {
     print(scenarioCollection, scenarioBase, scenarioName);
+    return scenarioCollection
 }
