@@ -507,14 +507,14 @@ settingsPanelContents.add(ui.Label({
 // });
 // settingsPanel.add(toggleLegendDisplay);
 
-// var createScenarioButton = ui.Button({
-//     label: 'Create Scenario',
-//     onClick: function () {
-//         countryPanel.style().set('shown', false)
-//         createScenarioPanel.style().set('shown', true)
-//     }
-// })
-// settingsPanelContents.add(createScenarioButton)
+var createScenarioButton = ui.Button({
+    label: 'Create Scenario',
+    onClick: function () {
+        countryPanel.style().set('shown', false)
+        createScenarioPanel.style().set('shown', true)
+    }
+})
+settingsPanelContents.add(createScenarioButton)
 
 var changeCountryButton = ui.Button({
     label: 'Change Country',
@@ -568,7 +568,8 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
-                createScenario(createScenarioSelect.getValue(), createScenaioName.getValue())
+                // createScenario(createScenarioSelect.getValue(), createScenaioName.getValue())
+                print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 regionalDataEditButton.style().set('shown', true);
             }
         }), 
