@@ -536,12 +536,12 @@ createScenarioPanel.style().set('shown', false);
 
 createScenarioPanel.add(ui.Label({
     value: 'LDN Sceanrio Tool',
-    style: HEADER_STYLE_1,
+    style: Styles.HEADER_STYLE_1,
 }));
   
 createScenarioPanel.add(ui.Label({
     value: 'Please select the Year (or an existing scenario) to use as the starting point.',
-    style: INTRO_STYLE,
+    style: Styles.INTRO_STYLE,
 }));
 
 createScenarioPanel.add(Label('Select the starting point:'))
