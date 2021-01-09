@@ -174,6 +174,9 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.landCoverEndCount = outputImages[4];
     app.datasets.landCoverTransistionsCount = outputImages[5];
 
+    var predictionsData = outputImages[6];
+    print(predictionsData)
+
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
     mapPanel.addLayer(landCoverChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Land Cover', false, 0.75);

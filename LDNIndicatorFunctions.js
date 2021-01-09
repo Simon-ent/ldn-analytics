@@ -213,16 +213,16 @@ function calculateLandCoverTransistions(transistions, subRegions) {
  * Outputs
  */
 
-exports.LDNIndicatorImages = function(startYear, targetYear, subRegions) {
-    var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
-    var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
-    var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
-    var landCoverChange = LandCoverChangeImage(landCoverTransistions);
-    var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
-    var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
-    var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
-    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage]
-}
+// exports.LDNIndicatorImages = function(startYear, targetYear, subRegions) {
+//     var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
+//     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
+//     var landCoverTransistions = LandCoverTransistions(landCoverStartImage, landCoverEndImage);
+//     var landCoverChange = LandCoverChangeImage(landCoverTransistions);
+//     var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransistions, soilCarbonTop);
+//     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
+//     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
+//     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage]
+// }
 
 exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
@@ -237,8 +237,14 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     var landCoverEndCount = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, false, subRegions);
     var landCoverTransistionsCount = calculateLandCoverTransistions(landCoverTransistions, subRegions);
 
+    landCoverStartCount = landCoverStartCount.set({id: 'landCoverStartCount'});
+    landCoverEndCount = landCoverEndCount.set({id: 'landCoverEndCount'});
+    landCoverTransistionsCount = landCoverTransistionsCount.set({id: 'landCoverTransistionsCount'});
+    var predictionsData = ee.FeatureCollection([landCoverStartCount, landCoverEndCount, landCoverTransistionsCount]);
+    predictionsData = predictionsData.set({id: 'predictions'});
+
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
-        landCoverStartCount, landCoverEndCount, landCoverTransistionsCount]
+        landCoverStartCount, landCoverEndCount, landCoverTransistionsCount, predictionsData]
 }
 
 /*
