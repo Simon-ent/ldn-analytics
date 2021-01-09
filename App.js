@@ -173,9 +173,9 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.predictionsData = outputImages[6];
     app.scenarios = ee.FeatureCollection([predictionsData])
     print(predictionsData)
-    app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount'));
-    app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount'));
-    app.datasets.landCoverTransistionsCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverTransistionsCount'));
+    app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
+    app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount')).first();
+    app.datasets.landCoverTransistionsCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverTransistionsCount')).first();
 
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
@@ -551,8 +551,8 @@ createScenarioPanel.add(ui.Label({
 createScenarioPanel.add(Label('Select the starting point:'))
 
 var createScenarioSelect = ui.Select({
-    items: ['predictions'],
-    value: 'predictions',
+    // items: ['predictions'],
+    // value: 'predictions',
     // onChange: function(scenario) {
     //     // print(scenario)
     //     // app.variables.scenarioBase = scenario;
@@ -573,7 +573,7 @@ function updateScenarioList() {
 
 
 var createScenaioName = ui.Textbox({
-    placeholder: '2019_Scenario_1'
+    // placeholder: '2019_Scenario_1'
 })
 createScenarioPanel.add(createScenaioName)
 
