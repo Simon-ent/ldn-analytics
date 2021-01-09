@@ -515,6 +515,7 @@ var createScenarioButton = ui.Button({
     onClick: function () {
         countryPanel.style().set('shown', false)
         createScenarioPanel.style().set('shown', true)
+        updateScenarioList()
     }
 })
 settingsPanelContents.add(createScenarioButton)
@@ -559,14 +560,17 @@ var createScenarioSelect = ui.Select({
 });
 createScenarioPanel.add(createScenarioSelect);
 
-var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
-    .get('list'));
-    // .distinct();
+function updateScenarioList() {
+    var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
+        .get('list'));
+        // .distinct();
 
-computedScenarioList.evaluate(function(scenarioList) {
-    createScenarioSelect.items().reset(scenarioList);
-    createScenarioSelect.setValue('predictions')
-});
+    computedScenarioList.evaluate(function(scenarioList) {
+        createScenarioSelect.items().reset(scenarioList);
+        createScenarioSelect.setValue('predictions')
+    });
+}
+
 
 var createScenaioName = ui.Textbox({
     placeholder: '2019_Scenario_1'
