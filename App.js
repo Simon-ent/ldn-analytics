@@ -524,3 +524,62 @@ var changeCountryButton = ui.Button({
     }
 })
 settingsPanelContents.add(changeCountryButton)
+
+/*
+*  Scenario Planner UI
+*/
+
+var createScenarioPanel = ui.Panel({style: {stretch: 'horizontal'}});
+uiPanel.add(createScenarioPanel);
+
+createScenarioPanel.style().set('shown', false);
+
+createScenarioPanel.add(ui.Label({
+    value: 'LDN Sceanrio Tool',
+    style: HEADER_STYLE_1,
+}));
+  
+createScenarioPanel.add(ui.Label({
+    value: 'Please select the Year (or an existing scenario) to use as the starting point.',
+    style: INTRO_STYLE,
+}));
+
+createScenarioPanel.add(Label('Select the starting point:'))
+
+var createScenarioSelect = ui.Select({
+    items: ['Model Predictions'],
+    value: 'Model Predictions',
+    // onChange: function(scenario) {
+    //     // print(scenario)
+    //     // app.variables.scenarioBase = scenario;
+    // }
+});
+createScenarioPanel.add(createScenarioSelect);
+
+var createScenaioName = ui.Textbox({
+    placeholder: '2019_Scenario_1'
+})
+createScenarioPanel.add(createScenaioName)
+
+createScenarioPanel.add(
+    ui.Panel([
+        ui.Button({
+            label: 'Create',
+            onClick: function () {
+                countryPanel.style().set('shown', true);
+                createScenarioPanel.style().set('shown', false);
+                createScenario(createScenarioSelect.getValue(), createScenaioName.getValue())
+                regionalDataEditButton.style().set('shown', true);
+            }
+        }), 
+        ui.Button({
+            label: 'Cancel',
+            onClick: function () {
+                countryPanel.style().set('shown', true);
+                createScenarioPanel.style().set('shown', false);
+            }
+        })],
+        ui.Panel.Layout.flow('horizontal'),
+        {stretch: 'vertical'}
+    )
+);
