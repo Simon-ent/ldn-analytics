@@ -551,6 +551,7 @@ createScenarioPanel.add(ui.Label({
 createScenarioPanel.add(Label('Select the starting point:'))
 
 var createScenarioSelect = ui.Select({
+    placeholder: 'Choose a scenario...',
     // items: ['predictions'],
     // value: 'predictions',
     // onChange: function(scenario) {
@@ -571,9 +572,10 @@ function updateScenarioList() {
     });
 }
 
-
+createScenarioPanel.add(Label('New scenario name:'))
 var createScenaioName = ui.Textbox({
     // placeholder: '2019_Scenario_1'
+    placeholder: ''
 })
 createScenarioPanel.add(createScenaioName)
 
