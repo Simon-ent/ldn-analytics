@@ -7,5 +7,5 @@ exports.createScenario = function(scenarioCollection, scenarioBaseName, scenario
     // Returns the collection of scenarios plus the new scenario
     var scenario = scenarioCollection.filter(ee.Filter.eq('id', scenarioBaseName)).first()
     scenario = scenario.set({id: scenarioName});
-    return scenarioCollection.merge(ee.FeatureCollection([base]));
+    return scenarioCollection.merge(ee.FeatureCollection([scenario]));
 }
