@@ -8,7 +8,7 @@ exports.createScenario = function(scenarioCollection, scenarioBase, scenarioName
     print(base);
     base.set({id: scenarioName});
 
-    updatedScenarioCollection = scenarioCollection.merge(ee.FeatureCollection([base]));
+    var updatedScenarioCollection = scenarioCollection.merge(ee.FeatureCollection([base]));
     
     return updatedScenarioCollection
 }
