@@ -170,12 +170,15 @@ function loadCountry(country, startYear, targetYear) {
     var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    app.datasets.landCoverStartCount = outputImages[3];
-    app.datasets.landCoverEndCount = outputImages[4];
-    app.datasets.landCoverTransistionsCount = outputImages[5];
+    // app.datasets.landCoverStartCount = outputImages[3];
+    // app.datasets.landCoverEndCount = outputImages[4];
+    // app.datasets.landCoverTransistionsCount = outputImages[5];
 
     var predictionsData = outputImages[6];
     print(predictionsData)
+    app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount'));
+    app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount'));
+    app.datasets.landCoverTransistionsCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverTransistionsCount'));
 
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
