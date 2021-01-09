@@ -550,8 +550,8 @@ createScenarioPanel.add(ui.Label({
 createScenarioPanel.add(Label('Select the starting point:'))
 
 var createScenarioSelect = ui.Select({
-    items: ['Model Predictions'],
-    value: 'Model Predictions',
+    items: ['predictions'],
+    value: 'predictions',
     // onChange: function(scenario) {
     //     // print(scenario)
     //     // app.variables.scenarioBase = scenario;
