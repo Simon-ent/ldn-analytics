@@ -166,16 +166,18 @@ function loadCountry(country, startYear, targetYear) {
     var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    // app.datasets.landCoverStartCount = outputImages[3];
-    // app.datasets.landCoverEndCount = outputImages[4];
-    // app.datasets.landCoverTransistionsCount = outputImages[5];
+    app.datasets.landCoverStartCount = outputImages[3];
+    app.datasets.landCoverEndCount = outputImages[4];
+    app.datasets.landCoverTransistionsCount = outputImages[5];
     var predictionsData = outputImages[6];
     app.datasets.predictionsData = outputImages[6];
     app.scenarios = ee.FeatureCollection([predictionsData])
-    print(predictionsData)
-    app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
-    app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount')).first();
-    app.datasets.landCoverTransistionsCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverTransistionsCount')).first();
+    // print(predictionsData)
+    // app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
+    // app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount')).first();
+    // app.datasets.landCoverTransistionsCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverTransistionsCount')).first();
+    // print(app.datasets.landCoverStartCount)
+    // print(outputImages[3])
 
     // Land Cover (Layer 0)
     var landCoverChange = outputImages[0].clip(countryGeometry);
@@ -568,7 +570,7 @@ function updateScenarioList() {
 
     computedScenarioList.evaluate(function(scenarioList) {
         createScenarioSelect.items().reset(scenarioList);
-        createScenarioSelect.setValue('predictions')
+        // createScenarioSelect.setValue('predictions')
     });
 }
 
