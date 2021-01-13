@@ -93,10 +93,14 @@ function regionalChartsBuilder() {
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
 
+    // Land Cover Over Time Chart
+    var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
+    var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
+
     function extractLandCoverTimeSeries(featureCollection) {
         // feature collection of feature collections
-        return featureCollection.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-                .select(landDataProperties).first();
+        return ee.FeatureCollection(featureCollection).filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+                .select(landDataProperties);
     }
     var output = app.datasets.landCoverTimeSeries.map(extractLandCoverTimeSeries)
     print(output)
@@ -111,8 +115,8 @@ function regionalChartsBuilder() {
 
     var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
     
-
-    var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
+    // var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
+    var landTypesScenarioChart = ui.Chart.feature.byProperty(output, landTypes, 'Year')
         .setChartType('ColumnChart')
         .setOptions({
             title: 'Land Types by Year',
