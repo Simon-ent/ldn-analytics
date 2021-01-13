@@ -26,6 +26,8 @@ var app = {
     datasets: {
         regions: null,
         subRegions: null,
+        landCoverTimeSeries: null,
+        landCoverTransistionsSeries: null,
         predictionsData: null,
         landCoverStartCount: null,
         landCoverEndCount: null,
@@ -90,6 +92,14 @@ function regionalChartsBuilder() {
     regionalChartsPanel.clear()
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
+
+    function extractLandCoverTimeSeries(featureCollection) {
+        // feature collection of feature collections
+        return featureCollection.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+                .select(landDataProperties).first();
+    }
+    var output = app.datasets.landCoverTimeSeries.map(extractLandCoverTimeSeries)
+    print(output)
 
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
@@ -175,6 +185,9 @@ function loadCountry(country, startYear, targetYear) {
     var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
+    app.datasets.landCoverTimeSeries = outputImages[8];
+    app.datasets.landCoverTransistionsSeries = outputImages[7];
+
     app.datasets.landCoverStartCount = outputImages[3];
     app.datasets.landCoverEndCount = outputImages[4];
     app.datasets.landCoverTransistionsCount = outputImages[5];

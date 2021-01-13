@@ -243,8 +243,12 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     var predictionsData = ee.FeatureCollection([landCoverStartCount, landCoverEndCount, landCoverTransistionsCount]);
     predictionsData = predictionsData.set({id: 'predictions'});
 
+    var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount])
+    var landCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount])
+
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
-        landCoverStartCount, landCoverEndCount, landCoverTransistionsCount, predictionsData]
+        landCoverStartCount, landCoverEndCount, landCoverTransistionsCount, predictionsData,
+        landCoverTransistionsSeries, landCoverTimeSeries]
 }
 
 /*
