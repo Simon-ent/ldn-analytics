@@ -104,13 +104,21 @@ function regionalChartsBuilder() {
         .select(landDataProperties).first();
     print(app.datasets.landCoverEndCounts.get('predictions'))
     var landCoverEndCount = app.datasets.landCoverEndCounts.get('predictions');
-    landCoverEndCount = landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
-    // var landCoverEndCount = app.datasets.landCoverEndCounts.get('predictions').filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-    // .select(landDataProperties).first();
+    landCoverEndCount = ee.FeatureCollection(landCoverEndCount).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
     // var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
     //     .select(landDataProperties).first();
+
+    // var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
+    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount]);
     
-    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
+    function extractScenarios(key, value) {
+        var landCoverScenarioEndCount = ee.FeatureCollection(value).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
+        regionLandCoverTimeSeries = regionLandCoverTimeSeries.merge(ee.FeatureCollection(landCoverScenarioEndCount));
+        return value
+    }
+    
+    var landCoverEndCounts = app.datasets.landCoverEndCounts;
+    ee.Dictionary(landCoverEndCounts).map(extractScenarios);
 
     var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
         .setChartType('ColumnChart')
