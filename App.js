@@ -67,7 +67,8 @@ function IndicatorLabel(text) {
 }
 
 // Updates the map overlay using the currently-selected region.
-function updateOverlay(region) {
+function updateOverlay() {
+    var region = app.variables.region;
     var regionHighlight = ui.Map.Layer(HelperFunctions.highlightRegion(region), {palette: ['8856a7']}, 'Selected Region');
     mapPanel.layers().set(4, regionHighlight);
 }
@@ -76,8 +77,7 @@ function handleMapClick(location) {
     var selectedPoint = [location.lon, location.lat];
     var region = app.datasets.subRegions.filterBounds(ee.Geometry.MultiPoint(selectedPoint));
     app.variables.region = region;
-    updateOverlay(region);
-    // updateUI(region);
+    updateOverlay();
     updateUI();
 }
 
