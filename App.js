@@ -26,6 +26,8 @@ var app = {
     datasets: {
         regions: null,
         subRegions: null,
+        landCoverEndCounts: null,
+        landCoverTransistionsCounts: null,
         predictionsData: null,
         landCoverStartCount: null,
         landCoverEndCount: null,
@@ -81,8 +83,18 @@ function handleMapClick(location) {
     updateUI();
 }
 
-function regionalChartsBuilder(regionNameText) {
+function regionalChartsBuilder() {
+    // Clear charts panel
+    // unpack variables
+    // extract datasets
+    // create charts
+
     regionalChartsPanel.clear()
+    var regionNameText = app.variables.regionNameText;
+    // var LCScenarios = app.scenarios.filter(ee.Filter.eq('id', 'predictions').not())
+
+
+
     print(regionNameText)
 
     // Land Cover Over Time Chart
@@ -169,6 +181,10 @@ function loadCountry(country, startYear, targetYear) {
 
     // Data
     app.datasets.landCoverStartCount = outputImages[3];
+    app.datasets.landCoverEndCounts = ee.Dictionary().set('predictions', outputImages[4])
+    app.datasets.landCoverTransistionsCounts = ee.Dictionary().set('predictions', outputImages[5])
+
+    // app.datasets.landCoverStartCount = outputImages[3];
     app.datasets.landCoverEndCount = outputImages[4];
     app.datasets.landCoverTransistionsCount = outputImages[5];
     var predictionsData = outputImages[6];
@@ -235,7 +251,7 @@ function updateUI() {
     regionName.setValue(regionNameText);
     app.variables.regionNameText = regionNameText;
     // regionalDataEditButton.style().set('shown', true); // Just for development
-    regionalChartsBuilder(regionNameText);
+    regionalChartsBuilder();
     // updateSubRegionIndicator(regionNameText);
     // updateScenarioEditPanel(regionNameText)
 }
