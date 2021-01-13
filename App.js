@@ -103,8 +103,10 @@ function regionalChartsBuilder() {
     var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
         .select(landDataProperties).first();
     print(app.datasets.landCoverEndCounts.get('predictions'))
-    var landCoverEndCount = app.datasets.landCoverEndCounts.get('predictions').filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-    .select(landDataProperties).first();
+    var landCoverEndCount = app.datasets.landCoverEndCounts.get('predictions');
+    landCoverEndCount = landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
+    // var landCoverEndCount = app.datasets.landCoverEndCounts.get('predictions').filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+    // .select(landDataProperties).first();
     // var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
     //     .select(landDataProperties).first();
     
