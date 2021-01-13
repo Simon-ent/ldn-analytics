@@ -99,7 +99,11 @@ function regionalChartsBuilder() {
 
     function extractLandCoverTimeSeries(featureCollection) {
         // feature collection of feature collections
-        return ee.FeatureCollection(featureCollection).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
+        var result = featureCollection.map(function(feature) {
+            return feature.filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
+        })
+        return result
+        // ee.FeatureCollection(featureCollection).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
                 // .select(landDataProperties);
     }
     var output = app.datasets.landCoverTimeSeries.map(extractLandCoverTimeSeries)
