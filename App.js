@@ -39,7 +39,7 @@ var app = {
     scenarios: null
 };
 
-var selectedPoint = [];
+// var selectedPoint = [];
 
 var yearList = ['2001', '2002', '2003', '2004', '2005', '2006',
                 '2007', '2008', '2009', '2010', '2011', '2012',
@@ -73,10 +73,12 @@ function updateOverlay(region) {
 }
 
 function handleMapClick(location) {
-    selectedPoint = [location.lon, location.lat];
+    var selectedPoint = [location.lon, location.lat];
     var region = app.datasets.subRegions.filterBounds(ee.Geometry.MultiPoint(selectedPoint));
-    updateOverlay(region)
-    updateUI(region)
+    app.variables.region = region;
+    updateOverlay(region);
+    // updateUI(region);
+    updateUI();
 }
 
 function regionalChartsBuilder(regionNameText) {
@@ -226,8 +228,9 @@ function loadCountry(country, startYear, targetYear) {
 //     })
 // }
 
-function updateUI(region) {
+function updateUI() {
     countryStartInstructions.style().set('shown', false); // Hide instructions
+    var region = app.variables.region;
     var regionNameText = region.first().get('ADM2_NAME').getInfo();
     regionName.setValue(regionNameText);
     app.variables.regionNameText = regionNameText;
