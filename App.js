@@ -114,7 +114,7 @@ function regionalChartsBuilder() {
         .select(landDataProperties).first();
 
     var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
-    print
+    print(regionLandCoverTimeSeries)
     
     // var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
     var landTypesScenarioChart = ui.Chart.feature.byProperty(output, landTypes, 'Year')
