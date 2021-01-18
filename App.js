@@ -95,17 +95,17 @@ function regionalChartsBuilder() {
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
 
-    var currentRegion = ee.FeatureCollection(scenarios.get('Test')).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
+    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
     print(currentRegion)
 
-    var scenarioList = app.variables.scenarioList;
+    var transitionsList = app.variables.scenarioList;
 
     var landCoverChartData = scenarioList.map(function(item) {
         return ee.Dictionary(currentRegion.get(item)).values()
-      })
-    print(landCoverChartData)
+    })
 
-    var chart = ui.Chart.array.values(chartData3, 1, ee.Dictionary(currentRegion.get(scenarioList[0])).keys())
+    // Land Cover Over Time Chart
+    var landTypesScenarioChart = ui.Chart.array.values(landCoverChartData, 1, ee.Dictionary(currentRegion.get(scenarioList.get(0))).keys())
         .setSeriesNames(scenarioList)
         .setChartType('ColumnChart')
         .setOptions({
@@ -115,65 +115,105 @@ function regionalChartsBuilder() {
             bar: { gap: 0 },
             orientation: 'vertical',
         });
-    print(chart)
 
-    // Land Cover Over Time Chart
-    var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
-    var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
-
-    function extractLandCoverTimeSeries(featureCollection) {
-        // feature collection of feature collections
-        var result = ee.FeatureCollection(featureCollection).map(function(feature) {
-            return ee.FeatureCollection(feature).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
-        })
-        return result
-    }
-    var output = app.datasets.landCoverTimeSeries.map(extractLandCoverTimeSeries)
-    print(output)
-
-    // Land Cover Over Time Chart
-    var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
-    var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
-    var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-        .select(landDataProperties).first();
-    var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-        .select(landDataProperties).first();
-
-    var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
-    print(regionLandCoverTimeSeries)
-    
-    // var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
-    var landTypesScenarioChart = ui.Chart.feature.byProperty(output, landTypes, 'Year')
-        .setChartType('ColumnChart')
-        .setOptions({
-            title: 'Land Types by Year',
-            vAxis: {title: 'Land Type'},
-            hAxis: {title: 'Pixel Count', logScale: true},
-            // isStacked: true,
-            bar: { gap: 0 },
-            orientation: 'vertical',
-        });
     regionalChartsPanel.add(landTypesScenarioChart)
 
     // Transitions Chart
-    var transitionTypes = [
-        'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
-        'Grasslands to Croplands', 'Grasslands to Artificial',
-        'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
-    ];
-    var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
-        .select(transitionTypes).first();
-    landCoverTransistionsCount = landCoverTransistionsCount.set({Series_Name: 'Predictions'});
-    
-    var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount]);
-    var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsSeries, transitionTypes, 'Series_Name')
+
+    var transitionsList = ee.List(['landCoverTransitions'])
+
+    var landCoverTransistionsData = transitionsList.map(function(item) {
+        return ee.Dictionary(currentRegion.get(item)).values()
+    })
+    print(landCoverTransistionsData)
+
+    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsData, 1, ee.Dictionary(currentRegion.get(transitionsList.get(0))).keys())
+        .setSeriesNames(transitionsList)
         .setChartType('ColumnChart')
         .setOptions({
-        title: 'Land Cover Transitions',
-        hAxis: {title: 'Net Change'},
-        orientation: 'vertical',
-    });
-    regionalChartsPanel.add(transitionsChart);
+            title: 'Land Cover Transitions',
+            hAxis: {title: 'Net Change'},
+            orientation: 'vertical',
+        });
+
+    regionalChartsPanel.add(landCoverTransitionsChart)
+
+    // var transitionTypes = [
+    //     'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
+    //     'Grasslands to Croplands', 'Grasslands to Artificial',
+    //     'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
+    // ];
+    // var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+    //     .select(transitionTypes).first();
+    // landCoverTransistionsCount = landCoverTransistionsCount.set({Series_Name: 'Predictions'});
+    
+    // var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount]);
+    // var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsSeries, transitionTypes, 'Series_Name')
+    //     .setChartType('ColumnChart')
+    //     .setOptions({
+    //     title: 'Land Cover Transitions',
+    //     hAxis: {title: 'Net Change'},
+    //     orientation: 'vertical',
+    // });
+    // regionalChartsPanel.add(transitionsChart);
+
+    // // Land Cover Over Time Chart
+    // var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
+    // var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
+
+    // function extractLandCoverTimeSeries(featureCollection) {
+    //     // feature collection of feature collections
+    //     var result = ee.FeatureCollection(featureCollection).map(function(feature) {
+    //         return ee.FeatureCollection(feature).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).select(landDataProperties).first();
+    //     })
+    //     return result
+    // }
+    // var output = app.datasets.landCoverTimeSeries.map(extractLandCoverTimeSeries)
+    // print(output)
+
+    // // Land Cover Over Time Chart
+    // var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
+    // var landDataProperties = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies', 'Year'];
+    // var landCoverStartCount = app.datasets.landCoverStartCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+    //     .select(landDataProperties).first();
+    // var landCoverEndCount = app.datasets.landCoverEndCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+    //     .select(landDataProperties).first();
+
+    // var regionLandCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount]);
+    // print(regionLandCoverTimeSeries)
+    
+    // // var landTypesScenarioChart = ui.Chart.feature.byProperty(regionLandCoverTimeSeries, landTypes, 'Year')
+    // var landTypesScenarioChart = ui.Chart.feature.byProperty(output, landTypes, 'Year')
+    //     .setChartType('ColumnChart')
+    //     .setOptions({
+    //         title: 'Land Types by Year',
+    //         vAxis: {title: 'Land Type'},
+    //         hAxis: {title: 'Pixel Count', logScale: true},
+    //         // isStacked: true,
+    //         bar: { gap: 0 },
+    //         orientation: 'vertical',
+    //     });
+    // regionalChartsPanel.add(landTypesScenarioChart)
+
+    // // Transitions Chart
+    // var transitionTypes = [
+    //     'Tree_Cover to Grasslands', 'Tree_Cover to Croplands', 'Tree_Cover to Artificial',
+    //     'Grasslands to Croplands', 'Grasslands to Artificial',
+    //     'Bare_Land to Grasslands', 'Bare_Land to Croplands', 'Bare_Land to Artificial'
+    // ];
+    // var landCoverTransistionsCount = app.datasets.landCoverTransistionsCount.filter(ee.Filter.eq('ADM2_NAME', regionNameText))
+    //     .select(transitionTypes).first();
+    // landCoverTransistionsCount = landCoverTransistionsCount.set({Series_Name: 'Predictions'});
+    
+    // var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount]);
+    // var transitionsChart = ui.Chart.feature.byProperty(landCoverTransistionsSeries, transitionTypes, 'Series_Name')
+    //     .setChartType('ColumnChart')
+    //     .setOptions({
+    //     title: 'Land Cover Transitions',
+    //     hAxis: {title: 'Net Change'},
+    //     orientation: 'vertical',
+    // });
+    // regionalChartsPanel.add(transitionsChart);
 }
 
 // function calculateSDG(landCoverChange, countryGeometry) {
@@ -223,9 +263,9 @@ function loadCountry(country, startYear, targetYear) {
     // app.datasets.landCoverStartCount = outputImages[3];
     // app.datasets.landCoverEndCount = outputImages[4];
     // app.datasets.landCoverTransistionsCount = outputImages[5];
-    // var predictionsData = outputImages[6];
-    // app.datasets.predictionsData = outputImages[6];
-    // app.scenarios = ee.FeatureCollection([predictionsData])
+    var predictionsData = outputImages[6];
+    app.datasets.predictionsData = outputImages[6];
+    app.scenarios = ee.FeatureCollection([predictionsData])
     app.datasets.regionalData = outputImages[9];
     // print(predictionsData)
     // app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
