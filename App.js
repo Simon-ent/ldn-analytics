@@ -38,6 +38,7 @@ var app = {
         region: null,
         regionNameText: null,
         scenarioList: null,
+        transitionsList: null,
         nationalIndicator: null,
     },
     scenarios: null
@@ -119,7 +120,7 @@ function regionalChartsBuilder() {
     regionalChartsPanel.add(landTypesScenarioChart)
 
     // Transitions Chart
-    var transitionsList = ee.List(['landCoverTransitions']) // Need to dynamically generate this and improve the feature names
+    var transitionsList = app.variables.transitionsList;
     var landCoverTransistionsData = transitionsList.map(function(item) {
         return ee.Dictionary(currentRegion.get(item)).values()
     })
@@ -167,7 +168,8 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.countryGeometry = countryGeometry;
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
-    app.variables.scenarioList = ee.List([startYear, targetYear]);
+    app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
+    app.variables.transitionsList = ee.List(['landCoverTransitions']); // Needs improving
 
     /**
      * LDN Indicators
@@ -594,7 +596,9 @@ createScenarioPanel.add(
                 app.scenarios = ScenarioFunctions.createScenario(app.scenarios, createScenarioSelect.getValue(), createScenaioName.getValue());
                 // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, createScenarioSelect.getValue(), createScenaioName.getValue());
-                app.variables.scenarioList = ee.List(app.variables.scenarioList).add(createScenaioName.getValue());
+                app.variables.scenarioList = ee.List(app.variables.scenarioList).add(ee.String(createScenaioName.getValue()+ '_2019'));
+                app.variables.transitionsList = ee.List(app.variables.transitionsList).add(createScenaioName.getValue());
+                regionalChartsBuilder()
                 regionalDataEditButton.style().set('shown', true);
                 createScenarioSelect.setValue('predictions');
                 createScenaioName.setValue('');
