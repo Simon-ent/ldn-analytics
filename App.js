@@ -26,6 +26,7 @@ var app = {
     datasets: {
         regions: null,
         subRegions: null,
+        regionalData: null,
         landCoverTimeSeries: null,
         landCoverTransistionsSeries: null,
         predictionsData: null,
@@ -201,6 +202,7 @@ function loadCountry(country, startYear, targetYear) {
     var predictionsData = outputImages[6];
     app.datasets.predictionsData = outputImages[6];
     app.scenarios = ee.FeatureCollection([predictionsData])
+    app.datasets.regionalData = outputImages[9];
     // print(predictionsData)
     // app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
     // app.datasets.landCoverEndCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverEndCount')).first();

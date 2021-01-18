@@ -156,14 +156,7 @@ function generateLandCoverTypeSummaryFeature(baseImage, year, target, subRegions
         .map(function(feature) {
             // map through feature collection and unpack histogram values
             var histogramResults = ee.Dictionary(feature.get('histogram'));
-            return ee.Feature(null, {
-                'system:index': feature.get('system:index'),
-                'ADM0_NAME': feature.get('ADM0_NAME'),
-                'ADM1_NAME': feature.get('ADM1_NAME'),
-                'ADM2_NAME': feature.get('ADM2_NAME'),
-                'Shape_Area': feature.get('Shape_Area'),
-                'Year': year,
-                'Target': target,
+            var landCoverSummary = ee.Dictionary({
                 'Tree_Cover': ee.Number(histogramResults.get('1', 0)).toFloat(),
                 'Grasslands': ee.Number(histogramResults.get('2', 0)).toFloat(),
                 'Croplands': ee.Number(histogramResults.get('3', 0)).toFloat(),
@@ -172,6 +165,23 @@ function generateLandCoverTypeSummaryFeature(baseImage, year, target, subRegions
                 'Bare_Land': ee.Number(histogramResults.get('6', 0)).toFloat(),
                 'Water_Bodies': ee.Number(histogramResults.get('7', 0)).toFloat(),
             })
+            return feature.set(year, landCoverSummary)
+            // return ee.Feature(null, {
+            //     'system:index': feature.get('system:index'),
+            //     'ADM0_NAME': feature.get('ADM0_NAME'),
+            //     'ADM1_NAME': feature.get('ADM1_NAME'),
+            //     'ADM2_NAME': feature.get('ADM2_NAME'),
+            //     'Shape_Area': feature.get('Shape_Area'),
+            //     'Year': year,
+            //     'Target': target,
+            //     'Tree_Cover': ee.Number(histogramResults.get('1', 0)).toFloat(),
+            //     'Grasslands': ee.Number(histogramResults.get('2', 0)).toFloat(),
+            //     'Croplands': ee.Number(histogramResults.get('3', 0)).toFloat(),
+            //     'Wetlands': ee.Number(histogramResults.get('4', 0)).toFloat(),
+            //     'Artificial': ee.Number(histogramResults.get('5', 0)).toFloat(),
+            //     'Bare_Land': ee.Number(histogramResults.get('6', 0)).toFloat(),
+            //     'Water_Bodies': ee.Number(histogramResults.get('7', 0)).toFloat(),
+            // })
         })
     return regionalData
 }
@@ -190,11 +200,8 @@ function calculateLandCoverTransistions(transistions, subRegions) {
           var negativeTransistionNum = ee.Number(histogramResults.get(negativeTransition, 0)).multiply(-1);
           return positiveTransistionNum.add(negativeTransistionNum)
         }
-      
-        return ee.Feature(null, {
-          'ADM0_NAME': feature.get('ADM0_NAME'),
-          'ADM1_NAME': feature.get('ADM1_NAME'),
-          'ADM2_NAME': feature.get('ADM2_NAME'),
+        
+        var transitionSummary = ee.Dictionary({
           'Tree_Cover to Grasslands': calculateNetTransition('21', '12'),
           'Tree_Cover to Croplands': calculateNetTransition('31', '13'),
           'Tree_Cover to Artificial': calculateNetTransition('51', '15'),
@@ -204,6 +211,22 @@ function calculateLandCoverTransistions(transistions, subRegions) {
           'Bare_Land to Croplands' : calculateNetTransition('63', '36'),
           'Bare_Land to Artificial' : calculateNetTransition('65', '56'),
         })
+      
+        return feature.set({landCoverTransitions: transitionSummary})
+        
+        // return ee.Feature(null, {
+        //   'ADM0_NAME': feature.get('ADM0_NAME'),
+        //   'ADM1_NAME': feature.get('ADM1_NAME'),
+        //   'ADM2_NAME': feature.get('ADM2_NAME'),
+        //   'Tree_Cover to Grasslands': calculateNetTransition('21', '12'),
+        //   'Tree_Cover to Croplands': calculateNetTransition('31', '13'),
+        //   'Tree_Cover to Artificial': calculateNetTransition('51', '15'),
+        //   'Grasslands to Croplands': calculateNetTransition('23', '32'),
+        //   'Grasslands to Artificial': calculateNetTransition('52', '25'),
+        //   'Bare_Land to Grasslands' : calculateNetTransition('62', '26'),
+        //   'Bare_Land to Croplands' : calculateNetTransition('63', '36'),
+        //   'Bare_Land to Artificial' : calculateNetTransition('65', '56'),
+        // })
       
     })
     return netTranistions
@@ -245,10 +268,14 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
 
     var landCoverTransistionsSeries = ee.FeatureCollection([landCoverTransistionsCount])
     var landCoverTimeSeries = ee.FeatureCollection([landCoverStartCount, landCoverEndCount])
+    
+    var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, false, subRegions);
+    outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, false, outputDataSet);
+    outputDataSet = calculateLandCoverTransistions(landCoverTransistions, outputDataSet);
 
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
         landCoverStartCount, landCoverEndCount, landCoverTransistionsCount, predictionsData,
-        landCoverTransistionsSeries, landCoverTimeSeries]
+        landCoverTransistionsSeries, landCoverTimeSeries, outputDataSet]
 }
 
 /*
