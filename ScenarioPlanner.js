@@ -2,16 +2,6 @@
 *   Functions for the scenario planning
 */
 
-const { LandCoverTransistions } = require("../GEO_LDN_APP/ImageFunctions")
-
-function addScenarioData(feature, scenarioBaseName)
-
-function createLandCoverScenario(regionalData, scenarioBaseName, scenarioName) {
-    if (scenarioBaseName == 'predictions') {
-        
-    }
-}
-
 exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) {
     // Takes a collection of scenarios and creates a new scenario with the name: scenarioName.
     // Returns the collection of scenarios plus the new scenario
