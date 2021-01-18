@@ -37,6 +37,7 @@ var app = {
     variables: {
         region: null,
         regionNameText: null,
+        scenarioList: null,
         nationalIndicator: null,
     },
     scenarios: null
@@ -93,6 +94,28 @@ function regionalChartsBuilder() {
     regionalChartsPanel.clear()
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
+
+    var currentRegion = ee.FeatureCollection(scenarios.get('Test')).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
+    print(currentRegion)
+
+    var scenarioList = app.variables.scenarioList;
+
+    var landCoverChartData = scenarioList.map(function(item) {
+        return ee.Dictionary(currentRegion.get(item)).values()
+      })
+    print(landCoverChartData)
+
+    var chart = ui.Chart.array.values(chartData3, 1, ee.Dictionary(currentRegion.get(scenarioList[0])).keys())
+        .setSeriesNames(scenarioList)
+        .setChartType('ColumnChart')
+        .setOptions({
+            title: 'Land Types by Year',
+            vAxis: {title: 'Land Type'},
+            hAxis: {title: 'Pixel Count', logScale: true},
+            bar: { gap: 0 },
+            orientation: 'vertical',
+        });
+    print(chart)
 
     // Land Cover Over Time Chart
     var landTypes = ['Tree_Cover', 'Grasslands', 'Croplands', 'Wetlands', 'Artificial', 'Bare_Land', 'Water_Bodies'];
@@ -184,6 +207,7 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.countryGeometry = countryGeometry;
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
+    app.variables.scenarioList = ee.List([startYear, targetYear]);
 
     /**
      * LDN Indicators
@@ -193,15 +217,15 @@ function loadCountry(country, startYear, targetYear) {
     var outputImages = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    app.datasets.landCoverTimeSeries = outputImages[8];
-    app.datasets.landCoverTransistionsSeries = outputImages[7];
+    // app.datasets.landCoverTimeSeries = outputImages[8];
+    // app.datasets.landCoverTransistionsSeries = outputImages[7];
 
-    app.datasets.landCoverStartCount = outputImages[3];
-    app.datasets.landCoverEndCount = outputImages[4];
-    app.datasets.landCoverTransistionsCount = outputImages[5];
-    var predictionsData = outputImages[6];
-    app.datasets.predictionsData = outputImages[6];
-    app.scenarios = ee.FeatureCollection([predictionsData])
+    // app.datasets.landCoverStartCount = outputImages[3];
+    // app.datasets.landCoverEndCount = outputImages[4];
+    // app.datasets.landCoverTransistionsCount = outputImages[5];
+    // var predictionsData = outputImages[6];
+    // app.datasets.predictionsData = outputImages[6];
+    // app.scenarios = ee.FeatureCollection([predictionsData])
     app.datasets.regionalData = outputImages[9];
     // print(predictionsData)
     // app.datasets.landCoverStartCount = predictionsData.filter(ee.Filter.eq('id', 'landCoverStartCount')).first();
