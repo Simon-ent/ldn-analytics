@@ -594,6 +594,7 @@ createScenarioPanel.add(
                 app.scenarios = ScenarioFunctions.createScenario(app.scenarios, createScenarioSelect.getValue(), createScenaioName.getValue());
                 // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, createScenarioSelect.getValue(), createScenaioName.getValue());
+                app.variables.scenarioList = ee.List(app.variables.scenarioList).add(createScenaioName.getValue());
                 regionalDataEditButton.style().set('shown', true);
                 createScenarioSelect.setValue('predictions');
                 createScenaioName.setValue('');
