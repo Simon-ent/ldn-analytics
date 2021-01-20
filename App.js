@@ -28,11 +28,11 @@ var app = {
         subRegions: null,
         regionalData: null,
         landCoverTimeSeries: null,
-        landCoverTransistionsSeries: null,
+        landCoverTransitionsSeries: null,
         predictionsData: null,
         landCoverStartCount: null,
         landCoverEndCount: null,
-        landCoverTransistionsCount: null,
+        landCoverTransitionsCount: null,
     },
     variables: {
         region: null,
@@ -101,7 +101,7 @@ function regionalChartsBuilder() {
 
 
     var landCoverData = ee.Dictionary(currentRegion.get('landCover'));
-    var landCoverTransistionsData = ee.Dictionary(currentRegion.get('landCoverTransistions'));
+    var landCoverTransitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
 
     var scenarioList = app.variables.scenarioList;
 
@@ -125,11 +125,11 @@ function regionalChartsBuilder() {
 
     // Transitions Chart
     var transitionsList = app.variables.transitionsList;
-    var landCoverTransistionsChartData = transitionsList.map(function(item) {
-        return ee.Dictionary(landCoverTransistionsData.get(item)).values()
+    var landCoverTransitionsChartData = transitionsList.map(function(item) {
+        return ee.Dictionary(landCoverTransitionsData.get(item)).values()
     })
 
-    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsChartData, 1, ee.Dictionary(landCoverTransistionsData.get(transitionsList.get(0))).keys())
+    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransitionsChartData, 1, ee.Dictionary(landCoverTransitionsData.get(transitionsList.get(0))).keys())
         .setSeriesNames(transitionsList)
         .setChartType('ColumnChart')
         .setOptions({
