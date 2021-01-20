@@ -199,7 +199,7 @@ function calculateLandCoverTransistions(transistions, name, subRegions) {
           'Bare_Land to Artificial' : calculateNetTransition('65', '56'),
         })
 
-        var landCoverTransistions= ee.Algorithms.If(feature.get('landCover'), feature.get('landCover'), null) 
+        var landCoverTransistions= ee.Algorithms.If(feature.get('landCoverTransistions'), feature.get('landCoverTransistions'), null) 
         landCoverTransistions = ee.Dictionary(landCoverTransistions).set(name, transitionSummary)
 
         return feature.set('landCoverTransistions', landCoverTransistions)

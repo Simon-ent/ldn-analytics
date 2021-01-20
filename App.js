@@ -110,7 +110,7 @@ function regionalChartsBuilder() {
     })
 
     // Land Cover Over Time Chart
-    var landTypesScenarioChart = ui.Chart.array.values(landCoverChartData, 1, ee.Dictionary(currentRegion.get(scenarioList.get(0))).keys())
+    var landTypesScenarioChart = ui.Chart.array.values(landCoverChartData, 1, ee.Dictionary(landCoverData.get(scenarioList.get(0))).keys())
         .setSeriesNames(scenarioList)
         .setChartType('ColumnChart')
         .setOptions({
@@ -129,7 +129,7 @@ function regionalChartsBuilder() {
         return ee.Dictionary(landCoverTransistionsData.get(item)).values()
     })
 
-    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsChartData, 1, ee.Dictionary(currentRegion.get(transitionsList.get(0))).keys())
+    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsChartData, 1, ee.Dictionary(landCoverTransistionsData.get(transitionsList.get(0))).keys())
         .setSeriesNames(transitionsList)
         .setChartType('ColumnChart')
         .setOptions({
