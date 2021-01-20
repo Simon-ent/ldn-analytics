@@ -99,10 +99,14 @@ function regionalChartsBuilder() {
     var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
     print(currentRegion)
 
+
+    var landCoverData = ee.Dictionary(currentRegion.get('landCover'));
+    var landCoverTransistionsData = ee.Dictionary(currentRegion.get('landCoverTransistions'));
+
     var scenarioList = app.variables.scenarioList;
 
     var landCoverChartData = scenarioList.map(function(item) {
-        return ee.Dictionary(currentRegion.get(item)).values()
+        return ee.Dictionary(landCoverData.get(item)).values()
     })
 
     // Land Cover Over Time Chart
@@ -121,11 +125,11 @@ function regionalChartsBuilder() {
 
     // Transitions Chart
     var transitionsList = app.variables.transitionsList;
-    var landCoverTransistionsData = transitionsList.map(function(item) {
-        return ee.Dictionary(currentRegion.get(item)).values()
+    var landCoverTransistionsChartData = transitionsList.map(function(item) {
+        return ee.Dictionary(landCoverTransistionsData.get(item)).values()
     })
 
-    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsData, 1, ee.Dictionary(currentRegion.get(transitionsList.get(0))).keys())
+    var landCoverTransitionsChart = ui.Chart.array.values(landCoverTransistionsChartData, 1, ee.Dictionary(currentRegion.get(transitionsList.get(0))).keys())
         .setSeriesNames(transitionsList)
         .setChartType('ColumnChart')
         .setOptions({
@@ -169,7 +173,7 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
     app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
-    app.variables.transitionsList = ee.List(['landCoverTransitions']); // Needs improving
+    app.variables.transitionsList = ee.List([targetYear]); // Needs improving
 
     /**
      * LDN Indicators
