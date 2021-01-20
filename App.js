@@ -601,7 +601,7 @@ createScenarioPanel.add(
                 // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, createScenarioSelect.getValue(), createScenaioName.getValue());
                 app.variables.scenarioList = ee.List(app.variables.scenarioList).add(ee.String(createScenaioName.getValue()+ '_2019'));
-                app.variables.transitionsList = ee.List(app.variables.transitionsList).add(createScenaioName.getValue());
+                app.variables.transitionsList = ee.List(app.variables.transitionsList).add(ee.String(createScenaioName.getValue()+ '_2019'));
                 regionalChartsBuilder()
                 regionalDataEditButton.style().set('shown', true);
                 createScenarioSelect.setValue('predictions');
