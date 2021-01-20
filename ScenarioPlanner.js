@@ -8,9 +8,16 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     
     // createLandCoverScenario(regionalData, scenarioBaseName, scenarioName)
     var updatedScenarioData = regionalData.map(function(feature) {
-        var landCoverTypeCount = feature.get('2019')
-        var landCoverTransitions = feature.get('landCoverTransitions')
-        return feature.set(ee.String(scenarioName + '_2019'), landCoverTypeCount, ee.String(scenarioName), landCoverTransitions)
+        var landCoverData = ee.Dictionary(feature.get('landCover'));
+        var landCoverTransistionsData = ee.Dictionary(feature.get('landCoverTransistions'));
+        var scenarioBaseName = '2019';
+
+        var landCoverTypeCount = landCoverData.get(scenarioBaseName);
+        var landCoverTransitions = landCoverTransistionsData.get(scenarioBaseName);
+
+        landCoverData = landCoverData.set(ee.String(scenarioName + '_2019'), landCoverTypeCount)
+        landCoverTransistionsData = landCoverTransistionsData.set(ee.String(scenarioName + '_2019'), landCoverTransitions)
+        return feature.set(landCover, landCoverData, landCoverTransitions, landCoverTransistionsData)
     })
     return updatedScenarioData
 }
