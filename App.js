@@ -361,11 +361,11 @@ var regionName = ui.Label('', Styles.HEADER_STYLE_2);
 var regionalDataEditButton = ui.Button({
     label: 'Edit',
     onClick: function () {
-        // var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
-        // landTypesScenarioChart.setChartType('Table')
-        // var transitionsChart = regionalChartsPanel.widgets().get(0);
-        // transitionsChart.setChartType('Table')
-        // // regionalChartsPanel.style().set('shown', false);
+        var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+        landTypesScenarioChart.setChartType('Table')
+        var transitionsChart = regionalChartsPanel.widgets().get(0);
+        transitionsChart.setChartType('Table')
+        // regionalChartsPanel.style().set('shown', false);
         regionalEditPanel.style().set('shown', true);
         regionalDataEditButton.style().set('shown', false);
     }
@@ -398,6 +398,13 @@ var regionalEditPanel = ui.Panel({
 regionalDataPanel.add(regionalEditPanel);
 
 // Not brought over Tree2GrassText -> saveEditData()
+
+function changeTablesToCharts() {
+    var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+    landTypesScenarioChart.setChartType('ColumnChart');
+    var transitionsChart = regionalChartsPanel.widgets().get(0);
+    transitionsChart.setChartType('ColumnChart');
+}
 
 regionalEditPanel.add(
     ui.Panel([
@@ -585,7 +592,6 @@ function updateScenarioList() {
 
 createScenarioPanel.add(Label('New scenario name:'))
 var createScenaioName = ui.Textbox({
-    // placeholder: '2019_Scenario_1'
     placeholder: ''
 })
 createScenarioPanel.add(createScenaioName)
