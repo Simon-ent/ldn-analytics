@@ -15,8 +15,8 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
         var landCoverTypeCount = landCoverData.get(scenarioBaseName);
         var landCoverTransitions = landCoverTransitionsData.get(scenarioBaseName);
 
-        landCoverData = landCoverData.set(ee.String(scenarioName + '_2019'), landCoverTypeCount)
-        landCoverTransitionsData = landCoverTransitionsData.set(ee.String(scenarioName + '_2019'), landCoverTransitions)
+        landCoverData = landCoverData.set(scenarioName, landCoverTypeCount)
+        landCoverTransitionsData = landCoverTransitionsData.set(scenarioName, landCoverTransitions)
         return feature.set('landCover', landCoverData, 'landCoverTransitions', landCoverTransitionsData)
     })
     return updatedScenarioData

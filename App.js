@@ -411,12 +411,12 @@ function setRegionalEditData() {
 
     regionalEditDataPanel.clear();
 
-    for (var [key, value] of Object.entries(scenarioTransitionData)) {
+    for (var key in scenarioTransitionData.keys()) {
         regionalEditDataPanel.add(
             ui.Panel([
                 Label(key),
-                ui.Textbox({value: value})
-            ]);
+                ui.Textbox({value: scenarioTransitionData.get(key)})
+            ])
         )
     }
 }
