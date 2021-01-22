@@ -405,8 +405,12 @@ var regionalEditDataPanel = ui.Panel();
 
 function setRegionalEditData() {
     var currentScenario = app.variables.currentScenario;
-    var transitionsData = ee.Dictionary(app.datasets.regionalData.get('landCoverTransitions'))
-    var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario))
+    print(currentScenario);
+    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
+    print(currentRegion);
+    var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
+    print(transitionsData)
+    var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
     print(scenarioTransitionData)
 
     regionalEditDataPanel.clear();
