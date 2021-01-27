@@ -473,7 +473,7 @@ function changeTablesToCharts() {
 }
 
 function getEditedData() {
-    var adjustments = ee.Dictionary({
+    var adjustments = {
         'Tree_Cover to Grasslands': Tree2GrassText.getValue(),
         'Tree_Cover to Croplands': Tree2CropText.getValue(),
         'Tree_Cover to Artificial': Tree2ArtificialText.getValue(),
@@ -482,7 +482,7 @@ function getEditedData() {
         'Bare_Land to Grasslands': Bare2GrassText.getValue(),
         'Bare_Land to Croplands': Bare2CropText.getValue(),
         'Bare_Land to Artificial': Bare2ArtificialText.getValue()
-    })
+    }
     return adjustments
 }
 

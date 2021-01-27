@@ -30,28 +30,36 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
     var updatedLandCoverTransitions = landCoverTransitionsData.set(scenarioName, scenarioLandCoverTransitions)
     currentRegion = currentRegion.set('landCoverTransitions', updatedLandCoverTransitions)
     // LandCover
-    var landCoverBaseData = ee.Dictionary(currentRegion.get('landCover')).get(startYear);
+    var landCoverData = ee.Dictionary(currentRegion.get('landCover'))
+    var landCoverBaseData = landCoverData.get(startYear);
 
     landCoverBaseData.evaluate(function(data) {
         print(data)
         print(scenarioLandCoverTransitions)
-        print(scenarioLandCoverTransitions.get('Tree_Cover to Artificial'))
-        var artificial = ee.Number(data['Artificial'])
-            .add(scenarioLandCoverTransitions.get('Tree_Cover to Artificial'))
-            // .add(scenarioLandCoverTransitions['Grasslands to Artificial'])
-            // .add(scenarioLandCoverTransitions['Bare_Land to Artificial']);
-        var bareLand = ee.Number(data['Bare_land'])
-            .add(ee.Number(scenarioLandCoverTransitions.get('Bare_Land to Grasslands')).multiply(-1))
-            // .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Croplands']).multiply(-1))
-            // .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Artificial']).multiply(-1));
-        var croplands = ee.Number(data['Croplands']);
-        var grasslands = ee.Number(data['Grasslands']);
-        var treeCover = ee.Number(data['Tree_Cover']);
-        var waterBodies = ee.Number(data['Water_Bodies']);
-        var wetlands = ee.Number(data['Wetlands']);
+        print(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
+        var artificial = data['Artificial'] + scenarioLandCoverTransitions['Tree_Cover to Artificial'] + scenarioLandCoverTransitions['Grasslands to Artificial'] + scenarioLandCoverTransitions['Bare_Land to Artificial'];
+        var bareLand = data['Bare_land'] - scenarioLandCoverTransitions['Bare_Land to Grasslands'] - scenarioLandCoverTransitions['Bare_Land to Croplands'] - scenarioLandCoverTransitions['Bare_Land to Artificial'];
+        var croplands = data['Croplands'] + scenarioLandCoverTransitions['Bare_Land to Croplands'] + scenarioLandCoverTransitions['Grasslands to Croplands'] + scenarioLandCoverTransitions['Tree_Cover to Croplands'];
+        var grasslands = data['Grasslands'] + scenarioLandCoverTransitions['Bare_Land to Grasslands'] + scenarioLandCoverTransitions['Tree_Cover to Grasslands'] - scenarioLandCoverTransitions['Grasslands to Artificial'] - scenarioLandCoverTransitions['Grasslands to Croplands'];
+        var treeCover = data['Tree_Cover'] - scenarioLandCoverTransitions['Tree_Cover to Artificial'] - scenarioLandCoverTransitions['Tree_Cover to Croplands'] - scenarioLandCoverTransitions['Tree_Cover to Grasslands'];
+        var waterBodies = data['Water_Bodies'];
+        var wetlands = data['Wetlands'];
 
-        print('Land Cover:', artificial, bareLand, croplands)
+        var updatedLandCover = {
+            Artificial: artificial,
+            Bare_Land: bareLand,
+            Croplands: croplands,
+            Grasslands: grasslands,
+            Tree_Cover: treeCover,
+            Water_Bodies: waterBodies,
+            Wetlands: wetlands
+        }
 
+        print('Land Cover:', updatedLandCover)
+
+        var updatedLandCoverData = landCoverData.set(scenarioName, updatedLandCover)
+
+        currentRegion = currentRegion.set('landCover', updatedLandCoverData)
     })
 
     var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
