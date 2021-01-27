@@ -496,7 +496,7 @@ regionalEditPanel.add(
                 regionalDataEditButton.style().set('shown', true);
                 changeTablesToCharts();
                 var editedTransitionsDict = getEditedData();
-                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario);
+                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
                 app.datasets.regionalData = updatedRegionalData;
             }
         }), 
