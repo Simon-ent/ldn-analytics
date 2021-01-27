@@ -34,13 +34,14 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
 
     landCoverBaseData.evaluate(function(data) {
         print(data)
-        print(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
+        print(scenarioLandCoverTransitions)
+        print(scenarioLandCoverTransitions.get('Tree_Cover to Artificial'))
         var artificial = ee.Number(data['Artificial'])
-            .add(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
+            .add(scenarioLandCoverTransitions.get('Tree_Cover to Artificial'))
             // .add(scenarioLandCoverTransitions['Grasslands to Artificial'])
             // .add(scenarioLandCoverTransitions['Bare_Land to Artificial']);
         var bareLand = ee.Number(data['Bare_land'])
-            .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Grasslands']).multiply(-1))
+            .add(ee.Number(scenarioLandCoverTransitions.get('Bare_Land to Grasslands')).multiply(-1))
             // .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Croplands']).multiply(-1))
             // .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Artificial']).multiply(-1));
         var croplands = ee.Number(data['Croplands']);
