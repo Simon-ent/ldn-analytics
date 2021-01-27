@@ -402,27 +402,60 @@ regionalDataPanel.add(regionalEditPanel);
 // Not brought over Tree2GrassText -> saveEditData()
 
 var regionalEditDataPanel = ui.Panel();
+regionalEditPanel.add(regionalEditDataPanel)
 
 function setRegionalEditData() {
     var currentScenario = app.variables.currentScenario;
-    print(currentScenario);
-    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first();
-    print(currentRegion);
+    // print(currentScenario);
+    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
+    // print(currentRegion);
     var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
-    print(transitionsData)
+    // print(transitionsData)
     var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
     print(scenarioTransitionData)
 
     regionalEditDataPanel.clear();
-
-    for (var key in scenarioTransitionData.keys()) {
+    
+    // var labels = scenarioTransitionData.keys()
+    // print(scenarioTransitionData.size())
+    // print(typeof labels)
+    
+    scenarioTransitionData.keys().evaluate(function(labels) {
+      for (var i=0; i<labels.length; i++) {
+        var key = ee.List(labels).get(i)
+        var value = scenarioTransitionData.get(key)
+        print(key, value);
         regionalEditDataPanel.add(
             ui.Panel([
-                Label(key),
-                ui.Textbox({value: scenarioTransitionData.get(key)})
+                Label(key.getInfo()),
+                ui.Textbox({value: value.getInfo()})
             ])
         )
-    }
+      }
+    })
+
+    
+
+    // for (var key in scenarioTransitionData) {
+    //     // check if the property/key is defined in the object itself, not in parent
+    //     if (scenarioTransitionData.hasOwnProperty(key)) {           
+    //         print(key, scenarioTransitionData[key]);
+    //     }
+    // }
+    
+    // labels.forEach(function(key) {
+    //     print(key)
+    // })
+    
+    // for (var key of scenarioTransitionData.entries()) {
+    //     print(key)
+    //     // regionalEditDataPanel.add(
+    //     //     ui.Panel([
+    //     //         Label("key"),
+    //     //         ui.Textbox({value: scenarioTransitionData.get(key).getInfo()})
+    //     //     ])
+    //     // )
+    // }
 }
 
 function changeTablesToCharts() {
