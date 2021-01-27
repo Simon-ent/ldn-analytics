@@ -22,9 +22,20 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     return updatedScenarioData
 }
 
-// exports.saveScenario = function(regionalData, scenarioLandCoverTransitions) {
+exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, currentRegionText, scenarioName) {
+    var allRegionsExcludingCurrentRegion = ee.FeatureCollection(regionalData).filter(ee.Filter.eq('ADM2_NAME', currentRegionText).not())
+    var currentRegion = ee.FeatureCollection(regionalData).filter(ee.Filter.eq('ADM2_NAME', currentRegionText)).first()
+    print(currentRegion)
+    var landCoverTransitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
+    print(landCoverTransitionsData)
+    var updatedLandCoverTransitions = landCoverTransitionsData.set(scenarioName, scenarioLandCoverTransitions)
+    currentRegion = currentRegion.set('landCoverTransitions', updatedLandCoverTransitions)
 
-// }
+    var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
+    print("Updated Data: ", updatedRegionalData)
+
+    return updatedRegionalData
+}
 
 // exports.createScenario = function(scenarioCollection, scenarioBaseName, scenarioName) {
 //     // Takes a collection of scenarios and creates a new scenario with the name: scenarioName.

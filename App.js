@@ -489,7 +489,7 @@ function changeTablesToCharts() {
     transitionsChart.setChartType('ColumnChart');
 }
 
-function saveEditData() {
+function getEditedData() {
     var adjustments = ee.Dictionary({
         'Tree_Cover to Grasslands': Tree2GrassText.getValue(),
         'Tree_Cover to Croplands': Tree2CropText.getValue(),
@@ -500,7 +500,8 @@ function saveEditData() {
         'Bare_Land to Croplands': Bare2CropText.getValue(),
         'Bare_Land to Artificial': Bare2ArtificialText.getValue()
     })
-    print('Saved Data:', adjustments)
+    // print('Saved Data:', adjustments)
+    return adjustments
 }
 
 regionalEditPanel.add(
@@ -512,7 +513,9 @@ regionalEditPanel.add(
                 regionalEditPanel.style().set('shown', false);
                 regionalDataEditButton.style().set('shown', true);
                 changeTablesToCharts();
-                saveEditData();
+                var editedTransitionsDict = getEditedData();
+                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario);
+                app.variables.regionalData = updatedRegionalData;
             }
         }), 
         ui.Button({
