@@ -22,25 +22,37 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     return updatedScenarioData
 }
 
-exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, currentRegionText, scenarioName) {
+exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, currentRegionText, scenarioName, startYear) {
     var allRegionsExcludingCurrentRegion = ee.FeatureCollection(regionalData).filter(ee.Filter.eq('ADM2_NAME', currentRegionText).not())
     var currentRegion = ee.FeatureCollection(regionalData).filter(ee.Filter.eq('ADM2_NAME', currentRegionText)).first()
-    print(currentRegion)
+    // Transitions
     var landCoverTransitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
-    print(landCoverTransitionsData)
     var updatedLandCoverTransitions = landCoverTransitionsData.set(scenarioName, scenarioLandCoverTransitions)
     currentRegion = currentRegion.set('landCoverTransitions', updatedLandCoverTransitions)
+    // LandCover
+    var landCoverBaseData = ee.Dictionary(currentRegion.get('landCover')).get(startYear);
+
+    landCoverBaseData.evaluate(function(data) {
+        print(data)
+        var artificial = ee.Number(data['Artificial'])
+            .add(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
+            .add(scenarioLandCoverTransitions['Grasslands to Artificial'])
+            .add(scenarioLandCoverTransitions['Bare_Land to Artificial']);
+        var bareLand = ee.Number(data['Bare_land'])
+            .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Grasslands']).multiply(-1))
+            .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Croplands']).multiply(-1))
+            .add(ee.Number(scenarioLandCoverTransitions['Bare_Land to Artificial']).multiply(-1));
+        var croplands = ee.Number(data['Croplands']);
+        var grasslands = ee.Number(data['Grasslands']);
+        var treeCover = ee.Number(data['Tree_Cover']);
+        var waterBodies = ee.Number(data['Water_Bodies']);
+        var wetlands = ee.Number(data['Wetlands']);
+
+        print('Land Cover:', artificial, bareLand, croplands)
+
+    })
 
     var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
-    print("Updated Data: ", updatedRegionalData)
 
     return updatedRegionalData
 }
-
-// exports.createScenario = function(scenarioCollection, scenarioBaseName, scenarioName) {
-//     // Takes a collection of scenarios and creates a new scenario with the name: scenarioName.
-//     // Returns the collection of scenarios plus the new scenario
-//     var scenario = scenarioCollection.filter(ee.Filter.eq('id', scenarioBaseName)).first()
-//     scenario = scenario.set({id: scenarioName});
-//     return scenarioCollection.merge(ee.FeatureCollection([scenario]));
-// }

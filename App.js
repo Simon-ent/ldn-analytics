@@ -452,9 +452,6 @@ function setRegionalEditData() {
     var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
     var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
     var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
-    print(scenarioTransitionData)
-
-    // regionalEditDataPanel.clear();
 
     scenarioTransitionData.evaluate(function(data) {
         Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
@@ -466,20 +463,6 @@ function setRegionalEditData() {
         Bare2CropText.setValue(data['Bare_Land to Croplands']);
         Bare2ArtificialText.setValue(data['Bare_Land to Artificial']);
     })
-    
-    // scenarioTransitionData.keys().evaluate(function(labels) {
-    //   for (var i=0; i<labels.length; i++) {
-    //     var key = ee.List(labels).get(i)
-    //     var value = scenarioTransitionData.get(key)
-    //     print(key, value);
-    //     regionalEditDataPanel.add(
-    //         ui.Panel([
-    //             Label(key.getInfo()),
-    //             ui.Textbox({value: value.getInfo()})
-    //         ])
-    //     )
-    //   }
-    // })
 }
 
 function changeTablesToCharts() {
@@ -500,7 +483,6 @@ function getEditedData() {
         'Bare_Land to Croplands': Bare2CropText.getValue(),
         'Bare_Land to Artificial': Bare2ArtificialText.getValue()
     })
-    // print('Saved Data:', adjustments)
     return adjustments
 }
 
@@ -515,7 +497,7 @@ regionalEditPanel.add(
                 changeTablesToCharts();
                 var editedTransitionsDict = getEditedData();
                 var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario);
-                app.variables.regionalData = updatedRegionalData;
+                app.datasets.regionalData = updatedRegionalData;
             }
         }), 
         ui.Button({
