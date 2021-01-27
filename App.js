@@ -457,14 +457,14 @@ function setRegionalEditData() {
     // regionalEditDataPanel.clear();
 
     scenarioTransitionData.evaluate(function(data) {
-        Tree2GrassText.setValue(data.get('Tree_Cover to Grasslands').getInfo());
-        Tree2CropText.setValue(data.get('Tree_Cover to Croplands').getInfo());
-        Tree2ArtificialText.setValue(data.get('Tree_Cover to Artificial').getInfo());
-        Grass2CropText.setValue(data.get('Grasslands to Croplands').getInfo());
-        Grass2ArtificialText.setValue(data.get('Grasslands to Artificial').getInfo());
-        Bare2GrassText.setValue(data.get('Bare_Land to Grasslands').getInfo());
-        Bare2CropText.setValue(data.get('Bare_Land to Croplands').getInfo());
-        Bare2ArtificialText.setValue(data.get('Bare_Land to Artificial').getInfo());
+        Tree2GrassText.setValue(['Tree_Cover to Grasslands']);
+        Tree2CropText.setValue(data['Tree_Cover to Croplands']);
+        Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
+        Grass2CropText.setValue(data['Grasslands to Croplands']);
+        Grass2ArtificialText.setValue(data['Grasslands to Artificial']);
+        Bare2GrassText.setValue(data['Bare_Land to Grasslands']);
+        Bare2CropText.setValue(data['Bare_Land to Croplands']);
+        Bare2ArtificialText.setValue(data['Bare_Land to Artificial']);
     })
     
     // scenarioTransitionData.keys().evaluate(function(labels) {
