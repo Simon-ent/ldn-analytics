@@ -22,6 +22,10 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     return updatedScenarioData
 }
 
+// exports.saveScenario = function(regionalData, scenarioLandCoverTransitions) {
+
+// }
+
 // exports.createScenario = function(scenarioCollection, scenarioBaseName, scenarioName) {
 //     // Takes a collection of scenarios and creates a new scenario with the name: scenarioName.
 //     // Returns the collection of scenarios plus the new scenario
