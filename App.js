@@ -457,7 +457,7 @@ function setRegionalEditData() {
     // regionalEditDataPanel.clear();
 
     scenarioTransitionData.evaluate(function(data) {
-        Tree2GrassText.setValue(['Tree_Cover to Grasslands']);
+        Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
         Tree2CropText.setValue(data['Tree_Cover to Croplands']);
         Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
         Grass2CropText.setValue(data['Grasslands to Croplands']);
@@ -490,16 +490,16 @@ function changeTablesToCharts() {
 }
 
 function saveEditData() {
-    var adjustments = ee.Dictionary(
-        'Tree_Cover to Grasslands', Tree2GrassText.getValue(),
-        'Tree_Cover to Croplands', Tree2CropText.getValue(),
-        'Tree_Cover to Artificial', Tree2ArtificialText.getValue(),
-        'Grasslands to Croplands', Grass2CropText.getValue(),
-        'Grasslands to Artificial', Grass2ArtificialText.getValue(),
-        'Bare_Land to Grasslands', Bare2GrassText.getValue(),
-        'Bare_Land to Croplands', 500,
-        'Bare_Land to Artificial', Bare2ArtificialText.getValue()
-    )
+    var adjustments = ee.Dictionary({
+        'Tree_Cover to Grasslands': Tree2GrassText.getValue(),
+        'Tree_Cover to Croplands': Tree2CropText.getValue(),
+        'Tree_Cover to Artificial': Tree2ArtificialText.getValue(),
+        'Grasslands to Croplands': Grass2CropText.getValue(),
+        'Grasslands to Artificial': Grass2ArtificialText.getValue(),
+        'Bare_Land to Grasslands': Bare2GrassText.getValue(),
+        'Bare_Land to Croplands': Bare2CropText.getValue(),
+        'Bare_Land to Artificial': Bare2ArtificialText.getValue()
+    })
     print('Saved Data:', adjustments)
 }
 
