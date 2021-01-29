@@ -60,17 +60,11 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
 
     // currentRegion = currentRegion.set('landCover', updatedLandCoverData)
 
+    // var currentRegionLandCover = landCoverBaseData.evaluate(function(data) {
     var currentRegionLandCover = landCoverBaseData.evaluate(function(data) {
         print(data)
         print(scenarioLandCoverTransitions)
         print(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
-        // var artificial = data['Artificial'] + scenarioLandCoverTransitions['Tree_Cover to Artificial'] + scenarioLandCoverTransitions['Grasslands to Artificial'] + scenarioLandCoverTransitions['Bare_Land to Artificial'];
-        // var bareLand = data['Bare_land'] - scenarioLandCoverTransitions['Bare_Land to Grasslands'] - scenarioLandCoverTransitions['Bare_Land to Croplands'] - scenarioLandCoverTransitions['Bare_Land to Artificial'];
-        // var croplands = data['Croplands'] + scenarioLandCoverTransitions['Bare_Land to Croplands'] + scenarioLandCoverTransitions['Grasslands to Croplands'] + scenarioLandCoverTransitions['Tree_Cover to Croplands'];
-        // var grasslands = data['Grasslands'] + scenarioLandCoverTransitions['Bare_Land to Grasslands'] + scenarioLandCoverTransitions['Tree_Cover to Grasslands'] - scenarioLandCoverTransitions['Grasslands to Artificial'] - scenarioLandCoverTransitions['Grasslands to Croplands'];
-        // var treeCover = data['Tree_Cover'] - scenarioLandCoverTransitions['Tree_Cover to Artificial'] - scenarioLandCoverTransitions['Tree_Cover to Croplands'] - scenarioLandCoverTransitions['Tree_Cover to Grasslands'];
-        // var waterBodies = data['Water_Bodies'];
-        // var wetlands = data['Wetlands'];
 
         var artificial = parseFloat(data['Artificial']) + parseFloat(scenarioLandCoverTransitions['Tree_Cover to Artificial']) + parseFloat(scenarioLandCoverTransitions['Grasslands to Artificial']) + parseFloat(scenarioLandCoverTransitions['Bare_Land to Artificial']);
         var bareLand = parseFloat(data['Bare_Land']) - parseFloat(scenarioLandCoverTransitions['Bare_Land to Grasslands']) - parseFloat(scenarioLandCoverTransitions['Bare_Land to Croplands']) - parseFloat(scenarioLandCoverTransitions['Bare_Land to Artificial']);
@@ -92,17 +86,18 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
 
         print('Land Cover:', updatedLandCover)
 
-        var updatedLandCoverData = landCoverData.set(scenarioName, updatedLandCover)
+        var updatedLandCoverData = landCoverData.set(scenarioName, updatedLandCover);
+        currentRegion = currentRegion.set('landCover', updatedLandCoverData);
 
         // var currentRegionLandCover = currentRegion.set('landCover', updatedLandCoverData)
-        return currentRegion.set('landCover', updatedLandCoverData)
+        // return currentRegion.set('landCover', updatedLandCoverData)
 
         // var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
 
         // return updatedRegionalData
     })
 
-    var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegionLandCover]))
+    var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
 
     return updatedRegionalData
 }
