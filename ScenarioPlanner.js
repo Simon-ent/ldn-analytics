@@ -60,7 +60,7 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
 
     // currentRegion = currentRegion.set('landCover', updatedLandCoverData)
 
-    landCoverBaseData.evaluate(function(data) {
+    var currentRegionLandCover = landCoverBaseData.evaluate(function(data) {
         print(data)
         print(scenarioLandCoverTransitions)
         print(scenarioLandCoverTransitions['Tree_Cover to Artificial'])
@@ -94,14 +94,15 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
 
         var updatedLandCoverData = landCoverData.set(scenarioName, updatedLandCover)
 
-        currentRegion = currentRegion.set('landCover', updatedLandCoverData)
+        // var currentRegionLandCover = currentRegion.set('landCover', updatedLandCoverData)
+        return currentRegion.set('landCover', updatedLandCoverData)
 
-        var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
+        // var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
 
-        return updatedRegionalData
+        // return updatedRegionalData
     })
 
-    // var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegion]))
+    var updatedRegionalData = allRegionsExcludingCurrentRegion.merge(ee.FeatureCollection([currentRegionLandCover]))
 
-    // return updatedRegionalData
+    return updatedRegionalData
 }

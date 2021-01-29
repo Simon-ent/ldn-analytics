@@ -402,6 +402,12 @@ regionalDataPanel.add(regionalEditPanel);
 // var regionalEditDataPanel = ui.Panel();
 // regionalEditPanel.add(regionalEditDataPanel)
 
+// Regional Data Edit Layers
+regionalEditPanel.add(ui.Label({
+    value: 'Edit Scenario',
+    style: Styles.HEADER_STYLE_2,
+}));
+
 var Tree2GrassText = ui.Textbox();
 var Tree2CropText = ui.Textbox();
 var Tree2ArtificialText = ui.Textbox();
