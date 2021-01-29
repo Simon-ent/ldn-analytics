@@ -96,7 +96,7 @@ function regionalChartsBuilder() {
     regionalChartsPanel.clear()
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
-
+    print("Regional Data:", app.datasets.regionalData)
     var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', regionNameText)).first()
     print(currentRegion)
 
@@ -496,8 +496,14 @@ regionalEditPanel.add(
                 regionalDataEditButton.style().set('shown', true);
                 changeTablesToCharts();
                 var editedTransitionsDict = getEditedData();
-                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
-                app.datasets.regionalData = updatedRegionalData;
+                ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear).evaluate(function(updatedRegionalData) {
+                    print(updatedRegionalData)
+                    app.datasets.regionalData = updatedRegionalData;
+                    regionalChartsBuilder()
+                });
+                // var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
+                // print('Updated regional data', updatedRegionalData)
+                // app.datasets.regionalData = updatedRegionalData;
             }
         }), 
         ui.Button({
