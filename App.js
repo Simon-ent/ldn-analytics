@@ -552,15 +552,7 @@ createScenarioPanel.add(createScenarioSelect);
 
 function updateScenarioList() {
     print("Scenario List", typeof app.variables.scenarioList, app.variables.scenarioList)
-    createScenarioSelect.items().reset(app.variables.transitionsList);
-    // var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
-    //     .get('list'));
-    //     // .distinct();
-
-    // computedScenarioList.evaluate(function(scenarioList) {
-    //     createScenarioSelect.items().reset(scenarioList);
-    //     // createScenarioSelect.setValue('predictions')
-    // });
+    createScenarioSelect.items().reset(app.variables.scenarioList);
 }
 
 createScenarioPanel.add(Label('New scenario name:'))
@@ -579,8 +571,8 @@ createScenarioPanel.add(
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
-                app.variables.scenarioList = app.variables.scenarioList.push(scenarioName);
-                app.variables.transitionsList = app.variables.transitionsList.push(scenarioName);
+                app.variables.scenarioList = app.variables.scenarioList.concat([scenarioName]);
+                app.variables.transitionsList = app.variables.transitionsList.concat([scenarioName]);
                 // app.variables.scenarioList = ee.List(app.variables.scenarioList).add(scenarioName);
                 // app.variables.transitionsList = ee.List(app.variables.transitionsList).add(scenarioName);
                 regionalChartsBuilder()
