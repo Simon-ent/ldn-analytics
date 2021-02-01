@@ -6,11 +6,9 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     // Takes a collection of scenarios and creates a new scenario with the name: scenarioName.
     // Returns the collection of scenarios plus the new scenario
     
-    // createLandCoverScenario(regionalData, scenarioBaseName, scenarioName)
     var updatedScenarioData = regionalData.map(function(feature) {
         var landCoverData = ee.Dictionary(feature.get('landCover'));
         var landCoverTransitionsData = ee.Dictionary(feature.get('landCoverTransitions'));
-        var scenarioBaseName = '2019';
 
         var landCoverTypeCount = landCoverData.get(scenarioBaseName);
         var landCoverTransitions = landCoverTransitionsData.get(scenarioBaseName);
