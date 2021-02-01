@@ -27,12 +27,12 @@ var app = {
         regions: null,
         subRegions: null,
         regionalData: null,
-        landCoverTimeSeries: null,
-        landCoverTransitionsSeries: null,
-        predictionsData: null,
-        landCoverStartCount: null,
-        landCoverEndCount: null,
-        landCoverTransitionsCount: null,
+        // landCoverTimeSeries: null,
+        // landCoverTransitionsSeries: null,
+        // predictionsData: null,
+        // landCoverStartCount: null,
+        // landCoverEndCount: null,
+        // landCoverTransitionsCount: null,
     },
     variables: {
         region: null,
@@ -42,7 +42,7 @@ var app = {
         currentScenario: null,
         nationalIndicator: null,
     },
-    scenarios: null
+    // scenarios: null
 };
 
 // var selectedPoint = [];
@@ -170,7 +170,7 @@ function loadCountry(country, startYear, targetYear) {
     var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
     var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
     var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
-    app.datasets.countryGeometry = countryGeometry;
+    // app.datasets.countryGeometry = countryGeometry;
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
     app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
@@ -183,9 +183,9 @@ function loadCountry(country, startYear, targetYear) {
     var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    var predictionsData = LDNIndicatorData[6];
-    app.datasets.predictionsData = LDNIndicatorData[6];
-    app.scenarios = ee.FeatureCollection([predictionsData])
+    // var predictionsData = LDNIndicatorData[6];
+    // app.datasets.predictionsData = LDNIndicatorData[6];
+    // app.scenarios = ee.FeatureCollection([predictionsData])
     app.datasets.regionalData = LDNIndicatorData[9];
 
     // Land Cover (Layer 0)
@@ -399,127 +399,7 @@ var regionalEditPanel = ui.Panel({
 });
 regionalDataPanel.add(regionalEditPanel);
 
-// var regionalEditDataPanel = ui.Panel();
-// regionalEditPanel.add(regionalEditDataPanel)
-
-// Regional Data Edit Layers
-regionalEditPanel.add(ui.Label({
-    value: 'Edit Scenario',
-    style: Styles.HEADER_STYLE_2,
-}));
-
-var Tree2GrassText = ui.Textbox();
-var Tree2CropText = ui.Textbox();
-var Tree2ArtificialText = ui.Textbox();
-var Grass2CropText = ui.Textbox();
-var Grass2ArtificialText = ui.Textbox();
-var Bare2GrassText = ui.Textbox();
-var Bare2CropText = ui.Textbox();
-var Bare2ArtificialText = ui.Textbox();
-
-var regionalEditDataPanel = ui.Panel([
-    ui.Panel([
-        Label('Tree_Cover to Grasslands'), Tree2GrassText
-    ], 
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Tree_Cover to Croplands'), Tree2CropText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Tree_Cover to Artificial'), Tree2ArtificialText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Grasslands to Croplands'), Grass2CropText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Grasslands to Artificial'), Grass2ArtificialText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Bare_Land to Grasslands'), Bare2GrassText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Bare_Land to Croplands'), Bare2CropText
-    ],
-    ui.Panel.Layout.flow('horizontal')),
-    ui.Panel([
-        Label('Bare_Land to Artificial'), Bare2ArtificialText
-    ],
-    ui.Panel.Layout.flow('horizontal'))
-])
-regionalEditPanel.add(regionalEditDataPanel)
-
-function setRegionalEditData() {
-    var currentScenario = app.variables.currentScenario;
-    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
-    var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
-    var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
-
-    scenarioTransitionData.evaluate(function(data) {
-        Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
-        Tree2CropText.setValue(data['Tree_Cover to Croplands']);
-        Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
-        Grass2CropText.setValue(data['Grasslands to Croplands']);
-        Grass2ArtificialText.setValue(data['Grasslands to Artificial']);
-        Bare2GrassText.setValue(data['Bare_Land to Grasslands']);
-        Bare2CropText.setValue(data['Bare_Land to Croplands']);
-        Bare2ArtificialText.setValue(data['Bare_Land to Artificial']);
-    })
-}
-
-function changeTablesToCharts() {
-    var landTypesScenarioChart = regionalChartsPanel.widgets().get(0);
-    landTypesScenarioChart.setChartType('ColumnChart');
-    var transitionsChart = regionalChartsPanel.widgets().get(1);
-    transitionsChart.setChartType('ColumnChart');
-}
-
-function getEditedData() {
-    var adjustments = {
-        'Tree_Cover to Grasslands': Tree2GrassText.getValue(),
-        'Tree_Cover to Croplands': Tree2CropText.getValue(),
-        'Tree_Cover to Artificial': Tree2ArtificialText.getValue(),
-        'Grasslands to Croplands': Grass2CropText.getValue(),
-        'Grasslands to Artificial': Grass2ArtificialText.getValue(),
-        'Bare_Land to Grasslands': Bare2GrassText.getValue(),
-        'Bare_Land to Croplands': Bare2CropText.getValue(),
-        'Bare_Land to Artificial': Bare2ArtificialText.getValue()
-    }
-    return adjustments
-}
-
-regionalEditPanel.add(
-    ui.Panel([
-        ui.Button({
-            label: 'Save',
-            onClick: function () {
-                regionalChartsPanel.style().set('shown', true);
-                regionalEditPanel.style().set('shown', false);
-                regionalDataEditButton.style().set('shown', true);
-                changeTablesToCharts();
-                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
-                print('Updated regional data', updatedRegionalData)
-                app.datasets.regionalData = updatedRegionalData;
-                regionalChartsBuilder()
-            }
-        }), 
-        ui.Button({
-            label: 'Cancel',
-            onClick: function () {
-                regionalChartsPanel.style().set('shown', true);
-                regionalEditPanel.style().set('shown', false);
-                regionalDataEditButton.style().set('shown', true);
-                changeTablesToCharts();
-            }
-        })],
-        ui.Panel.Layout.flow('horizontal'),
-        {stretch: 'vertical'}
-    )
-);
+// For the Scenario Edit UI please see the scenario section
 
 // Indicators
 countryPanel.add(ui.Label({
@@ -669,14 +549,15 @@ var createScenarioSelect = ui.Select({
 createScenarioPanel.add(createScenarioSelect);
 
 function updateScenarioList() {
-    var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
-        .get('list'));
-        // .distinct();
+    createScenarioSelect.items().reset(app.variables.transitionsList);
+    // var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
+    //     .get('list'));
+    //     // .distinct();
 
-    computedScenarioList.evaluate(function(scenarioList) {
-        createScenarioSelect.items().reset(scenarioList);
-        // createScenarioSelect.setValue('predictions')
-    });
+    // computedScenarioList.evaluate(function(scenarioList) {
+    //     createScenarioSelect.items().reset(scenarioList);
+    //     // createScenarioSelect.setValue('predictions')
+    // });
 }
 
 createScenarioPanel.add(Label('New scenario name:'))
@@ -694,7 +575,7 @@ createScenarioPanel.add(
                 createScenarioPanel.style().set('shown', false);
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
-                app.scenarios = ScenarioFunctions.createScenario(app.scenarios, scenarioBase, scenarioName);
+                // app.scenarios = ScenarioFunctions.createScenario(app.scenarios, scenarioBase, scenarioName);
                 // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
                 app.variables.scenarioList = ee.List(app.variables.scenarioList).add(scenarioName);
@@ -711,6 +592,125 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
+            }
+        })],
+        ui.Panel.Layout.flow('horizontal'),
+        {stretch: 'vertical'}
+    )
+);
+
+// Regional Data Edit Scenario
+regionalEditPanel.add(ui.Label({
+    value: 'Edit Scenario',
+    style: Styles.HEADER_STYLE_2,
+}));
+
+var Tree2GrassText = ui.Textbox();
+var Tree2CropText = ui.Textbox();
+var Tree2ArtificialText = ui.Textbox();
+var Grass2CropText = ui.Textbox();
+var Grass2ArtificialText = ui.Textbox();
+var Bare2GrassText = ui.Textbox();
+var Bare2CropText = ui.Textbox();
+var Bare2ArtificialText = ui.Textbox();
+
+var regionalEditDataPanel = ui.Panel([
+    ui.Panel([
+        Label('Tree_Cover to Grasslands'), Tree2GrassText
+    ], 
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Tree_Cover to Croplands'), Tree2CropText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Tree_Cover to Artificial'), Tree2ArtificialText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Grasslands to Croplands'), Grass2CropText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Grasslands to Artificial'), Grass2ArtificialText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Bare_Land to Grasslands'), Bare2GrassText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Bare_Land to Croplands'), Bare2CropText
+    ],
+    ui.Panel.Layout.flow('horizontal')),
+    ui.Panel([
+        Label('Bare_Land to Artificial'), Bare2ArtificialText
+    ],
+    ui.Panel.Layout.flow('horizontal'))
+])
+regionalEditPanel.add(regionalEditDataPanel)
+
+function setRegionalEditData() {
+    var currentScenario = app.variables.currentScenario;
+    var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
+    var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
+    var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
+
+    scenarioTransitionData.evaluate(function(data) {
+        Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
+        Tree2CropText.setValue(data['Tree_Cover to Croplands']);
+        Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
+        Grass2CropText.setValue(data['Grasslands to Croplands']);
+        Grass2ArtificialText.setValue(data['Grasslands to Artificial']);
+        Bare2GrassText.setValue(data['Bare_Land to Grasslands']);
+        Bare2CropText.setValue(data['Bare_Land to Croplands']);
+        Bare2ArtificialText.setValue(data['Bare_Land to Artificial']);
+    })
+}
+
+function changeTablesToCharts() {
+    var landTypesScenarioChart = regionalChartsPanel.widgets().get(0);
+    landTypesScenarioChart.setChartType('ColumnChart');
+    var transitionsChart = regionalChartsPanel.widgets().get(1);
+    transitionsChart.setChartType('ColumnChart');
+}
+
+function getEditedData() {
+    var adjustments = {
+        'Tree_Cover to Grasslands': Tree2GrassText.getValue(),
+        'Tree_Cover to Croplands': Tree2CropText.getValue(),
+        'Tree_Cover to Artificial': Tree2ArtificialText.getValue(),
+        'Grasslands to Croplands': Grass2CropText.getValue(),
+        'Grasslands to Artificial': Grass2ArtificialText.getValue(),
+        'Bare_Land to Grasslands': Bare2GrassText.getValue(),
+        'Bare_Land to Croplands': Bare2CropText.getValue(),
+        'Bare_Land to Artificial': Bare2ArtificialText.getValue()
+    }
+    return adjustments
+}
+
+regionalEditPanel.add(
+    ui.Panel([
+        ui.Button({
+            label: 'Save',
+            onClick: function () {
+                regionalChartsPanel.style().set('shown', true);
+                regionalEditPanel.style().set('shown', false);
+                regionalDataEditButton.style().set('shown', true);
+                changeTablesToCharts();
+                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
+                print('Updated regional data', updatedRegionalData)
+                app.datasets.regionalData = updatedRegionalData;
+                regionalChartsBuilder()
+            }
+        }), 
+        ui.Button({
+            label: 'Cancel',
+            onClick: function () {
+                regionalChartsPanel.style().set('shown', true);
+                regionalEditPanel.style().set('shown', false);
+                regionalDataEditButton.style().set('shown', true);
+                changeTablesToCharts();
             }
         })],
         ui.Panel.Layout.flow('horizontal'),
