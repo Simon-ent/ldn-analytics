@@ -104,7 +104,7 @@ function regionalChartsBuilder() {
     var landCoverData = ee.Dictionary(currentRegion.get('landCover'));
     var landCoverTransitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
 
-    var scenarioList = app.variables.scenarioList;
+    var scenarioList = ee.List(app.variables.scenarioList);
 
     var landCoverChartData = scenarioList.map(function(item) {
         return ee.Dictionary(landCoverData.get(item)).values()
@@ -125,7 +125,7 @@ function regionalChartsBuilder() {
     regionalChartsPanel.add(landTypesScenarioChart)
 
     // Transitions Chart
-    var transitionsList = app.variables.transitionsList;
+    var transitionsList = ee.List(app.variables.transitionsList);
     var landCoverTransitionsChartData = transitionsList.map(function(item) {
         return ee.Dictionary(landCoverTransitionsData.get(item)).values()
     })
@@ -173,8 +173,10 @@ function loadCountry(country, startYear, targetYear) {
     // app.datasets.countryGeometry = countryGeometry;
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
-    app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
-    app.variables.transitionsList = ee.List([targetYear]); // Needs improving
+    app.variables.scenarioList = [startYear, targetYear]; // Needs improving
+    app.variables.transitionsList = [targetYear]; // Needs improving
+    // app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
+    // app.variables.transitionsList = ee.List([targetYear]); // Needs improving
 
     /**
      * LDN Indicators
@@ -549,6 +551,7 @@ var createScenarioSelect = ui.Select({
 createScenarioPanel.add(createScenarioSelect);
 
 function updateScenarioList() {
+    print("Scenario List", typeof app.variables.scenarioList, app.variables.scenarioList)
     createScenarioSelect.items().reset(app.variables.transitionsList);
     // var computedScenarioList = ee.List(app.scenarios.reduceColumns(ee.Reducer.toList(), ['id'])
     //     .get('list'));
@@ -575,11 +578,11 @@ createScenarioPanel.add(
                 createScenarioPanel.style().set('shown', false);
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
-                // app.scenarios = ScenarioFunctions.createScenario(app.scenarios, scenarioBase, scenarioName);
-                // print("Scenario: ", createScenarioSelect.getValue(), createScenaioName.getValue())
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
-                app.variables.scenarioList = ee.List(app.variables.scenarioList).add(scenarioName);
-                app.variables.transitionsList = ee.List(app.variables.transitionsList).add(scenarioName);
+                app.variables.scenarioList = app.variables.scenarioList.push(scenarioName);
+                app.variables.transitionsList = app.variables.transitionsList.push(scenarioName);
+                // app.variables.scenarioList = ee.List(app.variables.scenarioList).add(scenarioName);
+                // app.variables.transitionsList = ee.List(app.variables.transitionsList).add(scenarioName);
                 regionalChartsBuilder()
                 app.variables.currentScenario = scenarioName;
                 regionalDataEditButton.style().set('shown', true);
