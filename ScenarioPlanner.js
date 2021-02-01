@@ -9,7 +9,7 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     var updatedScenarioData = regionalData.map(function(feature) {
         var landCoverData = ee.Dictionary(feature.get('landCover'));
         var landCoverTransitionsData = ee.Dictionary(feature.get('landCoverTransitions'));
-        var scenarioBaseName = '2019'; // Needs fixing
+        // var scenarioBaseName = '2019'; // Needs fixing
 
         var landCoverTypeCount = landCoverData.get(scenarioBaseName);
         var landCoverTransitions = landCoverTransitionsData.get(scenarioBaseName);
