@@ -31,7 +31,7 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
     currentRegion = currentRegion.set('landCoverTransitions', updatedLandCoverTransitions)
     // LandCover
     var landCoverData = ee.Dictionary(currentRegion.get('landCover'))
-    var landCoverBaseData = landCoverData.get(startYear);
+    var landCoverBaseData = ee.Dictionary(landCoverData.get(startYear));
 
     print("Base Data", landCoverBaseData)
     print("Transitions", scenarioLandCoverTransitions)
