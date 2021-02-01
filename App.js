@@ -529,18 +529,12 @@ createScenarioPanel.add(Label('Select the starting point:'))
 
 var createScenarioSelect = ui.Select({
     placeholder: 'Choose a scenario...',
-    // items: ['predictions'],
-    // value: 'predictions',
-    // onChange: function(scenario) {
-    //     // print(scenario)
-    //     // app.variables.scenarioBase = scenario;
-    // }
 });
 createScenarioPanel.add(createScenarioSelect);
 
 function updateScenarioList() {
-    print("Scenario List", typeof app.variables.scenarioList, app.variables.scenarioList)
-    createScenarioSelect.items().reset(app.variables.scenarioList);
+    // print("Scenario List", typeof app.variables.transitionsList, app.variables.transitionsList)
+    createScenarioSelect.items().reset(app.variables.transitionsList);
 }
 
 createScenarioPanel.add(Label('New scenario name:'))
