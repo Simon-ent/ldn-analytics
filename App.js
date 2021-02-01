@@ -27,12 +27,6 @@ var app = {
         regions: null,
         subRegions: null,
         regionalData: null,
-        // landCoverTimeSeries: null,
-        // landCoverTransitionsSeries: null,
-        // predictionsData: null,
-        // landCoverStartCount: null,
-        // landCoverEndCount: null,
-        // landCoverTransitionsCount: null,
     },
     variables: {
         region: null,
@@ -175,8 +169,6 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.subRegions = subRegions;
     app.variables.scenarioList = [startYear, targetYear]; // Needs improving
     app.variables.transitionsList = [targetYear]; // Needs improving
-    // app.variables.scenarioList = ee.List([startYear, targetYear]); // Needs improving
-    // app.variables.transitionsList = ee.List([targetYear]); // Needs improving
 
     /**
      * LDN Indicators
@@ -185,9 +177,6 @@ function loadCountry(country, startYear, targetYear) {
     var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    // var predictionsData = LDNIndicatorData[6];
-    // app.datasets.predictionsData = LDNIndicatorData[6];
-    // app.scenarios = ee.FeatureCollection([predictionsData])
     app.datasets.regionalData = LDNIndicatorData[9];
 
     // Land Cover (Layer 0)
@@ -368,7 +357,6 @@ var regionalDataEditButton = ui.Button({
         landTypesScenarioChart.setChartType('Table')
         var transitionsChart = regionalChartsPanel.widgets().get(1);
         transitionsChart.setChartType('Table')
-        // regionalChartsPanel.style().set('shown', false);
         setRegionalEditData()
         regionalEditPanel.style().set('shown', true);
         regionalDataEditButton.style().set('shown', false);
@@ -573,8 +561,6 @@ createScenarioPanel.add(
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
                 app.variables.scenarioList = app.variables.scenarioList.concat([scenarioName]);
                 app.variables.transitionsList = app.variables.transitionsList.concat([scenarioName]);
-                // app.variables.scenarioList = ee.List(app.variables.scenarioList).add(scenarioName);
-                // app.variables.transitionsList = ee.List(app.variables.transitionsList).add(scenarioName);
                 regionalChartsBuilder()
                 app.variables.currentScenario = scenarioName;
                 regionalDataEditButton.style().set('shown', true);
