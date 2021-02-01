@@ -33,6 +33,27 @@ exports.saveScenario = function(regionalData, scenarioLandCoverTransitions, curr
     var landCoverData = ee.Dictionary(currentRegion.get('landCover'))
     var landCoverBaseData = landCoverData.get(startYear);
 
+    print("Base Data", landCoverBaseData)
+    print("Transitions", scenarioLandCoverTransitions)
+
+    var artificial = landCoverBaseData.getNumber('Artificial').add(parseFloat(scenarioLandCoverTransitions['Tree_Cover to Artificial']) + parseFloat(scenarioLandCoverTransitions['Grasslands to Artificial']) + parseFloat(scenarioLandCoverTransitions['Bare_Land to Artificial']));
+    var bareLand = landCoverBaseData.getNumber('Bare_Land').add(parseFloat(scenarioLandCoverTransitions['Bare_Land to Grasslands']) - parseFloat(scenarioLandCoverTransitions['Bare_Land to Croplands']) - parseFloat(scenarioLandCoverTransitions['Bare_Land to Artificial']));
+
+    var updatedLandCover = {
+        Artificial: artificial,
+        Bare_Land: bareLand,
+        // Croplands: croplands,
+        // Grasslands: grasslands,
+        // Tree_Cover: treeCover,
+        // Water_Bodies: waterBodies,
+        // Wetlands: wetlands
+    }
+
+    print('Land Cover:', updatedLandCover)
+
+    var updatedLandCoverData = landCoverData.set(scenarioName, updatedLandCover);
+    currentRegion = currentRegion.set('landCover', updatedLandCoverData);
+
     // print(landCoverBaseData)
     // print(scenarioLandCoverTransitions)
     // print(scenarioLandCoverTransitions['Tree_Cover to Artificial'])

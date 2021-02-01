@@ -501,15 +501,10 @@ regionalEditPanel.add(
                 regionalEditPanel.style().set('shown', false);
                 regionalDataEditButton.style().set('shown', true);
                 changeTablesToCharts();
-                var editedTransitionsDict = getEditedData();
-                // ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear).evaluate(function(updatedRegionalData) {
-                //     print(updatedRegionalData)
-                //     app.datasets.regionalData = updatedRegionalData;
-                //     regionalChartsBuilder()
-                // });
-                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, editedTransitionsDict, app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
+                var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
                 print('Updated regional data', updatedRegionalData)
                 app.datasets.regionalData = updatedRegionalData;
+                regionalChartsBuilder()
             }
         }), 
         ui.Button({
