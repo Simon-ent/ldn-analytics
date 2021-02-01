@@ -558,7 +558,7 @@ createScenarioPanel.add(
                 regionalChartsBuilder()
                 app.variables.currentScenario = scenarioName;
                 regionalDataEditButton.style().set('shown', true);
-                createScenarioSelect.setValue('predictions');
+                createScenarioSelect.setValue('');
                 createScenaioName.setValue('');
             }
         }), 
