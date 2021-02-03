@@ -498,6 +498,8 @@ var createScenarioButton = ui.Button({
     onClick: function () {
         countryPanel.style().set('shown', false)
         createScenarioPanel.style().set('shown', true)
+        createScenarioSelect.setValue('');
+        createScenaioName.setValue('');
         updateScenarioList()
     }
 })
@@ -564,8 +566,6 @@ createScenarioPanel.add(
                 regionalChartsBuilder()
                 app.variables.currentScenario = scenarioName;
                 regionalDataEditButton.style().set('shown', true);
-                createScenarioSelect.setValue('');
-                createScenaioName.setValue('');
             }
         }), 
         ui.Button({
@@ -678,7 +678,7 @@ regionalEditPanel.add(
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
                 regionalDataEditButton.style().set('shown', true);
-                changeTablesToCharts();
+                // changeTablesToCharts();
                 var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
                 print('Updated regional data', updatedRegionalData)
                 app.datasets.regionalData = updatedRegionalData;
