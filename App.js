@@ -112,6 +112,9 @@ function regionalChartsBuilder() {
             title: 'Land Types by Year',
             vAxis: {title: 'Land Type'},
             hAxis: {title: 'Pixel Count', logScale: true},
+            colors: [
+                '696969', '604791', '1d6b99', '39a8a7', '0f8755', '76b349', 'f0af07',
+                'e37d05', 'cf513e', '96356f', '724173', '9c4f97'],
             bar: { gap: 0 },
             orientation: 'vertical',
         });
@@ -130,6 +133,9 @@ function regionalChartsBuilder() {
         .setOptions({
             title: 'Land Cover Transitions',
             hAxis: {title: 'Net Change'},
+            colors: [
+                '604791', '1d6b99', '39a8a7', '0f8755', '76b349', 'f0af07',
+                'e37d05', 'cf513e', '96356f', '724173', '9c4f97'],
             orientation: 'vertical',
         });
 
