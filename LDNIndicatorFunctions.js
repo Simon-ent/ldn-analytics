@@ -226,6 +226,11 @@ function calculateSDG(landCoverChange, countryGeometry) {
     return SDGOutput
 }
 
+function calculateNationalNetChange(regionalScores) {
+    var nationalIndicator = regionalScores.reduceColumns(ee.Reducer.sum(), ['Degraded_State']);
+    return ee.Number(nationalIndicator.get('sum')).format('%.2f')
+}
+
 /*
  * Outputs
  */
@@ -247,7 +252,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
-        'National Net Change': 0
+        'National Net Change': calculateNationalNetChange(outputDataSet)
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
