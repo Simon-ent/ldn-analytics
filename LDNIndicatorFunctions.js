@@ -252,7 +252,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
-        'National Net Change': calculateNationalNetChange(outputDataSet)
+        'National Net Change': 2 //calculateNationalNetChange(outputDataSet)
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
