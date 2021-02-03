@@ -207,11 +207,30 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
     return netTranistions
 }
 
+function calculateSDG(landCoverChange, countryGeometry) {
+    var pixelCount = landCoverChange.reduceRegion(
+        ee.Reducer.fixedHistogram(-1, 1, 3),
+        countryGeometry,
+        500
+    ).get('remapped');
+    var degredationCount = ee.Array(pixelCount).get([0,1])
+    var totalPixel = landCoverChange.reduceRegion(
+        ee.Reducer.count(),
+        countryGeometry,
+        500
+    ).get('remapped');
+
+    var SDG = ee.Number(degredationCount).divide(totalPixel)
+    var SDGOutput = ee.Number(SDG).format('%.2f') //.getInfo()
+    // SDGIndicatorWidget.widgets().set(1, IndicatorLabel(SDGOutput + ' %'))
+    return SDGOutput
+}
+
 /*
  * Outputs
  */
 
-exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
+exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGeometry) {
     var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransitions = LandCoverTransitions(landCoverStartImage, landCoverEndImage);
@@ -227,7 +246,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
 
     var indicatorData = ee.Dictionary({
-        'SDG 15.3.1': 22,
+        'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
         'National Net Change': 0
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)

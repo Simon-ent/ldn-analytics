@@ -180,7 +180,7 @@ function loadCountry(country, startYear, targetYear) {
      * LDN Indicators
      */
 
-    var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
+    var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions, countryGeometry)
 
     // Data
     app.datasets.regionalData = LDNIndicatorData[3];
@@ -425,7 +425,7 @@ function createIndicatorsChart() {
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
-    nationalIndicatorsChartPanel.set(0, nationalIndicatorsChart)
+    nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
 }
 
 // var SDGIndicatorWidget = ui.Panel([
