@@ -241,6 +241,7 @@ function updateUI() {
     app.variables.regionNameText = regionNameText;
     // regionalDataEditButton.style().set('shown', true); // Just for development
     regionalChartsBuilder();
+    createIndicatorsChart();
     // updateSubRegionIndicator(regionNameText);
     // updateScenarioEditPanel(regionNameText)
 }
@@ -404,14 +405,16 @@ countryPanel.add(ui.Label({
   style: Styles.HEADER_STYLE_2,
 }));
 
-var nationalIndicatorsChartData = ee.List(app.variables.scenarioList).map(function(item) {
-    return ee.Dictionary(app.datasets.nationalIndicators.get(item)).values()
-})
-var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(indicators2.get(scenarioList.get(0))).keys())
-.setSeriesNames(scenarioList)
-.setChartType('Table')
-
-countryPanel.add(nationalIndicatorsChart)
+function createIndicatorsChart() {
+    var nationalIndicatorsChartData = ee.List(app.variables.scenarioList).map(function(item) {
+        return ee.Dictionary(app.datasets.nationalIndicators.get(item)).values()
+    })
+    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(indicators2.get(scenarioList.get(0))).keys())
+    .setSeriesNames(scenarioList)
+    .setChartType('Table')
+    
+    countryPanel.add(nationalIndicatorsChart)
+}
 
 var SDGIndicatorWidget = ui.Panel([
     Label('SDG 15.3.1 (Degraded Land / Total Area): '),
