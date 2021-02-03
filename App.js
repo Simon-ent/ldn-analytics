@@ -406,9 +406,9 @@ countryPanel.add(ui.Label({
 }));
 
 function createIndicatorsChart() {
-    var scenarioList = app.variables.scenarioList;
+    var scenarioList = ee.List(app.variables.scenarioList);
     var nationalIndicators = app.datasets.nationalIndicators;
-    var nationalIndicatorsChartData = ee.List(scenarioList).map(function(item) {
+    var nationalIndicatorsChartData = scenarioList.map(function(item) {
         return ee.Dictionary(nationalIndicators.get(item)).values()
     })
     var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
