@@ -183,7 +183,7 @@ function loadCountry(country, startYear, targetYear) {
     var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions)
 
     // Data
-    app.datasets.regionalData = LDNIndicatorData[9];
+    app.datasets.regionalData = LDNIndicatorData[3];
 
     // Land Cover (Layer 0)
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
@@ -498,8 +498,6 @@ var createScenarioButton = ui.Button({
     onClick: function () {
         countryPanel.style().set('shown', false)
         createScenarioPanel.style().set('shown', true)
-        createScenarioSelect.setValue('');
-        createScenaioName.setValue('');
         updateScenarioList()
     }
 })
@@ -558,14 +556,16 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
+                regionalDataEditButton.style().set('shown', true);
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
                 app.variables.scenarioList = app.variables.scenarioList.concat([scenarioName]);
                 app.variables.transitionsList = app.variables.transitionsList.concat([scenarioName]);
-                regionalChartsBuilder()
                 app.variables.currentScenario = scenarioName;
-                regionalDataEditButton.style().set('shown', true);
+                regionalChartsBuilder()
+                createScenarioSelect.setValue(null);
+                createScenaioName.setValue(null);
             }
         }), 
         ui.Button({
