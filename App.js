@@ -405,8 +405,13 @@ countryPanel.add(ui.Label({
   style: Styles.HEADER_STYLE_2,
 }));
 
+var nationalIndicatorsChartPanel = ui.Panel({
+    layout: ui.Panel.Layout.flow('vertical'),
+});
+countryPanel.add(nationalIndicatorsChartPanel)
+
 function createIndicatorsChart() {
-    var scenarioList = ee.List(app.variables.scenarioList);
+    var scenarioList = ee.List(app.variables.transitionsList);
     var nationalIndicators = app.datasets.nationalIndicators;
     var nationalIndicatorsChartData = scenarioList.map(function(item) {
         return ee.Dictionary(nationalIndicators.get(item)).values()
@@ -415,7 +420,7 @@ function createIndicatorsChart() {
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
-    countryPanel.add(nationalIndicatorsChart)
+    nationalIndicatorsChartPanel.add(nationalIndicatorsChart)
 }
 
 var SDGIndicatorWidget = ui.Panel([
