@@ -227,8 +227,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
 
     var indicatorData = ee.Dictionary({
-        'SDG 15.3.1': '22%',
-        'National Net Change': '0'
+        'SDG 15.3.1': 22,
+        'National Net Change': 0
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
