@@ -220,12 +220,20 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions) {
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
     
+    // var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
+    outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
+
+    var indicatorData = ee.Dictionary({
+        'SDG 15.3.1': '22%',
+        'National Net Change': '0'
+    })
+    var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
-        outputDataSet]
+        outputDataSet, nationalIndicators]
 }
 
 /*

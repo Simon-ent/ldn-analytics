@@ -27,6 +27,7 @@ var app = {
         regions: null,
         subRegions: null,
         regionalData: null,
+        nationalIndicators: null,
     },
     variables: {
         region: null,
@@ -34,7 +35,6 @@ var app = {
         scenarioList: null,
         transitionsList: null,
         currentScenario: null,
-        nationalIndicator: null,
     },
     // scenarios: null
 };
@@ -184,6 +184,7 @@ function loadCountry(country, startYear, targetYear) {
 
     // Data
     app.datasets.regionalData = LDNIndicatorData[3];
+    app.datasets.nationalIndicators = LDNIndicatorData[4];
 
     // Land Cover (Layer 0)
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
@@ -402,6 +403,15 @@ countryPanel.add(ui.Label({
   value: 'Key Indicators',
   style: Styles.HEADER_STYLE_2,
 }));
+
+var nationalIndicatorsChartData = ee.List(app.variables.scenarioList).map(function(item) {
+    return ee.Dictionary(app.datasets.nationalIndicators.get(item)).values()
+})
+var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(indicators2.get(scenarioList.get(0))).keys())
+.setSeriesNames(scenarioList)
+.setChartType('Table')
+
+countryPanel.add(nationalIndicatorsChart)
 
 var SDGIndicatorWidget = ui.Panel([
     Label('SDG 15.3.1 (Degraded Land / Total Area): '),
