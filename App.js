@@ -410,6 +410,11 @@ var nationalIndicatorsChartPanel = ui.Panel({
 });
 countryPanel.add(nationalIndicatorsChartPanel)
 
+nationalIndicatorsChartPanel.add(ui.Label({
+    value: 'Please click on a region on the map to begin analysis.',
+    style: Styles.INTRO_STYLE
+}));
+
 function createIndicatorsChart() {
     var scenarioList = ee.List(app.variables.transitionsList);
     var nationalIndicators = app.datasets.nationalIndicators;
@@ -420,38 +425,38 @@ function createIndicatorsChart() {
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
-    nationalIndicatorsChartPanel.add(nationalIndicatorsChart)
+    nationalIndicatorsChartPanel.set(0, nationalIndicatorsChart)
 }
 
-var SDGIndicatorWidget = ui.Panel([
-    Label('SDG 15.3.1 (Degraded Land / Total Area): '),
-    Label('Loading...')],
-    ui.Panel.Layout.flow('horizontal')
-)
+// var SDGIndicatorWidget = ui.Panel([
+//     Label('SDG 15.3.1 (Degraded Land / Total Area): '),
+//     Label('Loading...')],
+//     ui.Panel.Layout.flow('horizontal')
+// )
 
-var nationalIndicatorWidget = ui.Panel([
-    Label('National Net Change / Total Area: '),
-    Label('Loading...')],
-    ui.Panel.Layout.flow('horizontal')
-)
+// var nationalIndicatorWidget = ui.Panel([
+//     Label('National Net Change / Total Area: '),
+//     Label('Loading...')],
+//     ui.Panel.Layout.flow('horizontal')
+// )
 
-var subRegionIndicatorWidget = ui.Panel([
-    Label('Selected Region Net Change / Total Area: '),
-    Label('Loading...')],
-    ui.Panel.Layout.flow('horizontal'),
-    {shown: false}
-)
+// var subRegionIndicatorWidget = ui.Panel([
+//     Label('Selected Region Net Change / Total Area: '),
+//     Label('Loading...')],
+//     ui.Panel.Layout.flow('horizontal'),
+//     {shown: false}
+// )
 
-var indicatorsDegredationStatePanel = ui.Panel({
-    widgets: [
-        SDGIndicatorWidget,
-        nationalIndicatorWidget,
-        subRegionIndicatorWidget
-    ],
-    layout: ui.Panel.Layout.flow('vertical'),
-    style: Styles.SECTION_STYLE
-  });
-countryPanel.add(indicatorsDegredationStatePanel)
+// var indicatorsDegredationStatePanel = ui.Panel({
+//     widgets: [
+//         SDGIndicatorWidget,
+//         nationalIndicatorWidget,
+//         subRegionIndicatorWidget
+//     ],
+//     layout: ui.Panel.Layout.flow('vertical'),
+//     style: Styles.SECTION_STYLE
+//   });
+// countryPanel.add(indicatorsDegredationStatePanel)
 
 // Analysis Layers
 countryPanel.add(ui.Label({
