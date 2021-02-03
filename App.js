@@ -409,7 +409,7 @@ function createIndicatorsChart() {
     var nationalIndicatorsChartData = ee.List(app.variables.scenarioList).map(function(item) {
         return ee.Dictionary(app.datasets.nationalIndicators.get(item)).values()
     })
-    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(indicators2.get(scenarioList.get(0))).keys())
+    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(app.datasets.nationalIndicators.get(scenarioList.get(0))).keys())
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
