@@ -113,8 +113,8 @@ function regionalChartsBuilder() {
             vAxis: {title: 'Land Type'},
             hAxis: {title: 'Pixel Count', logScale: true},
             colors: [
-                '696969', 'e41a1c', '377eb8', '4daf4a', '984ea3', 
-                'ff7f00', 'ffff33', 'a65628', 'f781bf'],
+                '696969', '377eb8', '4daf4a', '984ea3', 'ff7f00',
+                'ffff33', 'a65628', 'f781bf', 'e41a1c'],
             bar: { gap: 0 },
             orientation: 'vertical',
         });
@@ -134,8 +134,8 @@ function regionalChartsBuilder() {
             title: 'Land Cover Transitions',
             hAxis: {title: 'Net Change'},
             colors: [
-                'e41a1c', '377eb8', '4daf4a', '984ea3', 
-                'ff7f00', 'ffff33', 'a65628', 'f781bf'],
+                '377eb8', '4daf4a', '984ea3', 'ff7f00',
+                'ffff33', 'a65628', 'f781bf', 'e41a1c'],
             orientation: 'vertical',
         });
 
