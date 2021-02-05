@@ -216,8 +216,23 @@ function loadCountry(country, startYear, targetYear) {
      */
 
     // Fire Frequency (Layer 5)
-    var fireFrequency = AnalysisLayers.FireFrequencyAnalysis(startYear, targetYear).clip(countryGeometry)
+    var fireFrequency = AnalysisLayers.FireFrequencyAnalysis(startYear, targetYear).clip(countryGeometry);
     mapPanel.addLayer(fireFrequency, {min: 0, max: 1, palette: ['#ffeda0', '#de2d26']}, 'Fire Frequency', false, 0.5);
+
+    // Erosion Risk (Layer 6)
+    var erosionRisk = AnalysisLayers.ErosionRisk(startYear, targetYear).clip(countryGeometry);
+    mapPanel.addLayer(erosionRisk, {min: 0, max: 15, palette: ['#ccece6', '#e31a1c']}, 'Erosion Risk', false, 0.5);
+
+    // Drought Risk (Layer 7,8,9)
+    var droughtRisk = AnalysisLayers.DroughtRisk();
+    var currentDroughtRisk = droughtRisk[0].clip(countryGeometry);
+    var longTermDroughtRisk = droughtRisk[1].clip(countryGeometry);
+    var longTermDroughtRiskClassified = droughtRisk[2].clip(countryGeometry);
+    var droughtRiskPalette = {min: 4,max: -4, palette: ['#35978f', '#8c510a']};
+
+    mapPanel.addLayer(currentDroughtRisk, droughtRiskPalette, 'Current Drought Risk', false, 0.5);
+    mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.5);
+    mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.5);
 
     mapPanel.centerObject(countryGeometry);
     mapPanel.onClick(handleMapClick);
