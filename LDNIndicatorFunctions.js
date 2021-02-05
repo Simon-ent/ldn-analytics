@@ -74,6 +74,7 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage) {
     // following the same logic as in earth trends
     // http://trends.earth/docs/en/background/understanding_indicators15.html
     // values 1 in earth trends table is zero in the remap table
+    var f = 0.8
     var remapped_soilTransitions = landCoverTransitions.remap(
         [11,12,13,14,15,16,17,
         21,22,23,24,25,26,27,
@@ -82,20 +83,20 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage) {
         51,52,53,54,55,56,57,
         61,62,63,64,65,66,67,
         71,72,73,74,75,76,77],
-        [0,0,1.7,0,2,2,0,
-        0,0,1.7,0,2,2,0,
-        -0.58,-0.58,0,-0.71,2,2,0,
-        0,0,1.4,0,2,2,0,
-        -0.1,-0.1,-0.1,-0.1,0,0,0,
-        -0.1,-0.1,-0.1,-0.1,0,0,0,
-        0,0,0,0,0,0,0]
+        [1,1,f,1,0.1,0.1,1,         //Tree-cover
+        1,1,f,1,0.1,0.1,1,          //Grassland
+        1/f,1/f,1,1/f,0.1,0.1,1,    //Cropland
+        1,1,0.71,1,0.1,0.1,1,       //Wetland
+        2,2,2,2,1,1,1,              //Artificial
+        2,2,2,2,1,1,1,              //Bareland
+        1,1,1,1,1,1,1]              //Water
     );
 
     // Soil carbon lost/gain "after 20 years of land cover change"
     var carbonChange = SoilTopImage.multiply(remapped_soilTransitions);
     // Addapt the change in carbon to the 9 years of our analysis
     // so that the change should be only 45% of the potential 
-    var carbonChangeAdjusted = carbonChange.multiply(0.45);
+    var carbonChangeAdjusted = carbonChange.multiply(0.45);                 /////// Only correct for 10 year intervals
 
     // Add the carbon lost/gain (change) to the original soil carbon
     var carbonFinal = SoilTopImage.add(carbonChangeAdjusted);
