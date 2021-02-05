@@ -237,8 +237,8 @@ function productivityTrajectory(){
     // Remaps the significant production trends according to the earth trends logic
     var trajectoryRemaped = ee.Image(4)
             .where(sigTrend.gt(0), 2)//improving
-            .where(carbonFracChange.lt(0), 3)//degrading
-            .where(carbonFracChange.eq(0), 0);//stable
+            .where(sigTrend.lt(0), 3)//degrading
+            .where(sigTrend.eq(0), 0);//stable
 
     // the masking is to remove whater bodies from being flaged as degrading.
     trajectoryRemaped = trajectoryRemaped.updateMask(trajectoryRemaped.lt(4));
