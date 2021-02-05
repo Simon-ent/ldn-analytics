@@ -484,20 +484,71 @@ countryPanel.add(ui.Label({
 }));
 
 // Toggle between the Land Cover Mode map and the Pixel Layer. Default to Land Cover Mode
-var togglePixelLayer = ui.Checkbox('Land Cover Pixel Layer', false);
+var toggleLandCoverPixelLayer = ui.Checkbox('Land Cover Pixel Layer', false);
 
-togglePixelLayer.onChange(function(checked) {
+toggleLandCoverPixelLayer.onChange(function(checked) {
   mapPanel.layers().get(0).setShown(checked);
   mapPanel.layers().get(1).setShown(!checked);
 });
-countryPanel.add(togglePixelLayer);
+countryPanel.add(toggleLandCoverPixelLayer);
 
+// Toggle between the SOC map and the Pixel Layer. Default to Regional Level
+var toggleSOCPixelLayer = ui.Checkbox('Soil Organic Carbon Pixel Layer', false);
+
+toggleSOCPixelLayer.onChange(function(checked) {
+  mapPanel.layers().get(2).setShown(checked);
+  mapPanel.layers().get(1).setShown(!checked);
+});
+countryPanel.add(toggleSOCPixelLayer);
+
+// Toggle between the NPP map and the Pixel Layer. Default to Regional Level
+var toggleNPPPixelLayer = ui.Checkbox('Productivity Pixel Layer', false);
+
+toggleNPPPixelLayer.onChange(function(checked) {
+  mapPanel.layers().get(3).setShown(checked);
+  mapPanel.layers().get(1).setShown(!checked);
+});
+countryPanel.add(toggleNPPPixelLayer);
+
+// Toggle Fire Frequency
 var toggleFireFreq = ui.Checkbox('Fire Frequecy Layer', false);
 
 toggleFireFreq.onChange(function(checked) {
     mapPanel.layers().get(6).setShown(checked);
 });
 countryPanel.add(toggleFireFreq);
+
+// Toggle Erosion Risk 
+var toggleErosionRisk = ui.Checkbox('Erosion Risk Layer', false);
+
+toggleErosionRisk.onChange(function(checked) {
+    mapPanel.layers().get(7).setShown(checked);
+});
+countryPanel.add(toggleErosionRisk);
+
+// Toggle Current Drought Risk 
+var toggleCurrentDroughtRisk = ui.Checkbox('Current Drought Risk Layer', false);
+
+toggleCurrentDroughtRisk.onChange(function(checked) {
+    mapPanel.layers().get(8).setShown(checked);
+});
+countryPanel.add(toggleCurrentDroughtRisk);
+
+// Toggle Long Term Drought Risk 
+var toggleLongTermDroughtRisk = ui.Checkbox('Long Term Drought Risk Layer', false);
+
+toggleLongTermDroughtRisk.onChange(function(checked) {
+    mapPanel.layers().get(9).setShown(checked);
+});
+countryPanel.add(toggleLongTermDroughtRisk);
+
+// Toggle Long Term Drought Risk 
+var toggleLongTermClassDroughtRisk = ui.Checkbox('Long Term Drought Risk Classified Layer', false);
+
+toggleLongTermClassDroughtRisk.onChange(function(checked) {
+    mapPanel.layers().get(10).setShown(checked);
+});
+countryPanel.add(toggleLongTermClassDroughtRisk);
 
 // Settings
 var settingsPanel = ui.Panel({
