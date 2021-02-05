@@ -112,6 +112,144 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage) {
     return carbonFracRemaped.updateMask(carbonFracRemaped.lt(4))
 }
 
+/**
+ * Productivity
+ * Sub indicator TRAJECTORY
+ */
+
+function productivityTrajectory(){
+    // Import annual NPP and filter time and bounds
+    var NPP = ee.ImageCollection("MODIS/006/MOD17A3HGF").select('Npp')
+    .filterDate('2002-01-01', '2019-01-01');
+
+    //Join collection to itself with a temporal filter
+    //Temporal filter
+    var afterFilter = ee.Filter.lessThan({
+    leftField: 'system:time_start',
+    rightField: 'system:time_start'
+    });
+    //Joins both collections
+    var joined = ee.ImageCollection(ee.Join.saveAll('after').apply({
+    primary: NPP,
+    secondary: NPP,
+    condition: afterFilter
+    }));
+
+    // STEP1 - make Kendall trend test
+    // Determines the sign of the NPP slopes, positive (improving) or negative (degrading)
+    // based on the sum of the e sums of the signs of all 
+    // the NPP pair at time t and t+1
+
+    // Sets function to determine the sums of the NPP pairs
+    var sign = function(i, j) { // i and j are images
+    return ee.Image(j).neq(i) // Zero case
+        .multiply(ee.Image(j).subtract(i).clamp(-1, 1)).int();
+    };
+
+    // Apply kendall test to retrieve positive and negative trends
+    // This results will then need to be overlayed with the significance value p
+    var kendall = ee.ImageCollection(joined.map(function(current) {
+    var afterCollection = ee.ImageCollection.fromImages(current.get('after'));
+    return afterCollection.map(function(image) {
+        return ee.Image(sign(current, image)).unmask(0);
+    });
+    }).flatten()).reduce('sum', 2);
+
+    //STEP2 - determines the variance of Kendall slopes
+    // Function to determnine values that are in a group
+    var groups = NPP.map(function(i) {
+    var matches = NPP.map(function(j) {
+        return i.eq(j); // i and j are images.
+    }).sum();
+    return i.multiply(matches.gt(1));
+    });
+
+    // Function to compute group sizes
+    var group = function(array) {
+    var length = array.arrayLength(0);
+    // Array of indices
+    var indices = ee.Image([1])
+        .arrayRepeat(0, length)
+        .arrayAccum(0, ee.Reducer.sum())
+        .toArray(1);
+    var sorted = array.arraySort();
+    var left = sorted.arraySlice(0, 1);
+    var right = sorted.arraySlice(0, 0, -1);
+    // Make indices of the end of runs.
+    var mask = left.neq(right)
+        .arrayCat(ee.Image(ee.Array([[1]])), 0);
+    var runIndices = indices.arrayMask(mask);
+    // Subtract the indices to get run lengths.
+    var groupSizes = runIndices.arraySlice(0, 1)
+        .subtract(runIndices.arraySlice(0, 0, -1));
+    return groupSizes;
+    };
+
+    var factors = function(image) {
+    return image.expression('b() * (b() - 1) * (b() * 2 + 5)');
+    };
+
+    var groupSizes = group(groups.toArray());
+    var groupFactors = factors(groupSizes);
+    var groupFactorSum = groupFactors.arrayReduce('sum', [0])
+        .arrayGet([0, 0]);
+
+    var count = joined.count();
+    // Make Kedall variance 
+    var kendallVariance = factors(count)
+        .subtract(groupFactorSum)
+        .divide(18)
+        .float();
+
+    // STEP 3 - Computes a standard normal Kendall statistics
+    // Subset the cases of zero, positive and negative from Kendal statistics
+    var zero = kendall.multiply(kendall.eq(0));
+    var pos = kendall.multiply(kendall.gt(0)).subtract(1);
+    var neg = kendall.multiply(kendall.lt(0)).add(1);
+
+    // Divide the statistics by the standard deviation
+    var z = zero
+        .add(pos.divide(kendallVariance.sqrt()))
+        .add(neg.divide(kendallVariance.sqrt()));
+
+    // Compute the Cumulate distribution functions
+    function eeCdf(z) {
+    return ee.Image(0.5)
+        .multiply(ee.Image(1).add(ee.Image(z).divide(ee.Image(2).sqrt()).erf()));
+    }
+
+    function invCdf(p) {
+    return ee.Image(2).sqrt()
+        .multiply(ee.Image(p).multiply(2).subtract(1).erfInv());
+    }
+
+    // Compute P-values.
+    var p = ee.Image(1).subtract(eeCdf(z.abs()));
+
+    // Pixels where trend is significant have p values below 0.05
+    var sigPixels =p.lte(0.025);
+
+    // Multiplies the significant pixels with the Kendall trends from STEP 1
+    // This makes non-sig pixels 0 (stable) and all the others get the original
+    // value of the Kendal trend, either positive or negative
+    var sigTrend = kendall.multiply(sigPixels);
+
+    // Remaps the significant production trends according to the earth trends logic
+    var trajectoryRemaped = ee.Image(4)
+            .where(sigTrend.gt(0), 2)//improving
+            .where(carbonFracChange.lt(0), 3)//degrading
+            .where(carbonFracChange.eq(0), 0);//stable
+
+    // the masking is to remove whater bodies from being flaged as degrading.
+    trajectoryRemaped = trajectoryRemaped.updateMask(trajectoryRemaped.lt(4));
+
+    // Map.addLayer(trajectoryRemaped.updateMask(trajectoryRemaped.lt(4)),
+    // {min: 0, max: 3, palette: ['ffffbf', '#1a9850', 'fc8d59']},'trajectory');
+
+    return trajectoryRemaped
+}
+
+
 /*
  * Consolidated Regional Data
  */
@@ -243,6 +381,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop);
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
+
+    var productivityTrajectoryImage = productivityTrajectory()
     
     // var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
@@ -256,7 +396,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
-    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage, 
+    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
+        productivityTrajectoryImage,
         outputDataSet, nationalIndicators]
 }
 

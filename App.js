@@ -183,8 +183,8 @@ function loadCountry(country, startYear, targetYear) {
     var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions, countryGeometry)
 
     // Data
-    app.datasets.regionalData = LDNIndicatorData[3];
-    app.datasets.nationalIndicators = LDNIndicatorData[4];
+    app.datasets.regionalData = LDNIndicatorData[4];
+    app.datasets.nationalIndicators = LDNIndicatorData[5];
 
     // Land Cover (Layer 0)
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
@@ -199,10 +199,14 @@ function loadCountry(country, startYear, targetYear) {
     var soilOrganicCarbonChange = LDNIndicatorData[1].clip(countryGeometry);
     mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
 
-    // Regional Outlines (Layer 3)
+    // Productivity Trajectory (Layer 3)
+    var productivityTrajectoryImage = LDNIndicatorData[3].clip(countryGeometry);
+    mapPanel.addLayer(productivityTrajectoryImage, {min: 0, max: 3, palette: ['ffffbf', '#1a9850', 'fc8d59']}, 'Productivity Trajectory', false, 0.75)
+
+    // Regional Outlines (Layer 4)
     mapPanel.addLayer(HelperFunctions.RegionsOverlay(ee.Image().byte(), regions, subRegions), {palette:['808080']}, 'Regions', true, 0.85);
 
-    // Selected Region Outline (Layer 4)
+    // Selected Region Outline (Layer 5)
     mapPanel.addLayer(
         HelperFunctions.highlightRegion(
             app.datasets.regions.filter(
@@ -215,24 +219,24 @@ function loadCountry(country, startYear, targetYear) {
      * Analysis Layers
      */
 
-    // Fire Frequency (Layer 5)
+    // Fire Frequency (Layer 6)
     var fireFrequency = AnalysisLayers.FireFrequencyAnalysis(startYear, targetYear).clip(countryGeometry);
     mapPanel.addLayer(fireFrequency, {min: 0, max: 1, palette: ['#ffeda0', '#de2d26']}, 'Fire Frequency', false, 0.5);
 
-    // Erosion Risk (Layer 6)
+    // Erosion Risk (Layer 7)
     var erosionRisk = AnalysisLayers.ErosionRisk(startYear, targetYear).clip(countryGeometry);
-    mapPanel.addLayer(erosionRisk, {min: 0, max: 15, palette: ['#ccece6', '#e31a1c']}, 'Erosion Risk', false, 0.5);
+    mapPanel.addLayer(erosionRisk, {min: 0, max: 15, palette: ['#ccece6', '#e31a1c']}, 'Erosion Risk', false, 0.75);
 
-    // Drought Risk (Layer 7,8,9)
+    // Drought Risk (Layer 8,9,10)
     var droughtRisk = AnalysisLayers.DroughtRisk();
     var currentDroughtRisk = droughtRisk[0].clip(countryGeometry);
     var longTermDroughtRisk = droughtRisk[1].clip(countryGeometry);
     var longTermDroughtRiskClassified = droughtRisk[2].clip(countryGeometry);
     var droughtRiskPalette = {min: 4,max: -4, palette: ['#35978f', '#8c510a']};
 
-    mapPanel.addLayer(currentDroughtRisk, droughtRiskPalette, 'Current Drought Risk', false, 0.5);
-    mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.5);
-    mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.5);
+    mapPanel.addLayer(currentDroughtRisk, droughtRiskPalette, 'Current Drought Risk', false, 0.9);
+    mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.9);
+    mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
 
     mapPanel.centerObject(countryGeometry);
     mapPanel.onClick(handleMapClick);
@@ -491,7 +495,7 @@ countryPanel.add(togglePixelLayer);
 var toggleFireFreq = ui.Checkbox('Fire Frequecy Layer', false);
 
 toggleFireFreq.onChange(function(checked) {
-    mapPanel.layers().get(5).setShown(checked);
+    mapPanel.layers().get(6).setShown(checked);
 });
 countryPanel.add(toggleFireFreq);
 
