@@ -238,6 +238,18 @@ function loadCountry(country, startYear, targetYear) {
     mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.9);
     mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
 
+    // Wildlife Corridors
+    var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
+    var WDPAParams = {
+    palette: ['2ed033', '5aff05', '67b9ff', '5844ff', '0a7618', '2c05ff'],
+    min: 0.0,
+    max: 1550000.0,
+    opacity: 0.8,
+    };
+    var WDPAimage = ee.Image().float().paint(WDPA, 'REP_AREA');
+    mapPanel.addLayer(WDPAimage, WDPAParams, 'WCMC/WDPA/current/polygons');
+    mapPanel.addLayer(WDPA, null, 'for Inspector', false);
+
     mapPanel.centerObject(countryGeometry);
     mapPanel.onClick(handleMapClick);
 }
