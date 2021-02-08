@@ -247,7 +247,7 @@ function loadCountry(country, startYear, targetYear) {
     opacity: 0.8,
     };
     var WDPAimage = ee.Image().float().paint(WDPA, 'REP_AREA');
-    mapPanel.addLayer(WDPAimage, WDPAParams, 'WCMC/WDPA/current/polygons');
+    mapPanel.addLayer(WDPAimage, WDPAParams, 'WCMC/WDPA/current/polygons',false);
     mapPanel.addLayer(WDPA, null, 'for Inspector', false);
 
     mapPanel.centerObject(countryGeometry);
