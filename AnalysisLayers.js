@@ -79,7 +79,7 @@ exports.ErosionRisk = function(startYear, targetYear) {
 
     // Logic, higher slope higher the risk
     var slopeCoeffMap = ee.Image(0)
-            .where(slope.gt(0).and(slope.lte(5)), 1)//
+            .where(slope.gte(0).and(slope.lte(5)), 1)//
             .where(slope.gt(5).and(slope.lte(10)), 2)// 
             .where(slope.gt(10).and(slope.lte(20)), 3)// 
             .where(slope.gt(20).and(slope.lte(30)), 4)// 
@@ -140,6 +140,7 @@ exports.ErosionRisk = function(startYear, targetYear) {
 
     // Raw sum of index coefficients
     var rawErosionRisk = vegCoef.unmask(0).add(fireCoef.unmask(0)).add(slopeCoef);
+    rawErosionRisk = rawErosionRisk.updateMask(rawErosionRisk.gte(8));
 
     return rawErosionRisk
 
