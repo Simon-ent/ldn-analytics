@@ -195,9 +195,9 @@ function loadCountry(country, startYear, targetYear) {
     var regionalLandCoverChange = LDNIndicatorData[2].clip(countryGeometry);
     mapPanel.addLayer(regionalLandCoverChange,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Regional Degredation', true, 0.9)
 
-    // Land Cover (Layer 2)
+    // Soil Organic Carbon (Layer 2)
     var soilOrganicCarbonChange = LDNIndicatorData[1].clip(countryGeometry);
-    mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 3, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
+    mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
 
     // Productivity Trajectory (Layer 3)
     var productivityTrajectoryImage = LDNIndicatorData[3].clip(countryGeometry);

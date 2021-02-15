@@ -114,9 +114,9 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage, start
     // Remaps the fraction of carbon to improving, degrading or stable
     // following the 10% + or - cutoff in earth trends
     var carbonFracRemaped = ee.Image(4)
-            .where(varSoilCarbon.gte(1.10), 2)//improving
-            .where(varSoilCarbon.gt(0).and(varSoilCarbon.lte(0.90)), 3)//degrading
-            .where(varSoilCarbon.gt(0.90).and(varSoilCarbon.lt(1.10)), 0);//stable
+            .where(varSoilCarbon.gte(1.10), 1)//improving 2
+            .where(varSoilCarbon.gt(0).and(varSoilCarbon.lte(0.90)), -1)//degrading 3
+            .where(varSoilCarbon.gt(0.90).and(varSoilCarbon.lt(1.10)), 0);//stable 0
 
     // Map.addLayer(carbonFracRemaped.updateMask(carbonFracRemaped.lt(4)),
     // {min: 0, max: 3, palette: ['ffffbf', '1a9850', 'fc8d59']},'soil carbon');
