@@ -69,7 +69,7 @@ var LandCoverChangeImage = function(transitions) {
 *   Soil Organic Carbon
 */
 
-var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage) {
+var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage, startYear, targetYear) {
     // Remapping land transitions to soil carbon loss/gain factors
     // following the same logic as in earth trends
     // http://trends.earth/docs/en/background/understanding_indicators15.html
@@ -92,23 +92,52 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage) {
         1,1,1,1,1,1,1]              //Water
     );
 
-    // Soil carbon lost/gain "after 20 years of land cover change"
-    var carbonChange = SoilTopImage.multiply(remapped_soilTransitions);
-    // Addapt the change in carbon to the 9 years of our analysis
-    // so that the change should be only 45% of the potential 
-    var carbonChangeAdjusted = carbonChange.multiply(0.45);                 /////// Only correct for 10 year intervals
+    // Determine Soil carbon "after 20 years of land cover change" by applying the factors as in earthtrends
+    var Carbon20 =  SoilTopImage.multiply(remapped_soilTransitions);
 
-    // Add the carbon lost/gain (change) to the original soil carbon
-    var carbonFinal = SoilTopImage.add(carbonChangeAdjusted);
-    // Determine the % change to the original carbon stock
-    var carbonFracChange = carbonFinal.divide(SoilTopImage).subtract(1);
+    // Determine the change between carbon 20 years from now and "present"
+    var CarbonDiff = Carbon20.subtract(SoilTopImage);
+
+    // Determine yearly change in soil carbon - 20 years in total
+    var CarbonYearlyChange = CarbonDiff.divide(20);
+
+    // Set the number of years for the analysis
+    var Nyears = Number(targetYear) - Number(startYear);
+
+    // Determine carbon at Nyears
+    // Basically it multiplies the yearly change by a number of years and adds it to the original soil carbon. 
+    var CarbonYearX = CarbonYearlyChange.multiply(Nyears).add(SoilTopImage);
+
+    // Determine variation in % to reference
+    var varSoilCarbon = CarbonYearX.divide(SoilTopImage);
 
     // Remaps the fraction of carbon to improving, degrading or stable
-    // following the 10% cutoff in earth trends
+    // following the 10% + or - cutoff in earth trends
     var carbonFracRemaped = ee.Image(4)
-            .where(carbonFracChange.gt(0.1).and(carbonFracChange.lte(1)), 2)//improving
-            .where(carbonFracChange.gt(-1).and(carbonFracChange.lte(-0.1)), 3)//degrading
-            .where(carbonFracChange.gt(-0.1).and(carbonFracChange.lte(0.1)), 0);//stable
+            .where(varSoilCarbon.gte(1.10), 2)//improving
+            .where(varSoilCarbon.gt(0).and(varSoilCarbon.lte(0.90)), 3)//degrading
+            .where(varSoilCarbon.gt(0.90).and(varSoilCarbon.lt(1.10)), 0);//stable
+
+    // Map.addLayer(carbonFracRemaped.updateMask(carbonFracRemaped.lt(4)),
+    // {min: 0, max: 3, palette: ['ffffbf', '1a9850', 'fc8d59']},'soil carbon');
+
+    // // Soil carbon lost/gain "after 20 years of land cover change"
+    // var carbonChange = SoilTopImage.multiply(remapped_soilTransitions);
+    // // Addapt the change in carbon to the 9 years of our analysis
+    // // so that the change should be only 45% of the potential 
+    // var carbonChangeAdjusted = carbonChange.multiply(0.45);                 /////// Only correct for 10 year intervals
+
+    // // Add the carbon lost/gain (change) to the original soil carbon
+    // var carbonFinal = SoilTopImage.add(carbonChangeAdjusted);
+    // // Determine the % change to the original carbon stock
+    // var carbonFracChange = carbonFinal.divide(SoilTopImage).subtract(1);
+
+    // // Remaps the fraction of carbon to improving, degrading or stable
+    // // following the 10% cutoff in earth trends
+    // var carbonFracRemaped = ee.Image(4)
+    //         .where(carbonFracChange.gt(0.1).and(carbonFracChange.lte(1)), 2)//improving
+    //         .where(carbonFracChange.gt(-1).and(carbonFracChange.lte(-0.1)), 3)//degrading
+    //         .where(carbonFracChange.gt(-0.1).and(carbonFracChange.lte(0.1)), 0);//stable
 
     return carbonFracRemaped.updateMask(carbonFracRemaped.lt(4))
 }
@@ -379,7 +408,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransitions = LandCoverTransitions(landCoverStartImage, landCoverEndImage);
     var landCoverChange = LandCoverChangeImage(landCoverTransitions);
-    var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop);
+    var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
 
