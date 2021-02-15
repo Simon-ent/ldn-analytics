@@ -236,18 +236,18 @@ function loadCountry(country, startYear, targetYear) {
 
     mapPanel.addLayer(currentDroughtRisk, droughtRiskPalette, 'Current Drought Risk', false, 0.9);
     mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.9);
-    mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
+    // mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
 
-    // Wildlife Corridors (Layer 11)
-    var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
-    var WDPAParams = {
-    palette: ['2ed033', '5aff05', '67b9ff', '5844ff', '0a7618', '2c05ff'],
-    min: 0.0,
-    max: 1550000.0,
-    opacity: 0.8,
-    };
-    var WDPAimage = ee.Image().float().paint(WDPA, 'REP_AREA');
-    mapPanel.addLayer(WDPAimage, WDPAParams, 'WCMC/WDPA/current/polygons',false);
+    // // Wildlife Corridors (Layer 11)
+    // var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
+    // var WDPAParams = {
+    // palette: ['2ed033', '5aff05', '67b9ff', '5844ff', '0a7618', '2c05ff'],
+    // min: 0.0,
+    // max: 1550000.0,
+    // opacity: 0.8,
+    // };
+    // var WDPAimage = ee.Image().float().paint(WDPA, 'REP_AREA');
+    // mapPanel.addLayer(WDPAimage, WDPAParams, 'WCMC/WDPA/current/polygons',false);
     // mapPanel.addLayer(WDPA, null, 'for Inspector', false);
 
     mapPanel.centerObject(countryGeometry);
@@ -554,13 +554,13 @@ toggleLongTermDroughtRisk.onChange(function(checked) {
 });
 countryPanel.add(toggleLongTermDroughtRisk);
 
-// Toggle Long Term Drought Risk 
-var toggleLongTermClassDroughtRisk = ui.Checkbox('Long Term Drought Risk Classified Layer', false);
+// // Toggle Long Term Drought Risk 
+// var toggleLongTermClassDroughtRisk = ui.Checkbox('Long Term Drought Risk Classified Layer', false);
 
-toggleLongTermClassDroughtRisk.onChange(function(checked) {
-    mapPanel.layers().get(10).setShown(checked);
-});
-countryPanel.add(toggleLongTermClassDroughtRisk);
+// toggleLongTermClassDroughtRisk.onChange(function(checked) {
+//     mapPanel.layers().get(10).setShown(checked);
+// });
+// countryPanel.add(toggleLongTermClassDroughtRisk);
 
 // Settings
 var settingsPanel = ui.Panel({
