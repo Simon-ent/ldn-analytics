@@ -294,6 +294,7 @@ var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
 splitPanel.style().set({shown: false})
 var landingPage = ui.Panel({style: {stretch: 'horizontal'}});
+ui.root.add(landingPage);
 
 /**
  * Intro Panel
