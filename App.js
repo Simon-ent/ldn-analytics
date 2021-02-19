@@ -300,7 +300,8 @@ ui.root.add(landingPage);
  * Intro Panel
  */
 
-var introPanel = ui.Panel({style: {stretch: 'horizontal'}});
+var introPanel = ui.Panel({style: {position: 'top-center', stretch: 'vertical'}});
+introPanel.setLayout(ui.Panel.Layout.absolute());
 landingPage.add(introPanel);
 
 introPanel.add(ui.Label({
@@ -364,7 +365,7 @@ var startButton = ui.Button({
         print(app)
         loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
         landingPage.style().set('shown', false)
-        splitPanel.style().set('shown', true);
+        splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
         // introPanel.style().set('shown', false);
         introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
         // countryPanel.style().set('shown', true);
