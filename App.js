@@ -388,7 +388,7 @@ countryPanel.add(ui.Label({
 }));
 
 // Indicators Explanation Instructions
-var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
 countryPanel.add(countryIndicatorInstructions);
 
 countryIndicatorInstructions.add(ui.Label({
@@ -469,19 +469,18 @@ regionalDataPanel.add(regionalEditPanel);
 
 // Scenario Panel
 // For the Scenario Edit UI please see the scenario section
+countryPanel.add(ui.Label({
+    value: 'Scenarios',
+    style: Styles.HEADER_STYLE_2,
+}));
 
 var scenarioPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
 });
 countryPanel.add(scenarioPanel);
 
-countryPanel.add(ui.Label({
-    value: 'Scenarios',
-    style: Styles.HEADER_STYLE_2,
-}));
-
 // Scenarios Explanation Instructions
-var addSceanrioInstructions = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+var addSceanrioInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
 countryPanel.add(addSceanrioInstructions);
 
 addSceanrioInstructions.add(ui.Label({
