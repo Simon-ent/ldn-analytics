@@ -381,6 +381,45 @@ countryStartInstructions.add(ui.Label({
     style: Styles.INTRO_STYLE
 }))
 
+// Indicators
+countryPanel.add(ui.Label({
+    value: 'Key Indicators',
+    style: Styles.HEADER_STYLE_2,
+}));
+
+// Indicators Explanation Instructions
+var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+countryPanel.add(countryIndicatorInstructions);
+
+countryIndicatorInstructions.add(ui.Label({
+    value: 'Key performance indicators aggregated at the country level.',
+    style: Styles.INTRO_STYLE
+}))
+  
+var nationalIndicatorsChartPanel = ui.Panel({
+    layout: ui.Panel.Layout.flow('vertical'),
+});
+countryPanel.add(nationalIndicatorsChartPanel)
+
+nationalIndicatorsChartPanel.add(ui.Label({
+    value: 'Please click on a region on the map to begin analysis.',
+    style: Styles.INTRO_STYLE
+}));
+  
+function createIndicatorsChart() {
+    var scenarioList = ee.List(app.variables.transitionsList);
+    var nationalIndicators = app.datasets.nationalIndicators;
+    var nationalIndicatorsChartData = scenarioList.map(function(item) {
+        return ee.Dictionary(nationalIndicators.get(item)).values()
+    })
+    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
+    .setSeriesNames(scenarioList)
+    .setChartType('Table')
+    
+    countryIndicatorInstructions.style({shown: true})
+    nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
+}
+
 // Regional Data
 var regionalDataPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
@@ -428,36 +467,37 @@ var regionalEditPanel = ui.Panel({
 });
 regionalDataPanel.add(regionalEditPanel);
 
+// Scenario Panel
 // For the Scenario Edit UI please see the scenario section
 
-// Indicators
-countryPanel.add(ui.Label({
-  value: 'Key Indicators',
-  style: Styles.HEADER_STYLE_2,
-}));
-
-var nationalIndicatorsChartPanel = ui.Panel({
+var scenarioPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
 });
-countryPanel.add(nationalIndicatorsChartPanel)
+countryPanel.add(scenarioPanel);
 
-nationalIndicatorsChartPanel.add(ui.Label({
-    value: 'Please click on a region on the map to begin analysis.',
-    style: Styles.INTRO_STYLE
+countryPanel.add(ui.Label({
+    value: 'Scenarios',
+    style: Styles.HEADER_STYLE_2,
 }));
 
-function createIndicatorsChart() {
-    var scenarioList = ee.List(app.variables.transitionsList);
-    var nationalIndicators = app.datasets.nationalIndicators;
-    var nationalIndicatorsChartData = scenarioList.map(function(item) {
-        return ee.Dictionary(nationalIndicators.get(item)).values()
-    })
-    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
-    .setSeriesNames(scenarioList)
-    .setChartType('Table')
-    
-    nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
-}
+// Scenarios Explanation Instructions
+var addSceanrioInstructions = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+countryPanel.add(addSceanrioInstructions);
+
+addSceanrioInstructions.add(ui.Label({
+    value: 'Add a scenario based off the Start and Target Year selected, to model different changes required to acheive LDN.',
+    style: Styles.INTRO_STYLE
+}))
+
+var createScenarioButton = ui.Button({
+    label: 'Create Scenario',
+    onClick: function () {
+        countryPanel.style().set('shown', false)
+        createScenarioPanel.style().set('shown', true)
+        updateScenarioList()
+    }
+})
+scenarioPanel.add(createScenarioButton)
 
 // var SDGIndicatorWidget = ui.Panel([
 //     Label('SDG 15.3.1 (Degraded Land / Total Area): '),
@@ -489,70 +529,70 @@ function createIndicatorsChart() {
 //   });
 // countryPanel.add(indicatorsDegredationStatePanel)
 
-// Analysis Layers
-countryPanel.add(ui.Label({
-    value: 'Analysis Layers',
-    style: Styles.HEADER_STYLE_2,
-}));
+// // Analysis Layers
+// countryPanel.add(ui.Label({
+//     value: 'Analysis Layers',
+//     style: Styles.HEADER_STYLE_2,
+// }));
 
-// Toggle between the Land Cover Mode map and the Pixel Layer. Default to Land Cover Mode
-var toggleLandCoverPixelLayer = ui.Checkbox('Land Cover Pixel Layer', false);
+// // Toggle between the Land Cover Mode map and the Pixel Layer. Default to Land Cover Mode
+// var toggleLandCoverPixelLayer = ui.Checkbox('Land Cover Pixel Layer', false);
 
-toggleLandCoverPixelLayer.onChange(function(checked) {
-  mapPanel.layers().get(0).setShown(checked);
-  mapPanel.layers().get(1).setShown(!checked);
-});
-countryPanel.add(toggleLandCoverPixelLayer);
+// toggleLandCoverPixelLayer.onChange(function(checked) {
+//   mapPanel.layers().get(0).setShown(checked);
+//   mapPanel.layers().get(1).setShown(!checked);
+// });
+// countryPanel.add(toggleLandCoverPixelLayer);
 
-// Toggle between the SOC map and the Pixel Layer. Default to Regional Level
-var toggleSOCPixelLayer = ui.Checkbox('Soil Organic Carbon Pixel Layer', false);
+// // Toggle between the SOC map and the Pixel Layer. Default to Regional Level
+// var toggleSOCPixelLayer = ui.Checkbox('Soil Organic Carbon Pixel Layer', false);
 
-toggleSOCPixelLayer.onChange(function(checked) {
-  mapPanel.layers().get(2).setShown(checked);
-  mapPanel.layers().get(1).setShown(!checked);
-});
-countryPanel.add(toggleSOCPixelLayer);
+// toggleSOCPixelLayer.onChange(function(checked) {
+//   mapPanel.layers().get(2).setShown(checked);
+//   mapPanel.layers().get(1).setShown(!checked);
+// });
+// countryPanel.add(toggleSOCPixelLayer);
 
-// Toggle between the NPP map and the Pixel Layer. Default to Regional Level
-var toggleNPPPixelLayer = ui.Checkbox('Productivity Pixel Layer', false);
+// // Toggle between the NPP map and the Pixel Layer. Default to Regional Level
+// var toggleNPPPixelLayer = ui.Checkbox('Productivity Pixel Layer', false);
 
-toggleNPPPixelLayer.onChange(function(checked) {
-  mapPanel.layers().get(3).setShown(checked);
-  mapPanel.layers().get(1).setShown(!checked);
-});
-countryPanel.add(toggleNPPPixelLayer);
+// toggleNPPPixelLayer.onChange(function(checked) {
+//   mapPanel.layers().get(3).setShown(checked);
+//   mapPanel.layers().get(1).setShown(!checked);
+// });
+// countryPanel.add(toggleNPPPixelLayer);
 
-// Toggle Fire Frequency
-var toggleFireFreq = ui.Checkbox('Fire Frequecy Layer', false);
+// // Toggle Fire Frequency
+// var toggleFireFreq = ui.Checkbox('Fire Frequecy Layer', false);
 
-toggleFireFreq.onChange(function(checked) {
-    mapPanel.layers().get(6).setShown(checked);
-});
-countryPanel.add(toggleFireFreq);
+// toggleFireFreq.onChange(function(checked) {
+//     mapPanel.layers().get(6).setShown(checked);
+// });
+// countryPanel.add(toggleFireFreq);
 
-// Toggle Erosion Risk 
-var toggleErosionRisk = ui.Checkbox('Erosion Risk Layer', false);
+// // Toggle Erosion Risk 
+// var toggleErosionRisk = ui.Checkbox('Erosion Risk Layer', false);
 
-toggleErosionRisk.onChange(function(checked) {
-    mapPanel.layers().get(7).setShown(checked);
-});
-countryPanel.add(toggleErosionRisk);
+// toggleErosionRisk.onChange(function(checked) {
+//     mapPanel.layers().get(7).setShown(checked);
+// });
+// countryPanel.add(toggleErosionRisk);
 
-// Toggle Current Drought Risk 
-var toggleCurrentDroughtRisk = ui.Checkbox('Current Drought Risk Layer', false);
+// // Toggle Current Drought Risk 
+// var toggleCurrentDroughtRisk = ui.Checkbox('Current Drought Risk Layer', false);
 
-toggleCurrentDroughtRisk.onChange(function(checked) {
-    mapPanel.layers().get(8).setShown(checked);
-});
-countryPanel.add(toggleCurrentDroughtRisk);
+// toggleCurrentDroughtRisk.onChange(function(checked) {
+//     mapPanel.layers().get(8).setShown(checked);
+// });
+// countryPanel.add(toggleCurrentDroughtRisk);
 
-// Toggle Long Term Drought Risk 
-var toggleLongTermDroughtRisk = ui.Checkbox('Long Term Drought Risk Layer', false);
+// // Toggle Long Term Drought Risk 
+// var toggleLongTermDroughtRisk = ui.Checkbox('Long Term Drought Risk Layer', false);
 
-toggleLongTermDroughtRisk.onChange(function(checked) {
-    mapPanel.layers().get(9).setShown(checked);
-});
-countryPanel.add(toggleLongTermDroughtRisk);
+// toggleLongTermDroughtRisk.onChange(function(checked) {
+//     mapPanel.layers().get(9).setShown(checked);
+// });
+// countryPanel.add(toggleLongTermDroughtRisk);
 
 // // Toggle Long Term Drought Risk 
 // var toggleLongTermClassDroughtRisk = ui.Checkbox('Long Term Drought Risk Classified Layer', false);
@@ -600,15 +640,6 @@ settingsPanelContents.add(ui.Label({
 // });
 // settingsPanel.add(toggleLegendDisplay);
 
-var createScenarioButton = ui.Button({
-    label: 'Create Scenario',
-    onClick: function () {
-        countryPanel.style().set('shown', false)
-        createScenarioPanel.style().set('shown', true)
-        updateScenarioList()
-    }
-})
-settingsPanelContents.add(createScenarioButton)
 
 var changeCountryButton = ui.Button({
     label: 'Change Country',
