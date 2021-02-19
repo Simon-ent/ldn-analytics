@@ -265,6 +265,8 @@ function loadCountry(country, startYear, targetYear) {
 // }
 
 function updateUI() {
+    introPanel2.style().set('shown', false);
+    countryPanel.style().set('shown', true);
     countryStartInstructions.style().set('shown', false); // Hide instructions
     var region = app.variables.region;
     var regionNameText = region.first().get('ADM2_NAME').getInfo();
@@ -355,10 +357,29 @@ var startButton = ui.Button({
         print(app)
         loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
         introPanel.style().set('shown', false);
-        countryPanel.style().set('shown', true)
+        introPanel2.style().set('shown', true);
+        // countryPanel.style().set('shown', true);
     }
 });
 introPanel.add(startButton);
+
+/**
+ * Intro Panel 2 to select region
+ */
+
+var introPanel2 = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+uiPanel.add(introPanel2);
+
+introPanel2.add(ui.Label({
+    value: app.setup.country + ' LDN Analysis',
+    style: Styles.HEADER_STYLE_1
+}))
+
+introPanel2.add(ui.Label({
+    value: 'Please click on a region on the map to begin analysis.',
+    style: Styles.INTRO_STYLE
+}))
+
 
 /**
  * Country Panel
@@ -416,7 +437,7 @@ function createIndicatorsChart() {
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
-    countryIndicatorInstructions.style({shown: true})
+    countryIndicatorInstructions.style().set({shown: true})
     nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
 }
 
@@ -481,7 +502,7 @@ countryPanel.add(scenarioPanel);
 
 // Scenarios Explanation Instructions
 var addSceanrioInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
-countryPanel.add(addSceanrioInstructions);
+scenarioPanel.add(addSceanrioInstructions);
 
 addSceanrioInstructions.add(ui.Label({
     value: 'Add a scenario based off the Start and Target Year selected, to model different changes required to acheive LDN.',
