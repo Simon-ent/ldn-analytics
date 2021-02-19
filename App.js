@@ -163,6 +163,10 @@ function regionalChartsBuilder() {
 
 function loadCountry(country, startYear, targetYear) {
     mapPanel.clear()
+    introPanel2.widgets().set(0, ui.Label({
+        value: app.setup.country + ' LDN Analysis',
+        style: Styles.HEADER_STYLE_1
+    }))
     countryPanel.widgets().set(0, ui.Label({
         value: app.setup.country + ' LDN Analysis',
         style: Styles.HEADER_STYLE_1
@@ -288,13 +292,15 @@ var mapPanel = ui.Map()
 var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
+splitPanel.style().set({shown: false})
+var landingPage = ui.Panel({style: {stretch: 'horizontal'}});
 
 /**
  * Intro Panel
  */
 
 var introPanel = ui.Panel({style: {stretch: 'horizontal'}});
-uiPanel.add(introPanel);
+landingPage.add(introPanel);
 
 introPanel.add(ui.Label({
   value: 'LDN Analysis Tool',
@@ -356,8 +362,10 @@ var startButton = ui.Button({
         print('Started')
         print(app)
         loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
-        introPanel.style().set('shown', false);
-        introPanel2.style().set('shown', true);
+        landingPage.style().set('shown', false)
+        splitPanel.style().set('shown', true);
+        // introPanel.style().set('shown', false);
+        introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
         // countryPanel.style().set('shown', true);
     }
 });
@@ -664,8 +672,10 @@ settingsPanelContents.add(ui.Label({
 var changeCountryButton = ui.Button({
     label: 'Change Country',
     onClick: function () {
-        countryPanel.style().set('shown', false)
-        introPanel.style().set('shown', true)
+        landingPage.style().set('shown', true)
+        splitPanel.style().set('shown', false);
+        // countryPanel.style().set('shown', false)
+        // introPanel.style().set('shown', true)
     }
 })
 settingsPanelContents.add(changeCountryButton)
