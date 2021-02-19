@@ -288,20 +288,20 @@ function updateUI() {
  */
 
 ui.root.clear()
+var landingPage = ui.Panel();
+ui.root.add(landingPage);
 var mapPanel = ui.Map()
 var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
 splitPanel.style().set({shown: false})
-var landingPage = ui.Panel({style: {stretch: 'horizontal'}});
-ui.root.add(landingPage);
+
 
 /**
  * Intro Panel
  */
 
-var introPanel = ui.Panel({style: {position: 'top-center', stretch: 'vertical'}});
-introPanel.setLayout(ui.Panel.Layout.absolute());
+var introPanel = ui.Panel();
 landingPage.add(introPanel);
 
 introPanel.add(ui.Label({
