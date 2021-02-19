@@ -288,26 +288,35 @@ function updateUI() {
  */
 
 ui.root.clear()
-var landingPage = ui.Panel();
-ui.root.add(landingPage);
+var landingPage = ui.Panel({
+  style: {
+    margin: '20% auto 0 auto'
+  }
+})
+ui.root.add(landingPage)
 var mapPanel = ui.Map()
 var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
 splitPanel.style().set({shown: false})
 
-
 /**
  * Intro Panel
  */
-
-var introPanel = ui.Panel();
-landingPage.add(introPanel);
+var introPanel = ui.Panel()
+landingPage.add(introPanel)
 
 introPanel.add(ui.Label({
-  value: 'LDN Analysis Tool',
-  style: Styles.HEADER_STYLE_1,
-}));
+  value: 'Land Degredation Neutrality Analysis Tool',
+  style: {
+    fontSize: '24px',
+    margin: '0 auto',
+  }
+}))
+
+introPanel.add(ui.Label({
+  value: 'Welcome to the LDN Analysis tool. Use it to investigate land changes and plann for an LDN future.'
+}))
 
 introPanel.add(ui.Label({
     value: 'Please select a Country, Start and Target Year, or upload your saved settings file to start where you left off.',
