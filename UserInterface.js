@@ -6,7 +6,13 @@ exports.generateLandingPage = function(showBackButton) {
                   '2019'];
     
     ui.root.clear()
-    ui.root.setLayout(ui.Panel.Layout.flow('vertical'))
+    var landingPage = ui.Panel({
+        layout: ui.Panel.Layout.flow('vertical'),
+        style: {
+          stretch: 'horizontal'
+        }
+    })
+    ui.root.add(landingPage)
     
     var altusImpactLogo = ui.Chart(
     [
@@ -18,17 +24,13 @@ exports.generateLandingPage = function(showBackButton) {
       margin: '0 0 0 auto'
     })
     
-    ui.root.add(altusImpactLogo)
-  
-    var landingPage = ui.Panel({
+    landingPage.add(altusImpactLogo)
+    
+    var introPanel = ui.Panel({
       style: {
         margin: '5% auto 0 auto',
       }
     })
-    ui.root.add(landingPage)
-    
-    var introPanel = ui.Panel()
-    
     landingPage.add(introPanel)
   
     introPanel.add(ui.Label({
@@ -52,7 +54,7 @@ exports.generateLandingPage = function(showBackButton) {
       placeholder: 'Choose a country...',
       onChange: function(country) {
         print(country);
-        // app.setup.country = country;
+        app.setup.country = country;
       }
     })
     
@@ -88,13 +90,13 @@ exports.generateLandingPage = function(showBackButton) {
         label: 'Start',
         onClick: function () {
             print('Started')
-            // print(app)
-            // loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
-            // landingPage.style().set('shown', false)
-            // splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
-            // // introPanel.style().set('shown', false);
-            // introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
-            // // countryPanel.style().set('shown', true);
+            print(app)
+            loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
+            landingPage.style().set('shown', false)
+            splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
+            // introPanel.style().set('shown', false);
+            introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
+            // countryPanel.style().set('shown', true);
         }
     });
     
