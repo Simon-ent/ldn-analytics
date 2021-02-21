@@ -284,30 +284,20 @@ function updateUI() {
     // updateScenarioEditPanel(regionNameText)
 }
 
-/** 
+/**
  * Base UI
  */
-
 ui.root.clear()
-// var landingPage = ui.Panel({
-//   style: {
-//     margin: '20% auto 0 auto'
-//   }
-// })
-// ui.root.add(landingPage)
 var mapPanel = ui.Map()
 var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
-ui.root.add(splitPanel);
-splitPanel.style().set({shown: false})
 
 function landingPageStart() {
     loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
-    landingPage.style().set('shown', false)
-    splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
+    ui.root.widgets().set(0, splitPanel);
 }
 
-var landingPage = UserInterface.generateLandingPage(app, true, landingPageStart)
+var landingPage = UserInterface.generateLandingPage(app, false, landingPageStart)
 ui.root.add(landingPage)
 
 /**
@@ -703,10 +693,7 @@ settingsPanelContents.add(ui.Label({
 var changeCountryButton = ui.Button({
     label: 'Change Country',
     onClick: function () {
-        landingPage.style().set('shown', true)
-        splitPanel.style().set('shown', false);
-        // countryPanel.style().set('shown', false)
-        // introPanel.style().set('shown', true)
+        ui.root.widgets().set(0, UserInterface.generateLandingPage(app, false, landingPageStart))
     }
 })
 settingsPanelContents.add(changeCountryButton)
