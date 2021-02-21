@@ -306,94 +306,94 @@ splitPanel.style().set({shown: false})
 /**
  * Intro Panel
  */
-var introPanel = ui.Panel()
-landingPage.add(introPanel)
+// var introPanel = ui.Panel()
+// landingPage.add(introPanel)
 
-introPanel.add(ui.Label({
-  value: 'Land Degredation Neutrality Analysis Tool',
-  style: {
-    fontSize: '24px',
-    margin: '0 auto',
-  }
-}))
+// introPanel.add(ui.Label({
+//   value: 'Land Degredation Neutrality Analysis Tool',
+//   style: {
+//     fontSize: '24px',
+//     margin: '0 auto',
+//   }
+// }))
 
-introPanel.add(ui.Label({
-  value: 'Welcome to the LDN Analysis tool. Use it to investigate land changes and plann for an LDN future.',
-  style: {
-    fontSize: '14px',
-    margin: '0 auto',
-  }
-}))
+// introPanel.add(ui.Label({
+//   value: 'Welcome to the LDN Analysis tool. Use it to investigate land changes and plann for an LDN future.',
+//   style: {
+//     fontSize: '14px',
+//     margin: '0 auto',
+//   }
+// }))
 
-introPanel.add(ui.Label({
-    value: 'Please select a Country, Start and Target Year, or upload your saved settings file to start where you left off.',
-    style: Styles.INTRO_STYLE,
-}));
+// introPanel.add(ui.Label({
+//     value: 'Please select a Country, Start and Target Year, or upload your saved settings file to start where you left off.',
+//     style: Styles.INTRO_STYLE,
+// }));
 
-// var parameterSelectionPanel = ui.Panel({stretch: 'horizontal'})
-// introPanel.add(parameterSelectionPanel)
+// // var parameterSelectionPanel = ui.Panel({stretch: 'horizontal'})
+// // introPanel.add(parameterSelectionPanel)
 
-// Need additional panels to set each sub element vertically
+// // Need additional panels to set each sub element vertically
 
 
-// Country
-var countrySelect = ui.Select({
-  placeholder: 'Choose a country...',
-  onChange: function(country) {
-    app.setup.country = country;
-  }
-})
+// // Country
+// var countrySelect = ui.Select({
+//   placeholder: 'Choose a country...',
+//   onChange: function(country) {
+//     app.setup.country = country;
+//   }
+// })
 
-var computedCountryList = ee.List(countries.reduceColumns(ee.Reducer.toList(), ['ADM0_NAME'])
-    .get('list'))
-    .distinct();
+// var computedCountryList = ee.List(countries.reduceColumns(ee.Reducer.toList(), ['ADM0_NAME'])
+//     .get('list'))
+//     .distinct();
 
-computedCountryList.evaluate(function(countryList) {
-  countrySelect.items().reset(countryList);
-  countrySelect.setValue('Ghana')
-});
+// computedCountryList.evaluate(function(countryList) {
+//   countrySelect.items().reset(countryList);
+//   countrySelect.setValue('Ghana')
+// });
 
-introPanel.add(Label('Country'));
-introPanel.add(countrySelect);
+// introPanel.add(Label('Country'));
+// introPanel.add(countrySelect);
 
-// Start Year
-var startYearSelect = ui.Select({
-    items: yearList,
-    value: '2009',
-    onChange: function(year) {
-        app.setup.startYear = year;
-    }
-});
-introPanel.add(Label('Start Year'));
-introPanel.add(startYearSelect);
+// // Start Year
+// var startYearSelect = ui.Select({
+//     items: yearList,
+//     value: '2009',
+//     onChange: function(year) {
+//         app.setup.startYear = year;
+//     }
+// });
+// introPanel.add(Label('Start Year'));
+// introPanel.add(startYearSelect);
 
-// Target Year
-var targetYearSelect = ui.Select({
-    items: yearList,
-    value: '2019',
-    onChange: function(year) {
-        app.setup.targetYear = year;
-    }
-});
+// // Target Year
+// var targetYearSelect = ui.Select({
+//     items: yearList,
+//     value: '2019',
+//     onChange: function(year) {
+//         app.setup.targetYear = year;
+//     }
+// });
 
-introPanel.add(Label('Target Year'));
-introPanel.add(targetYearSelect);
+// introPanel.add(Label('Target Year'));
+// introPanel.add(targetYearSelect);
 
-// Start
-var startButton = ui.Button({
-    label: 'Start',
-    onClick: function () {
-        print('Started')
-        print(app)
-        loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
-        landingPage.style().set('shown', false)
-        splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
-        // introPanel.style().set('shown', false);
-        introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
-        // countryPanel.style().set('shown', true);
-    }
-});
-introPanel.add(startButton);
+// // Start
+// var startButton = ui.Button({
+//     label: 'Start',
+//     onClick: function () {
+//         print('Started')
+//         print(app)
+//         loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
+//         landingPage.style().set('shown', false)
+//         splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
+//         // introPanel.style().set('shown', false);
+//         introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
+//         // countryPanel.style().set('shown', true);
+//     }
+// });
+// introPanel.add(startButton);
 
 /**
  * Intro Panel 2 to select region
