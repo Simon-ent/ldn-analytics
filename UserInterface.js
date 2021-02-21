@@ -1,4 +1,4 @@
-exports.generateLandingPage = function(app, showBackButton, loadCountry, splitPanel) {
+exports.generateLandingPage = function(app, showBackButton, landingPageStart) {
     var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
     var yearList = ['2001', '2002', '2003', '2004', '2005', '2006',
                   '2007', '2008', '2009', '2010', '2011', '2012',
@@ -91,9 +91,10 @@ exports.generateLandingPage = function(app, showBackButton, loadCountry, splitPa
         onClick: function () {
             print('Started')
             print(app)
-            loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
-            landingPage.style().set('shown', false)
-            splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
+            landingPageStart()
+            // loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
+            // landingPage.style().set('shown', false)
+            // splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
             // introPanel.style().set('shown', false);
             // introPanel2.style().set('shown', true);     // Clean up by setting this to starting true
             // countryPanel.style().set('shown', true);

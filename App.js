@@ -301,7 +301,13 @@ var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
 splitPanel.style().set({shown: false})
 
-var landingPage = UserInterface.generateLandingPage(app, true, loadCountry, splitPanel)
+function landingPageStart() {
+    loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
+    landingPage.style().set('shown', false)
+    splitPanel.style().set({shown: true, width: '500px', padding: '10px'});
+}
+
+var landingPage = UserInterface.generateLandingPage(app, true, landingPageStart)
 ui.root.add(landingPage)
 
 /**
