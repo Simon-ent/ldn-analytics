@@ -288,7 +288,7 @@ function updateUI() {
  * Base UI
  */
 
-UserInterface.generateLandingPage(true)
+var landingPage = UserInterface.generateLandingPage(app, true)
 
 // ui.root.clear()
 // var landingPage = ui.Panel({

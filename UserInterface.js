@@ -1,4 +1,4 @@
-exports.generateLandingPage = function(showBackButton) {
+exports.generateLandingPage = function(app, showBackButton) {
     var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
     var yearList = ['2001', '2002', '2003', '2004', '2005', '2006',
                   '2007', '2008', '2009', '2010', '2011', '2012',
