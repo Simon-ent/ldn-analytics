@@ -171,6 +171,7 @@ exports.generateLandingPage = function(app, showBackButton, loadCountry, splitPa
       widgets: [startButton, backButton],
       style: {margin: '15px 0 15px auto'}
     }))
+    return landingPage
   }
   
 //   generateLandingPage(true)
