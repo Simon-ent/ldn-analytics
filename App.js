@@ -297,7 +297,11 @@ function landingPageStart() {
     ui.root.widgets().set(0, splitPanel);
 }
 
-var landingPage = UserInterface.generateLandingPage(app, false, landingPageStart)
+function returnToMapView() {
+    ui.root.widgets().set(0, splitPanel);
+}
+
+var landingPage = UserInterface.generateLandingPage(app, false, landingPageStart, returnToMapView)
 ui.root.add(landingPage)
 
 /**
@@ -693,7 +697,7 @@ settingsPanelContents.add(ui.Label({
 var changeCountryButton = ui.Button({
     label: 'Change Country',
     onClick: function () {
-        ui.root.widgets().set(0, UserInterface.generateLandingPage(app, false, landingPageStart))
+        ui.root.widgets().set(0, UserInterface.generateLandingPage(app, true, landingPageStart, returnToMapView))
     }
 })
 settingsPanelContents.add(changeCountryButton)
