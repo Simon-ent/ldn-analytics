@@ -5,14 +5,14 @@ exports.generateLandingPage = function(app, showBackButton, loadCountry, splitPa
                   '2013', '2014', '2015', '2016', '2017', '2018',
                   '2019'];
     
-    ui.root.clear()
+    // ui.root.clear()
     var landingPage = ui.Panel({
         layout: ui.Panel.Layout.flow('vertical'),
         style: {
           stretch: 'horizontal'
         }
     })
-    ui.root.add(landingPage)
+    // ui.root.add(landingPage)
     
     var altusImpactLogo = ui.Chart(
     [

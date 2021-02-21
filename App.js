@@ -288,9 +288,7 @@ function updateUI() {
  * Base UI
  */
 
-var landingPage = UserInterface.generateLandingPage(app, true, loadCountry, splitPanel)
-
-// ui.root.clear()
+ui.root.clear()
 // var landingPage = ui.Panel({
 //   style: {
 //     margin: '20% auto 0 auto'
@@ -302,6 +300,9 @@ var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 ui.root.add(splitPanel);
 splitPanel.style().set({shown: false})
+
+var landingPage = UserInterface.generateLandingPage(app, true, loadCountry, splitPanel)
+ui.root.add(landingPage)
 
 /**
  * Intro Panel
