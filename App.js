@@ -13,6 +13,7 @@ var HelperFunctions = require('users/ee-simon-ent/geo-ldn-app:HelperFunctions.js
 var AnalysisLayers = require('users/ee-simon-ent/geo-ldn-app:AnalysisLayers.js');
 var ScenarioFunctions = require('users/ee-simon-ent/geo-ldn-app:ScenarioPlanner.js');
 var Styles = require('users/ee-simon-ent/geo-ldn-app:Styles.js');
+var UserInterface = require('users/ee-simon-ent/geo-ldn-app:UserInterface.js')
 
 /**
  * Constants & Variables
@@ -287,13 +288,15 @@ function updateUI() {
  * Base UI
  */
 
-ui.root.clear()
-var landingPage = ui.Panel({
-  style: {
-    margin: '20% auto 0 auto'
-  }
-})
-ui.root.add(landingPage)
+UserInterface.generateLandingPage(true)
+
+// ui.root.clear()
+// var landingPage = ui.Panel({
+//   style: {
+//     margin: '20% auto 0 auto'
+//   }
+// })
+// ui.root.add(landingPage)
 var mapPanel = ui.Map()
 var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
@@ -315,13 +318,23 @@ introPanel.add(ui.Label({
 }))
 
 introPanel.add(ui.Label({
-  value: 'Welcome to the LDN Analysis tool. Use it to investigate land changes and plann for an LDN future.'
+  value: 'Welcome to the LDN Analysis tool. Use it to investigate land changes and plann for an LDN future.',
+  style: {
+    fontSize: '14px',
+    margin: '0 auto',
+  }
 }))
 
 introPanel.add(ui.Label({
     value: 'Please select a Country, Start and Target Year, or upload your saved settings file to start where you left off.',
     style: Styles.INTRO_STYLE,
 }));
+
+// var parameterSelectionPanel = ui.Panel({stretch: 'horizontal'})
+// introPanel.add(parameterSelectionPanel)
+
+// Need additional panels to set each sub element vertically
+
 
 // Country
 var countrySelect = ui.Select({
