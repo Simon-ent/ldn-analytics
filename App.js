@@ -288,7 +288,7 @@ function updateUI() {
  * Base UI
  */
 
-var landingPage = UserInterface.generateLandingPage(app, true)
+var landingPage = UserInterface.generateLandingPage(app, true, loadCountry, splitPanel)
 
 // ui.root.clear()
 // var landingPage = ui.Panel({
@@ -399,7 +399,7 @@ introPanel.add(startButton);
  * Intro Panel 2 to select region
  */
 
-var introPanel2 = ui.Panel({style: {stretch: 'horizontal', shown: false}});
+var introPanel2 = ui.Panel({style: {stretch: 'horizontal', shown: true}});
 uiPanel.add(introPanel2);
 
 introPanel2.add(ui.Label({
