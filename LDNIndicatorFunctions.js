@@ -114,30 +114,9 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage, start
     // Remaps the fraction of carbon to improving, degrading or stable
     // following the 10% + or - cutoff in earth trends
     var carbonFracRemaped = ee.Image(4)
-            .where(varSoilCarbon.gte(1.10), 1)//improving 2
-            .where(varSoilCarbon.gt(0).and(varSoilCarbon.lte(0.90)), -1)//degrading 3
-            .where(varSoilCarbon.gt(0.90).and(varSoilCarbon.lt(1.10)), 0);//stable 0
-
-    // Map.addLayer(carbonFracRemaped.updateMask(carbonFracRemaped.lt(4)),
-    // {min: 0, max: 3, palette: ['ffffbf', '1a9850', 'fc8d59']},'soil carbon');
-
-    // // Soil carbon lost/gain "after 20 years of land cover change"
-    // var carbonChange = SoilTopImage.multiply(remapped_soilTransitions);
-    // // Addapt the change in carbon to the 9 years of our analysis
-    // // so that the change should be only 45% of the potential 
-    // var carbonChangeAdjusted = carbonChange.multiply(0.45);                 /////// Only correct for 10 year intervals
-
-    // // Add the carbon lost/gain (change) to the original soil carbon
-    // var carbonFinal = SoilTopImage.add(carbonChangeAdjusted);
-    // // Determine the % change to the original carbon stock
-    // var carbonFracChange = carbonFinal.divide(SoilTopImage).subtract(1);
-
-    // // Remaps the fraction of carbon to improving, degrading or stable
-    // // following the 10% cutoff in earth trends
-    // var carbonFracRemaped = ee.Image(4)
-    //         .where(carbonFracChange.gt(0.1).and(carbonFracChange.lte(1)), 2)//improving
-    //         .where(carbonFracChange.gt(-1).and(carbonFracChange.lte(-0.1)), 3)//degrading
-    //         .where(carbonFracChange.gt(-0.1).and(carbonFracChange.lte(0.1)), 0);//stable
+            .where(varSoilCarbon.gte(1.10), 1)//improving 
+            .where(varSoilCarbon.gt(0).and(varSoilCarbon.lte(0.90)), -1)//degrading 
+            .where(varSoilCarbon.gt(0.90).and(varSoilCarbon.lt(1.10)), 0);//stable 
 
     return carbonFracRemaped.updateMask(carbonFracRemaped.lt(4))
 }
@@ -399,17 +378,17 @@ function calculateNationalNetChange(regionalScores) {
     return ee.Number(nationalIndicator.get('sum')).format('%.2f')
 }
 
-function socialCarbonCost(subRegions) {
+function socialCarbonCost(soilOrganicCarbonChange, subRegions) {
     // Load data with information on "bulk density" of soil, that is how many kg of soil exist under an m3 of soil
     // multiply by 10 given that density is given in "Soil bulk density in x 10 kg / m3"
 
     var soilDensity = ee.Image(ee.Image("OpenLandMap/SOL/SOL_BULKDENS-FINEEARTH_USDA-4A1H_M/v02"));
     var soilTopDensity = soilDensity.select(['b0']).multiply(10);
 
-    // Multiply "CarbonDiff" (g of SOC / kg of soil) with "soilDensity" (kg of soil /m3 of soil)
-    // "CarbonDiff" provides the info of how the concentrations of SOC varied due to land cover change.
-    // "CarbonDiff" contains both + and - values depending on the land cover change.
-    var carbonGrams = CarbonDiff.multiply(soilTopDensity);
+    // Multiply "soilOrganicCarbonChange" (g of SOC / kg of soil) with "soilDensity" (kg of soil /m3 of soil)
+    // "soilOrganicCarbonChange" provides the info of how the concentrations of SOC varied due to land cover change.
+    // "soilOrganicCarbonChange" contains both + and - values depending on the land cover change.
+    var carbonGrams = soilOrganicCarbonChange.multiply(soilTopDensity);
 
     // Effectively "carbonGrams" is now g of SOC per m2 (m3 is "a 1x1 square seen from above"), hence we need to multiply by the areas of the pixel.
     // And also divide the result by 1000000 to bring values into Tons of Carbon
@@ -462,7 +441,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
-    outputDataSet = socialCarbonCost(outputDataSet)
+    outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
