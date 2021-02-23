@@ -409,7 +409,7 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions) {
     var SCC = 44;
     var CarbonSCC = CarbonTons.multiply(SCC).multiply(3.66);
 
-    var regionalCarbonCost = CarbonSCC.reduceRegions(subRegions, ee.Reducer.sum())
+    var regionalCarbonCost = CarbonSCC.reduceRegions(subRegions, ee.Reducer.sum(), 500)
 
     var updateFeature = function(feature) {
         var SCC = ee.Number(feature.get('sum'));
