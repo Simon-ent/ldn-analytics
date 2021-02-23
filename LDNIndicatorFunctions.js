@@ -399,6 +399,49 @@ function calculateNationalNetChange(regionalScores) {
     return ee.Number(nationalIndicator.get('sum')).format('%.2f')
 }
 
+function socialCarbonCost(subRegions) {
+    // Load data with information on "bulk density" of soil, that is how many kg of soil exist under an m3 of soil
+    // multiply by 10 given that density is given in "Soil bulk density in x 10 kg / m3"
+
+    var soilDensity = ee.Image(ee.Image("OpenLandMap/SOL/SOL_BULKDENS-FINEEARTH_USDA-4A1H_M/v02"));
+    var soilTopDensity = soilDensity.select(['b0']).multiply(10);
+
+    // Multiply "CarbonDiff" (g of SOC / kg of soil) with "soilDensity" (kg of soil /m3 of soil)
+    // "CarbonDiff" provides the info of how the concentrations of SOC varied due to land cover change.
+    // "CarbonDiff" contains both + and - values depending on the land cover change.
+    var carbonGrams = CarbonDiff.multiply(soilTopDensity);
+
+    // Effectively "carbonGrams" is now g of SOC per m2 (m3 is "a 1x1 square seen from above"), hence we need to multiply by the areas of the pixel.
+    // And also divide the result by 1000000 to bring values into Tons of Carbon
+    var CarbonTons = carbonGrams.multiply(ee.Image.pixelArea()).divide(1000000);
+
+    // Now we need to introduce the estimates on Social Costs of Carbon (SCC)
+    // lets use this publication:
+    // William D. Nordhaus, PNAS February 14, 2017 114 (7) 1518-1523;
+    // https://www.pnas.org/content/114/7/1518.full#sec-13
+    // In table 1 we find the evolution for SCC under a baseline scenrio
+    // Scenario - Baseline
+    // Years:  2015 2020 2025 2030 2050
+    // SCC in USD$/ton CO2: 31.2 37.3 44.0 51.6 102.5
+
+    // Lets use the number of 2025 as example or 44.0 $/Ton CO2
+    // Ideally this would nee to be integrated in time
+    // Carbon also needs to be converted to CO2 with he 3.66 factor
+    var SCC = 44;
+    var CarbonSCC = CarbonTons.multiply(SCC).multiply(3.66);
+
+    regionalCarbonCost = CarbonSCC.reduceRegions(ee.Reducer.sum(), subRegions)
+
+    var updateFeature = function(feature) {
+        var SCC = ee.Number(feature.get('sum'));
+        return feature.set({'Social Carbon Cost': SCC})
+      }
+      
+    regionalCarbonCost = regionalCarbonCost.map(updateFeature);
+
+    return regionalCarbonCost
+}
+
 /*
  * Outputs
  */
@@ -419,10 +462,11 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
+    outputDataSet = socialCarbonCost(outputDataSet)
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
-        'National Net Change': 2 //calculateNationalNetChange(outputDataSet)
+        'National Net Change': calculateNationalNetChange(outputDataSet) //2
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
