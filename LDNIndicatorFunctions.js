@@ -441,7 +441,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
-    outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
+    // outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
