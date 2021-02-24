@@ -247,6 +247,11 @@ function productivityTrajectory(){
     // value of the Kendal trend, either positive or negative
     var sigTrend = kendall.multiply(sigPixels);
 
+    return sigTrend
+}
+
+var productivityTrajectoryClassified = function(sigTrend) {
+
     // Remaps the significant production trends according to the earth trends logic
     var trajectoryRemaped = ee.Image(4)
             .where(sigTrend.gt(0), 2)//improving
@@ -439,7 +444,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
 
-    var productivityTrajectoryImage = productivityTrajectory()
+    var productivityTrajectoryImageRaw = productivityTrajectory()
+    var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw)
     
     // var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
@@ -457,7 +463,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
         productivityTrajectoryImage,
         outputDataSet, nationalIndicators, 
-        soilOrganicCarbonChangeRaw]
+        soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw]
 }
 
 /*
