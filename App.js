@@ -293,8 +293,8 @@ var uiPanel = ui.Panel({style: {width: '500px', padding: '10px'}});
 var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 
 function landingPageStart() {
-    loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
     ui.root.widgets().set(0, splitPanel);
+    loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
 }
 
 function returnToMapView() {

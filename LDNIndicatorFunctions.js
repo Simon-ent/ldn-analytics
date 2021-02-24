@@ -111,6 +111,10 @@ var SoilOrganicCarbonChange = function(landCoverTransitions, SoilTopImage, start
     // Determine variation in % to reference
     var varSoilCarbon = CarbonYearX.divide(SoilTopImage);
 
+    return varSoilCarbon
+}
+
+var SoilOrganicCarbonChangeClassified = function(varSoilCarbon) {
     // Remaps the fraction of carbon to improving, degrading or stable
     // following the 10% + or - cutoff in earth trends
     var carbonFracRemaped = ee.Image(4)
@@ -430,7 +434,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransitions = LandCoverTransitions(landCoverStartImage, landCoverEndImage);
     var landCoverChange = LandCoverChangeImage(landCoverTransitions);
-    var soilOrganicCarbonChange = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
+    var soilOrganicCarbonChangeRaw = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
+    var soilOrganicCarbonChange = SoilOrganicCarbonChangeClassified(soilOrganicCarbonChangeRaw);
     var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
     var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
 
@@ -451,7 +456,8 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
 
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
         productivityTrajectoryImage,
-        outputDataSet, nationalIndicators]
+        outputDataSet, nationalIndicators, 
+        soilOrganicCarbonChangeRaw]
 }
 
 /*
