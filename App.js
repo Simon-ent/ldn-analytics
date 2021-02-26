@@ -283,7 +283,6 @@ function loadCountry(country, startYear, targetYear) {
 function updateUI() {
     introPanel2.style().set('shown', false);
     countryPanel.style().set('shown', true);
-    countryStartInstructions.style().set('shown', false); // Hide instructions
     var region = app.variables.region;
     var regionNameText = region.first().get('ADM2_NAME').getInfo();
     regionName.setValue(regionNameText);
@@ -342,15 +341,6 @@ countryPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_1
 }))
 
-// // Start Instructions
-// var countryStartInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
-// countryPanel.add(countryStartInstructions);
-
-// countryStartInstructions.add(ui.Label({
-//     value: 'Please click on a region on the map to begin analysis.',
-//     style: Styles.INTRO_STYLE
-// }))
-
 // Indicators
 countryPanel.add(ui.Label({
     value: 'Key Indicators',
@@ -371,10 +361,7 @@ var nationalIndicatorsChartPanel = ui.Panel({
 });
 countryPanel.add(nationalIndicatorsChartPanel)
 
-nationalIndicatorsChartPanel.add(ui.Label({
-    // value: 'Please click on a region on the map to begin analysis.',
-    // style: Styles.INTRO_STYLE
-}));
+nationalIndicatorsChartPanel.add(ui.Label());
   
 function createIndicatorsChart() {
     var scenarioList = ee.List(app.variables.transitionsList);
@@ -386,7 +373,6 @@ function createIndicatorsChart() {
     .setSeriesNames(scenarioList)
     .setChartType('Table')
     
-    countryIndicatorInstructions.style().set({shown: true})
     nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
 }
 
