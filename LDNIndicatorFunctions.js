@@ -377,7 +377,7 @@ function calculateSDG(landCoverChange, countryGeometry) {
     ).get('remapped');
 
     var SDG = ee.Number(degredationCount).divide(totalPixel)
-    var SDGOutput = ee.Number(SDG).format('%.2f').multiply(100) //.getInfo()
+    var SDGOutput = ee.Number(SDG).format('%.2f')//.multiply(100) //.getInfo()
     // SDGIndicatorWidget.widgets().set(1, IndicatorLabel(SDGOutput + ' %'))
     return SDGOutput
 }
