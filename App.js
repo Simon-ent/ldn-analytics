@@ -40,11 +40,6 @@ var app = {
     }
 };
 
-var yearList = ['2001', '2002', '2003', '2004', '2005', '2006',
-                '2007', '2008', '2009', '2010', '2011', '2012',
-                '2013', '2014', '2015', '2016', '2017', '2018',
-                '2019'];
-
 /**
  * Functions
  */
@@ -181,6 +176,7 @@ function regionalChartsBuilder() {
 }
 
 function loadCountry(country, startYear, targetYear) {
+    countryName.setValue(country);
     mapPanel.clear()
     introPanel2.widgets().set(0, ui.Label({
         value: app.setup.country + ' LDN Analysis',
@@ -336,34 +332,60 @@ introPanel2.add(ui.Label({
 var countryPanel = ui.Panel({style: {stretch: 'horizontal', shown: false}});
 uiPanel.add(countryPanel);
 
-countryPanel.add(ui.Label({
-    value: app.setup.country + ' LDN Analysis',
+var countryName = ui.Label({
+    value: 'Loading...',
     style: Styles.HEADER_STYLE_1
+});
+
+countryPanel.add(ui.Panel({
+    layout: ui.Panel.Layout.flow('horizontal'),
+    style: {stretch: 'horizontal'},
+    widgets: [
+        countryName,
+        ui.Panel({
+            layout: ui.Panel.Layout.flow('vertical'),
+            widgets: [
+                ui.Label({
+                    value: '7%',
+                    style: {fontWeight: 'lighter'}
+                }),
+                ui.Label({
+                    value: 'SDG 15.3.1',
+                    style: {fontWeight: 'lighter'}
+                })
+            ]
+        })
+    ]
 }))
 
-var countryIndicators = ui.Panel();
-countryPanel.add(countryIndicators)
+// countryPanel.add(ui.Label({
+//     value: app.setup.country + ' LDN Analysis',
+//     style: Styles.HEADER_STYLE_1
+// }))
 
-countryIndicators.add([ui.Panel({
-    layout: ui.Panel.Layout.flow('horizontal'),
-      style:{
-        // margin: '0 0 10px 0'
-      },
-    widgets:[
-    ui.Label({
-        value: 'Degraded Land (%)',
-        style: Styles.HEADER_STYLE_2,
-    }),
-    ui.Label({
-        value: '7',
-        style: Styles.HEADER_STYLE_2,
-    })]
-}),
-ui.Label({
-    value: 'SDG 15.3.1: Total degredation as a percentage of total land area.',
-    style: Styles.HELP_STYLE
-})
-])
+// var countryIndicators = ui.Panel();
+// countryPanel.add(countryIndicators)
+
+// countryIndicators.add([ui.Panel({
+//     layout: ui.Panel.Layout.flow('horizontal'),
+//       style:{
+//         // margin: '0 0 10px 0'
+//       },
+//     widgets:[
+//     ui.Label({
+//         value: 'Degraded Land (%)',
+//         style: Styles.HEADER_STYLE_2,
+//     }),
+//     ui.Label({
+//         value: '7',
+//         style: Styles.HEADER_STYLE_2,
+//     })]
+// }),
+// ui.Label({
+//     value: 'SDG 15.3.1: Total degredation as a percentage of total land area.',
+//     style: Styles.HELP_STYLE
+// })
+// ])
 
 // // Indicators
 // countryPanel.add(ui.Label({
