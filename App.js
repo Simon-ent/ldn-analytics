@@ -149,8 +149,16 @@ function regionalChartsBuilder() {
     var regionSoilOrganicCarbon = app.images.soilOrganicCarbon;
     var regionProductivity = app.images.productivity;
 
+    var landCoverHistogram = regionLandCoverImage.reduceRegion({
+        reducer: ee.Reducer.fixedHistogram(-1,2,3),
+        geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
+        scale: 500,
+        maxPixels: 1e9
+    });
+    var LCArray = ee.Array(landCoverHistogram.get('constant'));
+
     var SOCHistogram = regionSoilOrganicCarbon.reduceRegion({
-        reducer: ee.Reducer.fixedHistogram(-1,1,3),
+        reducer: ee.Reducer.fixedHistogram(-1,2,3),
         geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
         scale: 500,
         maxPixels: 1e9
@@ -158,17 +166,17 @@ function regionalChartsBuilder() {
     var SOCArray = ee.Array(SOCHistogram.get('constant'));
 
     var ProductivityHistogram = regionProductivity.reduceRegion({
-        reducer: ee.Reducer.fixedHistogram(-1,1,3),
+        reducer: ee.Reducer.fixedHistogram(-1,2,3),
         geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
         scale: 500,
         maxPixels: 1e9
     });
     var ProductivityArray = ee.Array(ProductivityHistogram.get('constant'));
 
-    var summaryTableData = ee.Array.cat([ProductivityArray.slice(1, 1), SOCArray.slice(1,1)], 1)
+    var summaryTableData = ee.Array.cat([ProductivityArray.slice(1, 1), SOCArray.slice(1,1), LCArray.slice(1,1)], 1)
     // print(chartData)
     var labels = ['Degrading', 'Stable', 'Improving']
-    var summaryTable = ui.Chart.array.values(summaryTableData, 1, ["NPP", "SOC"])
+    var summaryTable = ui.Chart.array.values(summaryTableData, 1, ["Productivity", "Soil Organic Carbon", 'Land Cover'])
         .setSeriesNames(labels)
         .setChartType('Table')
     regionalChartsPanel.add(summaryTable)
