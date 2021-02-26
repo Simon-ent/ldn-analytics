@@ -288,7 +288,7 @@ function updateUI() {
     regionName.setValue(regionNameText);
     app.variables.regionNameText = regionNameText;
     regionalChartsBuilder();
-    createIndicatorsChart();
+    // createIndicatorsChart();
 }
 
 /**
@@ -341,40 +341,64 @@ countryPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_1
 }))
 
-// Indicators
-countryPanel.add(ui.Label({
-    value: 'Key Indicators',
-    style: Styles.HEADER_STYLE_2,
-}));
+var countryIndicators = ui.Panel();
+countryPanel.add(countryIndicators)
 
-// Indicators Explanation Instructions
-var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
-countryPanel.add(countryIndicatorInstructions);
-
-countryIndicatorInstructions.add(ui.Label({
-    value: 'Key performance indicators aggregated at the country level.',
+countryIndicators.add([ui.Panel({
+    layout: ui.Panel.Layout.flow('horizontal'),
+      style:{
+        // margin: '0 0 10px 0'
+      },
+    widgets:[
+    ui.Label({
+        value: 'Degraded Land (%)',
+        style: Styles.HEADER_STYLE_2,
+    }),
+    ui.Label({
+        value: '7',
+        style: Styles.HEADER_STYLE_2,
+    })]
+}),
+ui.Label({
+    value: 'SDG 15.3.1: Total degredation as a percentage of total land area.',
     style: Styles.HELP_STYLE
-}))
-  
-var nationalIndicatorsChartPanel = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
-});
-countryPanel.add(nationalIndicatorsChartPanel)
+})
+])
 
-nationalIndicatorsChartPanel.add(ui.Label());
+// // Indicators
+// countryPanel.add(ui.Label({
+//     value: 'Key Indicators',
+//     style: Styles.HEADER_STYLE_2,
+// }));
+
+// // Indicators Explanation Instructions
+// var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
+// countryPanel.add(countryIndicatorInstructions);
+
+// countryIndicatorInstructions.add(ui.Label({
+//     value: 'Key performance indicators aggregated at the country level.',
+//     style: Styles.HELP_STYLE
+// }))
   
-function createIndicatorsChart() {
-    var scenarioList = ee.List(app.variables.transitionsList);
-    var nationalIndicators = app.datasets.nationalIndicators;
-    var nationalIndicatorsChartData = scenarioList.map(function(item) {
-        return ee.Dictionary(nationalIndicators.get(item)).values()
-    })
-    var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
-    .setSeriesNames(scenarioList)
-    .setChartType('Table')
+// var nationalIndicatorsChartPanel = ui.Panel({
+//     layout: ui.Panel.Layout.flow('vertical'),
+// });
+// countryPanel.add(nationalIndicatorsChartPanel)
+
+// nationalIndicatorsChartPanel.add(ui.Label());
+  
+// function createIndicatorsChart() {
+//     var scenarioList = ee.List(app.variables.transitionsList);
+//     var nationalIndicators = app.datasets.nationalIndicators;
+//     var nationalIndicatorsChartData = scenarioList.map(function(item) {
+//         return ee.Dictionary(nationalIndicators.get(item)).values()
+//     })
+//     var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
+//     .setSeriesNames(scenarioList)
+//     .setChartType('Table')
     
-    nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
-}
+//     nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
+// }
 
 // Regional Data
 var regionalDataPanel = ui.Panel({

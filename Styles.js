@@ -33,7 +33,7 @@ exports.INTRO_STYLE = {
 }
 
 exports.HELP_STYLE = {
-  fontSize: '12px',
+  fontSize: '14px',
   fontWeight: 'lighter',
   margin: '0 0 4px 8px',
   color: 'gray'
