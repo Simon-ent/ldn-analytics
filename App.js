@@ -206,7 +206,7 @@ function loadCountry(country, startYear, targetYear) {
 
     // Productivity Trajectory (Layer 3)
     var productivityTrajectoryImage = LDNIndicatorData[3].clip(countryGeometry);
-    mapPanel.addLayer(productivityTrajectoryImage, {min: 0, max: 3, palette: ['ffffbf', '#1a9850', 'fc8d59']}, 'Productivity Trajectory', false, 0.75)
+    mapPanel.addLayer(productivityTrajectoryImage, {min: -1, max: 1, palette: ['ffffbf', '#1a9850', 'fc8d59']}, 'Productivity Trajectory', false, 0.75)
 
     // Regional Outlines (Layer 4)
     mapPanel.addLayer(HelperFunctions.RegionsOverlay(ee.Image().byte(), regions, subRegions), {palette:['808080']}, 'Regions', true, 0.85);
