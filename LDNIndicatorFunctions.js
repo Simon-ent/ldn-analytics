@@ -460,10 +460,14 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
 
+    var SDGData = calculateSDG(landCoverChange, countryGeometry);
+
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
         productivityTrajectoryImage,
         outputDataSet, nationalIndicators, 
-        soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw]
+        soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw,
+        SDGData
+    ]
 }
 
 /*

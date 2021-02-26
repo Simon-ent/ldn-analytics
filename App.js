@@ -178,14 +178,6 @@ function regionalChartsBuilder() {
 function loadCountry(country, startYear, targetYear) {
     countryName.setValue(country);
     mapPanel.clear()
-    introPanel2.widgets().set(0, ui.Label({
-        value: app.setup.country + ' LDN Analysis',
-        style: Styles.HEADER_STYLE_1
-    }))
-    countryPanel.widgets().set(0, ui.Label({
-        value: app.setup.country + ' LDN Analysis',
-        style: Styles.HEADER_STYLE_1
-    }))
     var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
     var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
     var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
@@ -204,6 +196,10 @@ function loadCountry(country, startYear, targetYear) {
     // Data
     app.datasets.regionalData = LDNIndicatorData[4];
     app.datasets.nationalIndicators = LDNIndicatorData[5];
+    LDNIndicatorData[8].evaluate(function(SDGData) {
+        SDGValue.setValue(SDGData)
+        app.variables.SDGValue = SDGData
+    })
 
     // Land Cover (Layer 0)
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
@@ -315,7 +311,7 @@ var introPanel2 = ui.Panel({style: {stretch: 'horizontal', shown: true}});
 uiPanel.add(introPanel2);
 
 introPanel2.add(ui.Label({
-    value: app.setup.country + ' LDN Analysis',
+    value: app.setup.country,
     style: Styles.HEADER_STYLE_1
 }))
 
@@ -337,6 +333,8 @@ var countryName = ui.Label({
     style: Styles.HEADER_STYLE_1
 });
 
+var SDGValue = ui.Label({ value: 'Loading...', style: {fontWeight: 'bold', fontSize: '20px', margin: '0 8px 0 auto'}})
+
 countryPanel.add(ui.Panel({
     layout: ui.Panel.Layout.flow('horizontal'),
     style: {stretch: 'horizontal'},
@@ -344,11 +342,9 @@ countryPanel.add(ui.Panel({
         countryName,
         ui.Panel({
             layout: ui.Panel.Layout.flow('vertical'),
+            style: {margin: '0 0 0 auto'},
             widgets: [
-                ui.Label({
-                    value: '7%',
-                    style: {fontWeight: 'lighter'}
-                }),
+                SDGValue,
                 ui.Label({
                     value: 'SDG 15.3.1',
                     style: {fontWeight: 'lighter'}
