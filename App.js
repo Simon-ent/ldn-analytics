@@ -84,11 +84,6 @@ function handleMapClick(location) {
 }
 
 function regionalChartsBuilder() {
-    // Clear charts panel
-    // unpack variables
-    // extract datasets
-    // create charts
-
     regionalChartsPanel.clear()
     var regionNameText = app.variables.regionNameText;
     print(regionNameText)
@@ -155,7 +150,8 @@ function regionalChartsBuilder() {
         scale: 500,
         maxPixels: 1e9
     });
-    var LCArray = ee.Array(landCoverHistogram.get('constant'));
+    // print(landCoverHistogram)
+    var LCArray = ee.Array(landCoverHistogram.get('remapped'));
 
     var SOCHistogram = regionSoilOrganicCarbon.reduceRegion({
         reducer: ee.Reducer.fixedHistogram(-1,2,3),
@@ -180,6 +176,11 @@ function regionalChartsBuilder() {
         .setSeriesNames(labels)
         .setChartType('Table')
     regionalChartsPanel.add(summaryTable)
+    
+    regionalChartsPanel.add(Label('Social Cost of Carbon ($)'))
+    currentRegion.get('Social Carbon Cost').evaluate(function(result){
+      regionalChartsPanel.add(IndicatorLabel(result))
+    });
 }
 
 // function calculateSDG(landCoverChange, countryGeometry) {
