@@ -32,6 +32,13 @@ exports.INTRO_STYLE = {
     color: 'gray'
 }
 
+exports.HELP_STYLE = {
+  fontSize: '12px',
+  fontWeight: 'lighter',
+  margin: '0 0 4px 8px',
+  color: 'gray'
+}
+
 exports.SECTION_STYLE = {
   margin: '0 0 10px 0',
   padding: '0 0 12px 0'

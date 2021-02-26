@@ -174,10 +174,10 @@ function regionalChartsBuilder() {
         .setChartType('Table')
     regionalChartsPanel.add(summaryTable)
     
-    regionalChartsPanel.add(Label('Social Cost of Carbon ($)'))
-    currentRegion.get('Social Carbon Cost').evaluate(function(result){
-      regionalChartsPanel.add(IndicatorLabel(result))
-    });
+    // regionalChartsPanel.add(Label('Social Cost of Carbon ($)'))
+    // currentRegion.get('Social Carbon Cost').evaluate(function(result){
+    //   regionalChartsPanel.add(IndicatorLabel(result))
+    // });
 }
 
 function loadCountry(country, startYear, targetYear) {
@@ -342,14 +342,14 @@ countryPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_1
 }))
 
-// Start Instructions
-var countryStartInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
-countryPanel.add(countryStartInstructions);
+// // Start Instructions
+// var countryStartInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
+// countryPanel.add(countryStartInstructions);
 
-countryStartInstructions.add(ui.Label({
-    value: 'Please click on a region on the map to begin analysis.',
-    style: Styles.INTRO_STYLE
-}))
+// countryStartInstructions.add(ui.Label({
+//     value: 'Please click on a region on the map to begin analysis.',
+//     style: Styles.INTRO_STYLE
+// }))
 
 // Indicators
 countryPanel.add(ui.Label({
@@ -363,7 +363,7 @@ countryPanel.add(countryIndicatorInstructions);
 
 countryIndicatorInstructions.add(ui.Label({
     value: 'Key performance indicators aggregated at the country level.',
-    style: Styles.INTRO_STYLE
+    style: Styles.HELP_STYLE
 }))
   
 var nationalIndicatorsChartPanel = ui.Panel({
@@ -372,8 +372,8 @@ var nationalIndicatorsChartPanel = ui.Panel({
 countryPanel.add(nationalIndicatorsChartPanel)
 
 nationalIndicatorsChartPanel.add(ui.Label({
-    value: 'Please click on a region on the map to begin analysis.',
-    style: Styles.INTRO_STYLE
+    // value: 'Please click on a region on the map to begin analysis.',
+    // style: Styles.INTRO_STYLE
 }));
   
 function createIndicatorsChart() {
@@ -455,7 +455,7 @@ scenarioPanel.add(addSceanrioInstructions);
 
 addSceanrioInstructions.add(ui.Label({
     value: 'Add a scenario based off the Start and Target Year selected, to model different changes required to acheive LDN.',
-    style: Styles.INTRO_STYLE
+    style: Styles.HELP_STYLE
 }))
 
 var createScenarioButton = ui.Button({
@@ -509,7 +509,7 @@ createScenarioPanel.add(ui.Label({
   
 createScenarioPanel.add(ui.Label({
     value: 'Please select the Year (or an existing scenario) to use as the starting point.',
-    style: Styles.INTRO_STYLE,
+    style: Styles.HELP_STYLE,
 }));
 
 createScenarioPanel.add(Label('Select the starting point:'))
