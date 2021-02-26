@@ -438,9 +438,9 @@ regionalDataPanel.add(regionalEditPanel);
 var regionalDataEditButton = ui.Button({
     label: 'Edit',
     onClick: function () {
-        var landTypesScenarioChart = regionalChartsPanel.widgets().get(0);
+        var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
         landTypesScenarioChart.setChartType('Table')
-        var transitionsChart = regionalChartsPanel.widgets().get(1);
+        var transitionsChart = regionalChartsPanel.widgets().get(2);
         transitionsChart.setChartType('Table')
         setRegionalEditData()
         regionalEditPanel.style().set('shown', true);
@@ -658,9 +658,9 @@ function setRegionalEditData() {
 }
 
 function changeTablesToCharts() {
-    var landTypesScenarioChart = regionalChartsPanel.widgets().get(0);
+    var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
     landTypesScenarioChart.setChartType('ColumnChart');
-    var transitionsChart = regionalChartsPanel.widgets().get(1);
+    var transitionsChart = regionalChartsPanel.widgets().get(2);
     transitionsChart.setChartType('ColumnChart');
 }
 
