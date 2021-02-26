@@ -455,7 +455,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
 
     var indicatorData = ee.Dictionary({
-        'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
+        'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry)
         // 'National Net Change': 2 //calculateNationalNetChange(outputDataSet) //2
     })
     var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
