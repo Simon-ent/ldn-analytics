@@ -30,6 +30,7 @@ var app = {
         regionalData: null,
         nationalIndicators: null,
     },
+    images: {},
     variables: {
         region: null,
         regionNameText: null,
