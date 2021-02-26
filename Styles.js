@@ -27,7 +27,7 @@ exports.INDICATOR_STYLE = {
 exports.INTRO_STYLE = {
     fontSize: '20px',
     fontWeight: 'lighter',
-    padding: '20px 0 30px 0',
+    // padding: '20px 0 30px 0',
     margin: '0 0 4px 8px',
     color: 'gray'
 }
