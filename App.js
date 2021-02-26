@@ -144,6 +144,7 @@ function regionalChartsBuilder() {
     regionalChartsPanel.add(landCoverTransitionsChart)
 
     // Summary Table
+    var subRegions = app.datasets.subRegions;
     var regionLandCoverImage = app.images.landCover;
     var regionSoilOrganicCarbon = app.images.soilOrganicCarbon;
     var regionProductivity = app.images.productivity;
