@@ -141,6 +141,35 @@ function regionalChartsBuilder() {
         });
 
     regionalChartsPanel.add(landCoverTransitionsChart)
+
+    // Summary Table
+    var regionLandCoverImage = app.images.landCover;
+    var regionSoilOrganicCarbon = app.images.soilOrganicCarbon;
+    var regionProductivity = app.images.productivity;
+
+    var SOCHistogram = regionSoilOrganicCarbon.reduceRegion({
+        reducer: ee.Reducer.fixedHistogram(-1,1,3),
+        geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
+        scale: 500,
+        maxPixels: 1e9
+    });
+    var SOCArray = ee.Array(SOCHistogram.get('constant'));
+
+    var ProductivityHistogram = regionProductivity.reduceRegion({
+        reducer: ee.Reducer.fixedHistogram(-1,1,3),
+        geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
+        scale: 500,
+        maxPixels: 1e9
+    });
+    var ProductivityArray = ee.Array(ProductivityHistogram.get('constant'));
+
+    var summaryTableData = ee.Array.cat([ProductivityArray.slice(1, 1), SOCArray.slice(1,1)], 1)
+    // print(chartData)
+    var labels = ['Degrading', 'Stable', 'Improving']
+    var summaryTable = ui.Chart.array.values(summaryTableData, 1, ["NPP", "SOC"])
+        .setSeriesNames(labels)
+        .setChartType('Table')
+    regionalChartsPanel.add(summaryTable)
 }
 
 // function calculateSDG(landCoverChange, countryGeometry) {
@@ -193,6 +222,7 @@ function loadCountry(country, startYear, targetYear) {
 
     // Land Cover (Layer 0)
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
+    app.images.landCover = landCoverChange;
     mapPanel.addLayer(landCoverChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Land Cover', false, 0.75);
 
     // Regional Land Cover Tiles (Layer 1)
@@ -202,11 +232,13 @@ function loadCountry(country, startYear, targetYear) {
 
     // Soil Organic Carbon (Layer 2)
     var soilOrganicCarbonChange = LDNIndicatorData[1].clip(countryGeometry);
+    app.images.soilOrganicCarbon = soilOrganicCarbonChange;
     mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
 
     // Productivity Trajectory (Layer 3)
     var productivityTrajectoryImage = LDNIndicatorData[3].clip(countryGeometry);
-    mapPanel.addLayer(productivityTrajectoryImage, {min: -1, max: 1, palette: ['ffffbf', '#1a9850', 'fc8d59']}, 'Productivity Trajectory', false, 0.75)
+    app.images.productivity = productivityTrajectoryImage;
+    mapPanel.addLayer(productivityTrajectoryImage, {min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Productivity Trajectory', false, 0.75)
 
     // Regional Outlines (Layer 4)
     mapPanel.addLayer(HelperFunctions.RegionsOverlay(ee.Image().byte(), regions, subRegions), {palette:['808080']}, 'Regions', true, 0.85);
@@ -482,6 +514,15 @@ countryPanel.add(regionalDataPanel);
 
 var regionName = ui.Label('', Styles.HEADER_STYLE_2);
 
+// Edit Panel
+var regionalEditPanel = ui.Panel({
+    layout: ui.Panel.Layout.flow('vertical'),
+    style: {
+        shown: false
+    }
+});
+regionalDataPanel.add(regionalEditPanel);
+
 var regionalDataEditButton = ui.Button({
     label: 'Edit',
     onClick: function () {
@@ -511,15 +552,6 @@ var regionalChartsPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
 });
 regionalDataPanel.add(regionalChartsPanel);
-
-// Edit
-var regionalEditPanel = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
-    style: {
-        shown: false
-    }
-});
-regionalDataPanel.add(regionalEditPanel);
 
 // Scenario Panel
 // For the Scenario Edit UI please see the scenario section
