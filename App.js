@@ -197,7 +197,7 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.regionalData = LDNIndicatorData[4];
     app.datasets.nationalIndicators = LDNIndicatorData[5];
     LDNIndicatorData[8].evaluate(function(SDGData) {
-        SDGValue.setValue(SDGData)
+        SDGValue.setValue(SDGData + ' %')
         app.variables.SDGValue = SDGData
     })
 
