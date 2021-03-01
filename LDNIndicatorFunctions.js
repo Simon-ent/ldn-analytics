@@ -313,13 +313,13 @@ function generateLandCoverTypeSummaryFeature(baseImage, name, subRegions) {
             // map through feature collection and unpack histogram values
             var histogramResults = ee.Dictionary(feature.get('histogram'));
             var landCoverSummary = ee.Dictionary({
-                'Tree_Cover': ee.Number(histogramResults.get('1', 0)).toFloat().format('%.0f'),
-                'Grasslands': ee.Number(histogramResults.get('2', 0)).toFloat().format('%.0f'),
-                'Croplands': ee.Number(histogramResults.get('3', 0)).toFloat().format('%.0f'),
-                'Wetlands': ee.Number(histogramResults.get('4', 0)).toFloat().format('%.0f'),
-                'Artificial': ee.Number(histogramResults.get('5', 0)).toFloat().format('%.0f'),
-                'Bare_Land': ee.Number(histogramResults.get('6', 0)).toFloat().format('%.0f'),
-                'Water_Bodies': ee.Number(histogramResults.get('7', 0)).toFloat().format('%.0f'),
+                'Tree_Cover': ee.Number(histogramResults.get('1', 0)).toFloat(),
+                'Grasslands': ee.Number(histogramResults.get('2', 0)).toFloat(),
+                'Croplands': ee.Number(histogramResults.get('3', 0)).toFloat(),
+                'Wetlands': ee.Number(histogramResults.get('4', 0)).toFloat(),
+                'Artificial': ee.Number(histogramResults.get('5', 0)).toFloat(),
+                'Bare_Land': ee.Number(histogramResults.get('6', 0)).toFloat(),
+                'Water_Bodies': ee.Number(histogramResults.get('7', 0)).toFloat(),
             })
             var landCover = ee.Algorithms.If(feature.get('landCover'), feature.get('landCover'), null) 
             landCover = ee.Dictionary(landCover).set(name, landCoverSummary)
