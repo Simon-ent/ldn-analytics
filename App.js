@@ -95,7 +95,7 @@ function regionalChartsBuilder() {
         scale: 500,
         maxPixels: 1e9
     });
-    // print(landCoverHistogram)
+
     var LCArray = ee.Array(landCoverHistogram.get('remapped'));
 
     var SOCHistogram = regionSoilOrganicCarbon.reduceRegion({
@@ -441,7 +441,6 @@ function updateScenarioUIList() {
                                     setRegionalEditData(scenario)
                                     regionalEditPanel.style().set('shown', true);
                                     scenarioPanel.style().set('shown', false);
-                                    settingsPanel.style().set('shown', false);
                                 }
                             }),
                             ui.Button({
@@ -666,8 +665,6 @@ regionalEditPanel.add(
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
                 scenarioPanel.style().set('shown', true);
-                settingsPanel.style().set('shown', true);
-                // changeTablesToCharts();
                 var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
                 print('Updated regional data', updatedRegionalData)
                 app.datasets.regionalData = updatedRegionalData;
@@ -680,7 +677,6 @@ regionalEditPanel.add(
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
                 scenarioPanel.style().set('shown', true);
-                settingsPanel.style().set('shown', true);
                 changeTablesToCharts();
             }
         })],
