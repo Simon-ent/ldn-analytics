@@ -436,27 +436,27 @@ var regionalEditPanel = ui.Panel({
 });
 regionalDataPanel.add(regionalEditPanel);
 
-var regionalDataEditButton = ui.Button({
-    label: 'Edit',
-    onClick: function () {
-        print('Old Edit')
-        // var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
-        // landTypesScenarioChart.setChartType('Table')
-        // var transitionsChart = regionalChartsPanel.widgets().get(2);
-        // transitionsChart.setChartType('Table')
-        // setRegionalEditData()
-        // regionalEditPanel.style().set('shown', true);
-        // regionalDataEditButton.style().set('shown', false);
-        // scenarioPanel.style().set('shown', false);
-        // settingsPanel.style().set('shown', false);
-    }
-});
-regionalDataEditButton.style().set('shown', false);
+// var regionalDataEditButton = ui.Button({
+//     label: 'Edit',
+//     onClick: function () {
+//         print('Old Edit')
+//         // var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+//         // landTypesScenarioChart.setChartType('Table')
+//         // var transitionsChart = regionalChartsPanel.widgets().get(2);
+//         // transitionsChart.setChartType('Table')
+//         // setRegionalEditData()
+//         // regionalEditPanel.style().set('shown', true);
+//         // regionalDataEditButton.style().set('shown', false);
+//         // scenarioPanel.style().set('shown', false);
+//         // settingsPanel.style().set('shown', false);
+//     }
+// });
+// regionalDataEditButton.style().set('shown', false);
 
 regionalDataPanel.add(
     ui.Panel([
         regionName, 
-        regionalDataEditButton
+        // regionalDataEditButton
         ],
         ui.Panel.Layout.flow('horizontal'),
         {stretch: 'vertical'}
@@ -502,7 +502,10 @@ function updateScenarioUIList() {
                 layout: ui.Panel.Layout.flow('horizontal'),
                 style: {stretch: 'horizontal'},
                 widgets: [
-                    Label(scenario)
+                    ui.Label({
+                        value: scenario,
+                        style: {margin: '8px', padding: '12px 0 0 0'}
+                    })
                 ]
             }))
         } else {
@@ -510,7 +513,10 @@ function updateScenarioUIList() {
                 layout: ui.Panel.Layout.flow('horizontal'),
                 style: {stretch: 'horizontal'},
                 widgets: [
-                    Label(scenario),
+                    ui.Label({
+                        value: scenario,
+                        style: {margin: '8px', padding: '12px 0 0 0'}
+                    }),
                     ui.Button({
                         label: 'Edit',
                         onClick: function () {
@@ -608,7 +614,7 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
-                regionalDataEditButton.style().set('shown', true);
+                // regionalDataEditButton.style().set('shown', true);
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
@@ -734,7 +740,7 @@ regionalEditPanel.add(
             onClick: function () {
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
-                regionalDataEditButton.style().set('shown', true);
+                // regionalDataEditButton.style().set('shown', true);
                 scenarioPanel.style().set('shown', true);
                 settingsPanel.style().set('shown', true);
                 // changeTablesToCharts();
@@ -749,7 +755,7 @@ regionalEditPanel.add(
             onClick: function () {
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
-                regionalDataEditButton.style().set('shown', true);
+                // regionalDataEditButton.style().set('shown', true);
                 scenarioPanel.style().set('shown', true);
                 settingsPanel.style().set('shown', true);
                 changeTablesToCharts();
