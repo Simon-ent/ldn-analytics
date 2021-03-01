@@ -294,6 +294,10 @@ var splitPanel = ui.SplitPanel(mapPanel, uiPanel);
 
 function landingPageStart() {
     ui.root.widgets().set(0, splitPanel);
+    introPanel2.widgets().set(0, ui.Label({
+        value: app.setup.country,
+        style: Styles.HEADER_STYLE_1
+    }))
     loadCountry(app.setup.country, app.setup.startYear, app.setup.targetYear);
 }
 
@@ -312,7 +316,7 @@ var introPanel2 = ui.Panel({style: {stretch: 'horizontal', shown: true}});
 uiPanel.add(introPanel2);
 
 introPanel2.add(ui.Label({
-    value: app.setup.country,
+    value: 'Loading...',
     style: Styles.HEADER_STYLE_1
 }))
 
