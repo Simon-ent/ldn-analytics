@@ -538,11 +538,11 @@ function updateScenarioUIList() {
                             ui.Button({
                                 label: 'Delete',
                                 onClick: function () {
-                                    app.variables.transitionsList = app.variables.transitionsList.filter(function(item) {item != scenario});
-                                    app.variables.scenarioList = app.variables.scenarioList.filter(function(item) {item != scenario});
+                                    // Soft delete doesn't change the feature
+                                    app.variables.transitionsList = app.variables.transitionsList.filter(function(item) {return item != scenario});
+                                    app.variables.scenarioList = app.variables.scenarioList.filter(function(item) {return item != scenario});
                                     updateScenarioUIList()
                                     regionalChartsBuilder()
-                                    print('Delete')
                                 }
                             })
                         ]
