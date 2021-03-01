@@ -498,16 +498,17 @@ function updateScenarioUIList() {
     scenarioListPanel.clear()
     app.variables.transitionsList.forEach(function(scenario) {
         if (scenario == app.setup.targetYear) {
-            scenarioListPanel.add(ui.Panel({
-                layout: ui.Panel.Layout.flow('horizontal'),
-                style: {stretch: 'horizontal'},
-                widgets: [
-                    ui.Label({
-                        value: scenario,
-                        style: {margin: '8px', padding: '12px 0 0 0'}
-                    })
-                ]
-            }))
+            
+            // scenarioListPanel.add(ui.Panel({
+            //     layout: ui.Panel.Layout.flow('horizontal'),
+            //     style: {stretch: 'horizontal'},
+            //     widgets: [
+            //         ui.Label({
+            //             value: scenario,
+            //             style: {margin: '8px', padding: '12px 0 0 0'}
+            //         })
+            //     ]
+            // }))
         } else {
             scenarioListPanel.add(ui.Panel({
                 layout: ui.Panel.Layout.flow('horizontal'),
@@ -515,20 +516,32 @@ function updateScenarioUIList() {
                 widgets: [
                     ui.Label({
                         value: scenario,
-                        style: {margin: '8px', padding: '12px 0 0 0'}
+                        style: {margin: '8px', padding: '6px 0 0 0'}
                     }),
-                    ui.Button({
-                        label: 'Edit',
-                        onClick: function () {
-                            var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
-                            landTypesScenarioChart.setChartType('Table')
-                            var transitionsChart = regionalChartsPanel.widgets().get(2);
-                            transitionsChart.setChartType('Table')
-                            setRegionalEditData(scenario)
-                            regionalEditPanel.style().set('shown', true);
-                            scenarioPanel.style().set('shown', false);
-                            settingsPanel.style().set('shown', false);
-                        }
+                    ui.Panel({
+                        layout: ui.Panel.Layout.flow('horizontal'),
+                        style: {margin: '0 8px 0 auto'},
+                        widgets: [
+                            ui.Button({
+                                label: 'Edit',
+                                onClick: function () {
+                                    var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+                                    landTypesScenarioChart.setChartType('Table')
+                                    var transitionsChart = regionalChartsPanel.widgets().get(2);
+                                    transitionsChart.setChartType('Table')
+                                    setRegionalEditData(scenario)
+                                    regionalEditPanel.style().set('shown', true);
+                                    scenarioPanel.style().set('shown', false);
+                                    settingsPanel.style().set('shown', false);
+                                }
+                            }),
+                            ui.Button({
+                                label: 'Delete',
+                                onClick: function () {
+                                    print('Delete')
+                                }
+                            })
+                        ]
                     })
                 ]
             }));
