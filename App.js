@@ -540,6 +540,8 @@ function updateScenarioUIList() {
                                 onClick: function () {
                                     app.variables.transitionsList = app.variables.transitionsList.filter(function(item) {item != scenario});
                                     app.variables.scenarioList = app.variables.scenarioList.filter(function(item) {item != scenario});
+                                    updateScenarioUIList()
+                                    regionalChartsBuilder()
                                     print('Delete')
                                 }
                             })
