@@ -470,7 +470,7 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         return feature.set('landCoverTransitions', regionIndicators)
     }
       
-    regionalIndicators = classifiedHistogram.map(updateFeature);
+    var regionalIndicators = classifiedHistogram.map(updateFeature);
     return regionalIndicators
 }
 
