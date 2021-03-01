@@ -381,26 +381,22 @@ function calculateSDG(landCoverChange, countryGeometry) {
     return SDGOutput
 }
 
-exports.calculateRegionalSDG = function(landCoverChange, subRegions) {
-    var pixelCount = landCoverChange.reduceRegions(
+function calculateRegionalSDG(landCoverChange, subRegions) {
+    var degredationCount = landCoverChange.reduceRegions(
+        subRegions,
         ee.Reducer.fixedHistogram(-1, 1, 3),
-        countryGeometry,
         500
     )
-    return pixelCount
-
-    // var updateFeature = function(feature) {
-    //     var degredationCount = ee.Array(pixelCount).get([0,1])
-    //     return feature.set({'Social Carbon Cost': SCC})
-    //   }
+    
+    var updateFeature = function(feature) {
+        var result = feature.getArray('histogram').get([0,1])
+        var pixelCount = feature.getNumber('Pixel_Count')
+        result = result.divide(pixelCount).multiply(100).toInt()
+        return feature.set({'Regional Degraded Land (%)': result})
+      }
       
-    // regionalCarbonCost = regionalCarbonCost.map(updateFeature);
-    
-    
-
-    // var SDG = ee.Number(degredationCount).divide(totalPixel)
-    // var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') 
-    // return SDGOutput
+    degredationCount = degredationCount.map(updateFeature);
+    return degredationCount
 }
 
 function calculateNationalNetChange(regionalScores) {
@@ -468,12 +464,12 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var productivityTrajectoryImageRaw = productivityTrajectory()
     var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw)
     
-    // var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
     outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
     outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
+    outputDataSet = calculateRegionalSDG(landCoverChange, outputDataSet);
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
