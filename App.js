@@ -348,7 +348,8 @@ countryPanel.add(ui.Panel({
                 SDGValue,
                 ui.Label({
                     value: 'SDG 15.3.1',
-                    style: {fontWeight: 'lighter'}
+                    style: {fontWeight: 'lighter'},
+                    targetUrl: 'https://knowledge.unccd.int/ldn/ldn-monitoring/sdg-indicator-1531'
                 })
             ]
         })
