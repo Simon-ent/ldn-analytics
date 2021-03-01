@@ -345,14 +345,14 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
         }
         
         var transitionSummary = ee.Dictionary({
-          'Tree_Cover to Grasslands': calculateNetTransition('21', '12'),
-          'Tree_Cover to Croplands': calculateNetTransition('31', '13'),
-          'Tree_Cover to Artificial': calculateNetTransition('51', '15'),
-          'Grasslands to Croplands': calculateNetTransition('23', '32'),
-          'Grasslands to Artificial': calculateNetTransition('52', '25'),
-          'Bare_Land to Grasslands' : calculateNetTransition('62', '26'),
-          'Bare_Land to Croplands' : calculateNetTransition('63', '36'),
-          'Bare_Land to Artificial' : calculateNetTransition('65', '56'),
+          'Tree_Cover to Grasslands': calculateNetTransition('21', '12').toInt(),
+          'Tree_Cover to Croplands': calculateNetTransition('31', '13').toInt(),
+          'Tree_Cover to Artificial': calculateNetTransition('51', '15').toInt(),
+          'Grasslands to Croplands': calculateNetTransition('23', '32').toInt(),
+          'Grasslands to Artificial': calculateNetTransition('52', '25').toInt(),
+          'Bare_Land to Grasslands' : calculateNetTransition('62', '26').toInt(),
+          'Bare_Land to Croplands' : calculateNetTransition('63', '36').toInt(),
+          'Bare_Land to Artificial' : calculateNetTransition('65', '56').toInt(),
         })
 
         var landCoverTransitions= ee.Algorithms.If(feature.get('landCoverTransitions'), feature.get('landCoverTransitions'), null) 
