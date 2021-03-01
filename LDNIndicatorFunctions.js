@@ -365,7 +365,7 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
 
 function calculateSDG(landCoverChange, countryGeometry) {
     var pixelCount = landCoverChange.reduceRegion(
-        ee.Reducer.fixedHistogram(-1, 1, 3),
+        ee.Reducer.fixedHistogram(-1, 2, 3),
         countryGeometry,
         500
     ).get('remapped');
@@ -384,7 +384,7 @@ function calculateSDG(landCoverChange, countryGeometry) {
 function calculateRegionalSDG(landCoverChange, subRegions) {
     var degredationCount = landCoverChange.reduceRegions(
         subRegions,
-        ee.Reducer.fixedHistogram(-1, 1, 3),
+        ee.Reducer.fixedHistogram(-1, 2, 3),
         500
     )
     
@@ -454,7 +454,7 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
 var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
     var classifiedHistogram = aggregatedChange.reduceRegions({
         collection: subRegions,
-        reducer: ee.Reducer.fixedHistogram(-1, 1, 3),
+        reducer: ee.Reducer.fixedHistogram(-1, 2, 3),
         scale: 500
     });
     var updateFeature = function(feature) {
@@ -463,7 +463,7 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         var stable = result.get([1,1]);
         var improving = result.get([2,1]);
         var total = degraded.add(stable.add(improving));
-        var netDegraded = improving.add(stable.add(degraded.multiply(-1)))
+        var netDegraded = improving.add(degraded.multiply(-1))
         var indicators = ee.Dictionary({
             'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
             'Regional Degraded Land (%)': degraded.divide(total).multiply(100).toInt(),
