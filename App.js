@@ -280,6 +280,7 @@ function updateUI() {
     regionName.setValue(regionNameText);
     app.variables.regionNameText = regionNameText;
     regionalChartsBuilder();
+    updateScenarioUIList();
     // createIndicatorsChart();
 }
 
@@ -489,8 +490,14 @@ addSceanrioInstructions.add(ui.Label({
     style: Styles.HELP_STYLE
 }))
 
-for (scenario in app.variables.scenarioList) {
-    scenarioPanel.add(Label(scenario))
+var scenarioListPanel = ui.Panel()
+scenarioPanel.add(scenarioListPanel)
+
+function updateScenarioUIList() {
+    scenarioListPanel.clear()
+    app.variables.scenarioList.forEach(function(scenario) {
+        scenarioListPanel.add(Label(scenario))
+    });
 }
 
 var createScenarioButton = ui.Button({
