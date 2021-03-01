@@ -9,13 +9,16 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
     var updatedScenarioData = regionalData.map(function(feature) {
         var landCoverData = ee.Dictionary(feature.get('landCover'));
         var landCoverTransitionsData = ee.Dictionary(feature.get('landCoverTransitions'));
+        var regionalIndicatorsData = ee.Dictionary(feature.get('regionIndicators'));
 
         var landCoverTypeCount = landCoverData.get(scenarioBaseName);
         var landCoverTransitions = landCoverTransitionsData.get(scenarioBaseName);
+        var regionIndicators = regionalIndicatorsData.get(scenarioBaseName)
 
         landCoverData = landCoverData.set(scenarioName, landCoverTypeCount)
         landCoverTransitionsData = landCoverTransitionsData.set(scenarioName, landCoverTransitions)
-        return feature.set('landCover', landCoverData, 'landCoverTransitions', landCoverTransitionsData)
+        regionalIndicatorsData = regionalIndicatorsData.set(scenarioName, regionIndicators)
+        return feature.set('landCover', landCoverData, 'landCoverTransitions', landCoverTransitionsData, 'regionIndicators', regionIndicators)
     })
     return updatedScenarioData
 }
