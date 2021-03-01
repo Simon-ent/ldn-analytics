@@ -616,6 +616,7 @@ createScenarioPanel.add(
                 app.variables.transitionsList = app.variables.transitionsList.concat([scenarioName]);
                 app.variables.currentScenario = scenarioName;
                 regionalChartsBuilder()
+                updateScenarioUIList()
                 createScenarioSelect.setValue(null);
                 createScenaioName.setValue(null);
             }
