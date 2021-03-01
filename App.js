@@ -585,35 +585,35 @@ var Bare2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 
 var regionalEditDataPanel = ui.Panel([
     ui.Panel([
-        ui.Label(value: 'Tree_Cover to Grasslands', {margin: '8px', padding: '6px 0'}), Tree2GrassText
+        ui.Label('Tree_Cover to Grasslands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2GrassText
     ], 
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Tree_Cover to Croplands', {margin: '8px', padding: '6px 0'}), Tree2CropText
+        ui.Label('Tree_Cover to Croplands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Tree_Cover to Artificial', {margin: '8px', padding: '6px 0'}), Tree2ArtificialText
+        ui.Label('Tree_Cover to Artificial', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Grasslands to Croplands', {margin: '8px', padding: '6px 0'}), Grass2CropText
+        ui.Label('Grasslands to Croplands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Grass2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Grasslands to Artificial', {margin: '8px', padding: '6px 0'}), Grass2ArtificialText
+        ui.Label('Grasslands to Artificial', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Grass2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Grasslands', {margin: '8px', padding: '6px 0'}), Bare2GrassText
+        ui.Label('Bare_Land to Grasslands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Bare2GrassText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Croplands', {margin: '8px', padding: '6px 0'}), Bare2CropText
+        ui.Label('Bare_Land to Croplands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Bare2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Artificial', {margin: '8px', padding: '6px 0'}), Bare2ArtificialText
+        ui.Label('Bare_Land to Artificial', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Bare2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal'))
 ])
