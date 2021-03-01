@@ -439,15 +439,16 @@ regionalDataPanel.add(regionalEditPanel);
 var regionalDataEditButton = ui.Button({
     label: 'Edit',
     onClick: function () {
-        var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
-        landTypesScenarioChart.setChartType('Table')
-        var transitionsChart = regionalChartsPanel.widgets().get(2);
-        transitionsChart.setChartType('Table')
-        setRegionalEditData()
-        regionalEditPanel.style().set('shown', true);
-        regionalDataEditButton.style().set('shown', false);
-        scenarioPanel.style().set('shown', false);
-        settingsPanel.style().set('shown', false);
+        print('Old Edit')
+        // var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+        // landTypesScenarioChart.setChartType('Table')
+        // var transitionsChart = regionalChartsPanel.widgets().get(2);
+        // transitionsChart.setChartType('Table')
+        // setRegionalEditData()
+        // regionalEditPanel.style().set('shown', true);
+        // regionalDataEditButton.style().set('shown', false);
+        // scenarioPanel.style().set('shown', false);
+        // settingsPanel.style().set('shown', false);
     }
 });
 regionalDataEditButton.style().set('shown', false);
@@ -495,8 +496,37 @@ scenarioPanel.add(scenarioListPanel)
 
 function updateScenarioUIList() {
     scenarioListPanel.clear()
-    app.variables.scenarioList.forEach(function(scenario) {
-        scenarioListPanel.add(Label(scenario))
+    app.variables.transitionsList.forEach(function(scenario) {
+        if (scenario == app.setup.targetYear) {
+            scenarioListPanel.add(ui.Panel({
+                layout: ui.Panel.Layout.flow('horizontal'),
+                style: {stretch: 'horizontal'},
+                widgets: [
+                    Label(scenario)
+                ]
+            }))
+        } else {
+            scenarioListPanel.add(ui.Panel({
+                layout: ui.Panel.Layout.flow('horizontal'),
+                style: {stretch: 'horizontal'},
+                widgets: [
+                    Label(scenario),
+                    ui.Button({
+                        label: 'Edit',
+                        onClick: function () {
+                            var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
+                            landTypesScenarioChart.setChartType('Table')
+                            var transitionsChart = regionalChartsPanel.widgets().get(2);
+                            transitionsChart.setChartType('Table')
+                            setRegionalEditData(scenario)
+                            regionalEditPanel.style().set('shown', true);
+                            scenarioPanel.style().set('shown', false);
+                            settingsPanel.style().set('shown', false);
+                        }
+                    })
+                ]
+            }));
+        }
     });
 }
 
@@ -657,8 +687,8 @@ var regionalEditDataPanel = ui.Panel([
 ])
 regionalEditPanel.add(regionalEditDataPanel)
 
-function setRegionalEditData() {
-    var currentScenario = app.variables.currentScenario;
+function setRegionalEditData(currentScenario) {
+    // var currentScenario = app.variables.currentScenario;
     var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
     var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
     var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
