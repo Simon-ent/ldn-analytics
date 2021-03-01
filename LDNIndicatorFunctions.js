@@ -272,8 +272,8 @@ var productivityTrajectoryClassified = function(sigTrend) {
  * Consolidated Regional Data
  */
 
-var RegionalScores = function(remapped_transitions, subRegions) {
-    var regionScore = remapped_transitions.reduceRegions({
+var RegionalScores = function(landCoverChange, subRegions) {
+    var regionScore = landCoverChange.reduceRegions({
         collection: subRegions,
         reducer: ee.Reducer.sum().combine(
             ee.Reducer.count(), '', true),
@@ -447,6 +447,33 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions) {
     return regionalCarbonCost
 }
 
+var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
+    var classifiedHistogram = aggregatedChange.reduceRegions({
+        collection: subRegions,
+        reducer: ee.Reducer.fixedHistogram(-1, 1, 3),
+        scale: 500
+    });
+    var updateFeature = function(feature) {
+        var result = feature.getArray('histogram')
+        var degraded = result.get([0,1]);
+        var stable = result.get([1,1]);
+        var improving = result.get([2,1]);
+        var total = degraded.add(stable.add(improving));
+        var netDegraded = improving.add(stable.add(degraded.multiply(-1)))
+        var indicators = ee.Dictionary({
+            'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
+            'Regional Degraded Land (%)': degraded.divide(total).multiply(100).toInt(),
+            'Pixel_Count': total
+        })
+        var regionIndicators = ee.Dictionary(null).set(targetYear, indicators)
+
+        return feature.set('landCoverTransitions', regionIndicators)
+    }
+      
+    regionalIndicators = classifiedHistogram.map(updateFeature);
+    return regionalIndicators
+}
+
 /*
  * Outputs
  */
@@ -467,9 +494,10 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
     outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
-    outputDataSet = RegionalScores(landCoverTransitions, outputDataSet);
+    // outputDataSet = RegionalScores(landCoverChange, outputDataSet);
     outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet)
-    outputDataSet = calculateRegionalSDG(landCoverChange, outputDataSet);
+    // outputDataSet = calculateRegionalSDG(landCoverChange, outputDataSet);
+    outputDataSet = RegionalIndicators(landCoverChange, outputDataSet, targetYear)
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': calculateSDG(landCoverChange, countryGeometry),
