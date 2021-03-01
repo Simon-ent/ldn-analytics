@@ -171,11 +171,11 @@ function regionalChartsBuilder() {
 
     // Regional Indicators Table
     var regionalIndicators = ee.Dictionary(currentRegion.get('regionIndicators'));
-    var regionalIndicatorsData = transitionsList.map(function(item) {
+    var regionalIndicatorsTableData = transitionsList.map(function(item) {
         return ee.Dictionary(regionalIndicators.get(item)).values()
     })
 
-    var regionalIndicatorsTable = ui.Chart.array.values(regionalIndicatorsData, 1, ee.Dictionary(regionalIndicatorsData.get(transitionsList.get(0))).keys())
+    var regionalIndicatorsTable = ui.Chart.array.values(regionalIndicatorsTableData, 1, ee.Dictionary(regionalIndicators.get(transitionsList.get(0))).keys())
         .setSeriesNames(transitionsList)
         .setChartType('Table')
         // .setOptions({

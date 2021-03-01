@@ -465,14 +465,14 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         var total = degraded.add(stable.add(improving));
         var netDegraded = improving.add(degraded.multiply(-1))
         var indicators = ee.Dictionary({
-            'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
+            // 'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
             'Regional Degraded Land (%)': degraded.divide(total).multiply(100).toInt(),
-            'Pixel_Count': total.toInt(),
-            'Degraded Count': degraded.toInt()
+            // 'Pixel_Count': total.toInt(),
+            // 'Degraded Count': degraded.toInt()
         })
         var regionIndicators = ee.Dictionary(null).set(targetYear, indicators)
 
-        return feature.set('regionIndicators', regionIndicators)
+        return feature.set('regionIndicators', regionIndicators, 'Pixel_Count', total.toInt())
     }
       
     var regionalIndicators = classifiedHistogram.map(updateFeature);
