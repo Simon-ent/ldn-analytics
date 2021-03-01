@@ -502,7 +502,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     // outputDataSet = RegionalScores(landCoverChange, outputDataSet);
     // outputDataSet = calculateRegionalSDG(landCoverChange, outputDataSet);
     outputDataSet = RegionalIndicators(landCoverChange, outputDataSet, targetYear)
-    outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet) //must come after RegionalIndicators
+    outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet, targetYear) //must come after RegionalIndicators
 
     var indicatorData = ee.Dictionary({
         'SDG 15.3.1': 2, //calculateSDG(landCoverChange, countryGeometry),
