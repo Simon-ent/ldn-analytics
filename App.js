@@ -469,15 +469,16 @@ regionalDataPanel.add(regionalChartsPanel);
 
 // Scenario Panel
 // For the Scenario Edit UI please see the scenario section
-countryPanel.add(ui.Label({
-    value: 'Scenarios',
-    style: Styles.HEADER_STYLE_2,
-}));
 
 var scenarioPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
 });
 countryPanel.add(scenarioPanel);
+
+scenarioPanel.add(ui.Label({
+    value: 'Scenarios',
+    style: Styles.HEADER_STYLE_2,
+}));
 
 // Scenarios Explanation Instructions
 var addSceanrioInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
@@ -487,6 +488,10 @@ addSceanrioInstructions.add(ui.Label({
     value: 'Add a scenario based off the Start and Target Year selected, to model different changes required to acheive LDN.',
     style: Styles.HELP_STYLE
 }))
+
+for (scenario in app.variables.scenarioList) {
+    scenarioPanel.add(Label(scenario))
+}
 
 var createScenarioButton = ui.Button({
     label: 'Create Scenario',
