@@ -445,6 +445,8 @@ var regionalDataEditButton = ui.Button({
         setRegionalEditData()
         regionalEditPanel.style().set('shown', true);
         regionalDataEditButton.style().set('shown', false);
+        scenarioPanel.style().set('shown', false);
+        settingsPanel.style().set('shown', false);
     }
 });
 regionalDataEditButton.style().set('shown', false);
@@ -537,7 +539,7 @@ createScenarioPanel.add(ui.Label({
   
 createScenarioPanel.add(ui.Label({
     value: 'Please select the Year (or an existing scenario) to use as the starting point.',
-    style: Styles.HELP_STYLE,
+    style: Styles.INTRO_STYLE,
 }));
 
 createScenarioPanel.add(Label('Select the starting point:'))
@@ -588,7 +590,11 @@ createScenarioPanel.add(
     )
 );
 
-// Regional Data Edit Scenario
+
+/**
+ * Edit Scenario
+ */
+
 regionalEditPanel.add(ui.Label({
     value: 'Edit Scenario',
     style: Styles.HEADER_STYLE_2,
@@ -686,6 +692,8 @@ regionalEditPanel.add(
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
                 regionalDataEditButton.style().set('shown', true);
+                scenarioPanel.style().set('shown', true);
+                settingsPanel.style().set('shown', true);
                 // changeTablesToCharts();
                 var updatedRegionalData = ScenarioFunctions.saveScenario(app.datasets.regionalData, getEditedData(), app.variables.regionNameText, app.variables.currentScenario, app.setup.startYear);
                 print('Updated regional data', updatedRegionalData)
@@ -699,6 +707,8 @@ regionalEditPanel.add(
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
                 regionalDataEditButton.style().set('shown', true);
+                scenarioPanel.style().set('shown', true);
+                settingsPanel.style().set('shown', true);
                 changeTablesToCharts();
             }
         })],
