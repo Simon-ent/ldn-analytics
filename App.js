@@ -114,7 +114,7 @@ function regionalChartsBuilder() {
     });
     var ProductivityArray = ee.Array(ProductivityHistogram.get('constant'));
 
-    var summaryTableData = ee.Array.cat([ProductivityArray.slice(1, 1), SOCArray.slice(1,1), LCArray.slice(1,1)], 1)
+    var summaryTableData = ee.Array.cat([ProductivityArray.slice(1, 1), SOCArray.slice(1,1), LCArray.slice(1,1)], 1).toInt();
     // print(chartData)
     var labels = ['Degrading', 'Stable', 'Improving']
     var summaryTable = ui.Chart.array.values(summaryTableData, 1, ["Productivity", "Soil Organic Carbon", 'Land Cover'])
