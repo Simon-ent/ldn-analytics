@@ -18,7 +18,7 @@ exports.createScenario = function(regionalData, scenarioBaseName, scenarioName) 
         landCoverData = landCoverData.set(scenarioName, landCoverTypeCount)
         landCoverTransitionsData = landCoverTransitionsData.set(scenarioName, landCoverTransitions)
         regionalIndicatorsData = regionalIndicatorsData.set(scenarioName, regionIndicators)
-        return feature.set('landCover', landCoverData, 'landCoverTransitions', landCoverTransitionsData, 'regionIndicators', regionIndicators)
+        return feature.set('landCover', landCoverData, 'landCoverTransitions', landCoverTransitionsData, 'regionIndicators', regionalIndicatorsData)
     })
     return updatedScenarioData
 }
