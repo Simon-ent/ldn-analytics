@@ -574,46 +574,46 @@ regionalEditPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_2,
 }));
 
-var Tree2GrassText = ui.Textbox();
-var Tree2CropText = ui.Textbox();
-var Tree2ArtificialText = ui.Textbox();
-var Grass2CropText = ui.Textbox();
-var Grass2ArtificialText = ui.Textbox();
-var Bare2GrassText = ui.Textbox();
-var Bare2CropText = ui.Textbox();
-var Bare2ArtificialText = ui.Textbox();
+var Tree2GrassText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Tree2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Tree2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Grass2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Grass2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Bare2GrassText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Bare2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
+var Bare2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 
 var regionalEditDataPanel = ui.Panel([
     ui.Panel([
-        Label('Tree_Cover to Grasslands'), Tree2GrassText
+        ui.Label(value: 'Tree_Cover to Grasslands', {margin: '8px', padding: '6px 0'}), Tree2GrassText
     ], 
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Tree_Cover to Croplands'), Tree2CropText
+        Label('Tree_Cover to Croplands', {margin: '8px', padding: '6px 0'}), Tree2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Tree_Cover to Artificial'), Tree2ArtificialText
+        Label('Tree_Cover to Artificial', {margin: '8px', padding: '6px 0'}), Tree2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Grasslands to Croplands'), Grass2CropText
+        Label('Grasslands to Croplands', {margin: '8px', padding: '6px 0'}), Grass2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Grasslands to Artificial'), Grass2ArtificialText
+        Label('Grasslands to Artificial', {margin: '8px', padding: '6px 0'}), Grass2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Grasslands'), Bare2GrassText
+        Label('Bare_Land to Grasslands', {margin: '8px', padding: '6px 0'}), Bare2GrassText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Croplands'), Bare2CropText
+        Label('Bare_Land to Croplands', {margin: '8px', padding: '6px 0'}), Bare2CropText
     ],
     ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
-        Label('Bare_Land to Artificial'), Bare2ArtificialText
+        Label('Bare_Land to Artificial', {margin: '8px', padding: '6px 0'}), Bare2ArtificialText
     ],
     ui.Panel.Layout.flow('horizontal'))
 ])
