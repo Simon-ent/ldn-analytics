@@ -355,70 +355,6 @@ countryPanel.add(ui.Panel({
     ]
 }))
 
-// countryPanel.add(ui.Label({
-//     value: app.setup.country + ' LDN Analysis',
-//     style: Styles.HEADER_STYLE_1
-// }))
-
-// var countryIndicators = ui.Panel();
-// countryPanel.add(countryIndicators)
-
-// countryIndicators.add([ui.Panel({
-//     layout: ui.Panel.Layout.flow('horizontal'),
-//       style:{
-//         // margin: '0 0 10px 0'
-//       },
-//     widgets:[
-//     ui.Label({
-//         value: 'Degraded Land (%)',
-//         style: Styles.HEADER_STYLE_2,
-//     }),
-//     ui.Label({
-//         value: '7',
-//         style: Styles.HEADER_STYLE_2,
-//     })]
-// }),
-// ui.Label({
-//     value: 'SDG 15.3.1: Total degredation as a percentage of total land area.',
-//     style: Styles.HELP_STYLE
-// })
-// ])
-
-// // Indicators
-// countryPanel.add(ui.Label({
-//     value: 'Key Indicators',
-//     style: Styles.HEADER_STYLE_2,
-// }));
-
-// // Indicators Explanation Instructions
-// var countryIndicatorInstructions = ui.Panel({style: {stretch: 'horizontal', shown: true}});
-// countryPanel.add(countryIndicatorInstructions);
-
-// countryIndicatorInstructions.add(ui.Label({
-//     value: 'Key performance indicators aggregated at the country level.',
-//     style: Styles.HELP_STYLE
-// }))
-  
-// var nationalIndicatorsChartPanel = ui.Panel({
-//     layout: ui.Panel.Layout.flow('vertical'),
-// });
-// countryPanel.add(nationalIndicatorsChartPanel)
-
-// nationalIndicatorsChartPanel.add(ui.Label());
-  
-// function createIndicatorsChart() {
-//     var scenarioList = ee.List(app.variables.transitionsList);
-//     var nationalIndicators = app.datasets.nationalIndicators;
-//     var nationalIndicatorsChartData = scenarioList.map(function(item) {
-//         return ee.Dictionary(nationalIndicators.get(item)).values()
-//     })
-//     var nationalIndicatorsChart = ui.Chart.array.values(nationalIndicatorsChartData, 1, ee.Dictionary(nationalIndicators.get(scenarioList.get(0))).keys())
-//     .setSeriesNames(scenarioList)
-//     .setChartType('Table')
-    
-//     nationalIndicatorsChartPanel.widgets().set(0, nationalIndicatorsChart)
-// }
-
 // Regional Data
 var regionalDataPanel = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
@@ -435,23 +371,6 @@ var regionalEditPanel = ui.Panel({
     }
 });
 regionalDataPanel.add(regionalEditPanel);
-
-// var regionalDataEditButton = ui.Button({
-//     label: 'Edit',
-//     onClick: function () {
-//         print('Old Edit')
-//         // var landTypesScenarioChart = regionalChartsPanel.widgets().get(1);
-//         // landTypesScenarioChart.setChartType('Table')
-//         // var transitionsChart = regionalChartsPanel.widgets().get(2);
-//         // transitionsChart.setChartType('Table')
-//         // setRegionalEditData()
-//         // regionalEditPanel.style().set('shown', true);
-//         // regionalDataEditButton.style().set('shown', false);
-//         // scenarioPanel.style().set('shown', false);
-//         // settingsPanel.style().set('shown', false);
-//     }
-// });
-// regionalDataEditButton.style().set('shown', false);
 
 regionalDataPanel.add(
     ui.Panel([
@@ -498,17 +417,7 @@ function updateScenarioUIList() {
     scenarioListPanel.clear()
     app.variables.transitionsList.forEach(function(scenario) {
         if (scenario == app.setup.targetYear) {
-            
-            // scenarioListPanel.add(ui.Panel({
-            //     layout: ui.Panel.Layout.flow('horizontal'),
-            //     style: {stretch: 'horizontal'},
-            //     widgets: [
-            //         ui.Label({
-            //             value: scenario,
-            //             style: {margin: '8px', padding: '12px 0 0 0'}
-            //         })
-            //     ]
-            // }))
+            // Do nothing
         } else {
             scenarioListPanel.add(ui.Panel({
                 layout: ui.Panel.Layout.flow('horizontal'),
@@ -563,30 +472,30 @@ var createScenarioButton = ui.Button({
 })
 scenarioPanel.add(createScenarioButton)
 
-// Settings
-var settingsPanel = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
-})
-countryPanel.add(settingsPanel)
+// // Settings
+// var settingsPanel = ui.Panel({
+//     layout: ui.Panel.Layout.flow('vertical'),
+// })
+// countryPanel.add(settingsPanel)
 
-var settingsPanelContents = ui.Panel({
-  layout: ui.Panel.Layout.flow('vertical'),
-  style: Styles.SECTION_STYLE,
-});
-settingsPanel.add(settingsPanelContents)
+// var settingsPanelContents = ui.Panel({
+//   layout: ui.Panel.Layout.flow('vertical'),
+//   style: Styles.SECTION_STYLE,
+// });
+// settingsPanel.add(settingsPanelContents)
 
-settingsPanelContents.add(ui.Label({
-    value: 'Settings',
-    style: Styles.HEADER_STYLE_2,
-}));
+// settingsPanelContents.add(ui.Label({
+//     value: 'Settings',
+//     style: Styles.HEADER_STYLE_2,
+// }));
 
-var changeCountryButton = ui.Button({
-    label: 'Change Country',
-    onClick: function () {
-        ui.root.widgets().set(0, UserInterface.generateLandingPage(app, true, landingPageStart, returnToMapView))
-    }
-})
-settingsPanelContents.add(changeCountryButton)
+// var changeCountryButton = ui.Button({
+//     label: 'Change Country',
+//     onClick: function () {
+//         ui.root.widgets().set(0, UserInterface.generateLandingPage(app, true, landingPageStart, returnToMapView))
+//     }
+// })
+// settingsPanelContents.add(changeCountryButton)
 
 /*
 *  Scenario Planner UI
@@ -631,7 +540,6 @@ createScenarioPanel.add(
             onClick: function () {
                 countryPanel.style().set('shown', true);
                 createScenarioPanel.style().set('shown', false);
-                // regionalDataEditButton.style().set('shown', true);
                 var scenarioName = createScenaioName.getValue()
                 var scenarioBase = createScenarioSelect.getValue()
                 app.datasets.regionalData = ScenarioFunctions.createScenario(app.datasets.regionalData, scenarioBase, scenarioName);
@@ -757,7 +665,6 @@ regionalEditPanel.add(
             onClick: function () {
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
-                // regionalDataEditButton.style().set('shown', true);
                 scenarioPanel.style().set('shown', true);
                 settingsPanel.style().set('shown', true);
                 // changeTablesToCharts();
@@ -772,7 +679,6 @@ regionalEditPanel.add(
             onClick: function () {
                 regionalChartsPanel.style().set('shown', true);
                 regionalEditPanel.style().set('shown', false);
-                // regionalDataEditButton.style().set('shown', true);
                 scenarioPanel.style().set('shown', true);
                 settingsPanel.style().set('shown', true);
                 changeTablesToCharts();
