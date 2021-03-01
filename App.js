@@ -168,6 +168,26 @@ function regionalChartsBuilder() {
         });
 
     regionalChartsPanel.add(landCoverTransitionsChart)
+
+    // Regional Indicators Table
+    var regionalIndicators = ee.Dictionary(currentRegion.get('regionIndicators'));
+    var regionalIndicatorsData = transitionsList.map(function(item) {
+        return ee.Dictionary(regionalIndicators.get(item)).values()
+    })
+
+    var regionalIndicatorsTable = ui.Chart.array.values(regionalIndicatorsData, 1, ee.Dictionary(regionalIndicatorsData.get(transitionsList.get(0))).keys())
+        .setSeriesNames(transitionsList)
+        .setChartType('Table')
+        // .setOptions({
+        //     title: 'Land Cover Transitions',
+        //     hAxis: {title: 'Net Change'},
+        //     colors: [
+        //         '377eb8', '4daf4a', '984ea3', 'ff7f00',
+        //         'ffff33', 'a65628', 'f781bf', 'e41a1c'],
+        //     orientation: 'vertical',
+        // });
+
+    regionalChartsPanel.add(regionalIndicatorsTable)
     
     // regionalChartsPanel.add(Label('Social Cost of Carbon ($)'))
     // currentRegion.get('Social Carbon Cost').evaluate(function(result){
