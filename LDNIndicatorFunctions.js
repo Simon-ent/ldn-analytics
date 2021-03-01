@@ -467,7 +467,7 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         })
         var regionIndicators = ee.Dictionary(null).set(targetYear, indicators)
 
-        return feature.set('landCoverTransitions', regionIndicators)
+        return feature.set('regionIndicators', regionIndicators)
     }
       
     var regionalIndicators = classifiedHistogram.map(updateFeature);
