@@ -441,7 +441,7 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
         var socialCarbonCost = ee.Number(feature.get('sum'));
         var regionIndicators = ee.Dictionary(feature.get('regionIndicators'))
         var indicators = ee.Dictionary(regionIndicators.get(targetYear))
-        indicators = indicators.set('Social Carbon Cost', socialCarbonCost.toInt())
+        indicators = indicators.set('Social Carbon Cost ($)', socialCarbonCost.toInt())
         regionIndicators = regionIndicators.set(targetYear, indicators)
         return feature.set('regionIndicators', regionIndicators)
       }
