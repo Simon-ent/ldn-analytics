@@ -282,7 +282,7 @@ var RegionalScores = function(remapped_transitions, subRegions) {
     var calculatePercentageDegraded = function(feature) {
         var state = ee.Number(feature.get('sum'));
         var area = ee.Number(feature.get('count'));
-        return feature.set({Degraded_State: state.divide(area)})
+        return feature.set('Degraded_State', state.divide(area), 'Pixel_Count', area)
       }
       
     regionScore = regionScore.map(calculatePercentageDegraded);
@@ -377,9 +377,30 @@ function calculateSDG(landCoverChange, countryGeometry) {
     ).get('remapped');
 
     var SDG = ee.Number(degredationCount).divide(totalPixel)
-    var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') //.getInfo()
-    // SDGIndicatorWidget.widgets().set(1, IndicatorLabel(SDGOutput + ' %'))
+    var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') 
     return SDGOutput
+}
+
+exports.calculateRegionalSDG = function(landCoverChange, subRegions) {
+    var pixelCount = landCoverChange.reduceRegions(
+        ee.Reducer.fixedHistogram(-1, 1, 3),
+        countryGeometry,
+        500
+    )
+    return pixelCount
+
+    // var updateFeature = function(feature) {
+    //     var degredationCount = ee.Array(pixelCount).get([0,1])
+    //     return feature.set({'Social Carbon Cost': SCC})
+    //   }
+      
+    // regionalCarbonCost = regionalCarbonCost.map(updateFeature);
+    
+    
+
+    // var SDG = ee.Number(degredationCount).divide(totalPixel)
+    // var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') 
+    // return SDGOutput
 }
 
 function calculateNationalNetChange(regionalScores) {

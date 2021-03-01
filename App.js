@@ -209,7 +209,7 @@ function loadCountry(country, startYear, targetYear) {
     // Regional Land Cover Tiles (Layer 1)
     // Thoughts on -1 to 1 vs -0.2 to 0.2, the latter makes all changes much more easily identified?
     var regionalLandCoverChange = LDNIndicatorData[2].clip(countryGeometry);
-    mapPanel.addLayer(regionalLandCoverChange,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Regional Degredation', true, 0.9)
+    mapPanel.addLayer(regionalLandCoverChange,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Sub National Degredation Status', true, 0.9)
 
     // Soil Organic Carbon (Layer 2)
     var soilOrganicCarbonChange = LDNIndicatorData[1].clip(countryGeometry);
