@@ -480,7 +480,7 @@ var cropYields = function(regionalData, yieldsData, targetYear) {
         var indicators = ee.Dictionary(regionIndicators.get(targetYear));
         indicators = indicators.combine({'Crop: Maize Yield': maizeYield, 'Crop: Maize Value ($)': maizeValue,
                                     'Crop: Wheat Yield': wheatYield, 'Crop: Wheat Value ($)': wheatValue,
-                                    'Crop: Rice Yield': ricePrice, 'Crop: Rice Value ($)': riceValue});
+                                    'Crop: Rice Yield': riceYield, 'Crop: Rice Value ($)': riceValue});
         regionIndicators = regionIndicators.set(targetYear, indicators);
         return feature.set('regionIndicators', regionIndicators)
     })
@@ -527,7 +527,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
     regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
-    regionalData = cropYields(regionalData, yieldsData, targetYear)
+    // regionalData = cropYields(regionalData, yieldsData, targetYear)
 
     var SDGData = calculateSDG(SDGImage, countryGeometry);
 
