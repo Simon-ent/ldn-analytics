@@ -64,7 +64,7 @@ function IndicatorLabel(text) {
 function updateOverlay() {
     var region = app.variables.region;
     var regionHighlight = ui.Map.Layer(HelperFunctions.highlightRegion(region), {palette: ['8856a7']}, 'Selected Region');
-    mapPanel.layers().set(5, regionHighlight);
+    mapPanel.layers().set(6, regionHighlight);
 }
 
 function handleMapClick(location) {

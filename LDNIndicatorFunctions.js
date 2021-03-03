@@ -503,11 +503,18 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
     return regionalIndicators
 }
 
-var RegionalSDGImage = function(regionalData) {
+var RegionalSDGImage = function(SDGImage, subRegions) {
+    var regionalData = SDGImage.reduceRegions({
+      collection: subRegions, 
+      reducer: ee.Reducer.mean(), 
+      scale: 500,
+      tileScale: 4
+    })
+  
     var canvas = ee.Image().byte()
     canvas = canvas.paint({
         featureCollection: regionalData,
-        color: 'Degraded_State'
+        color: 'mean'
     })
     return canvas
 }
@@ -531,6 +538,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw);
 
     var SDGImage = aggregatedSDGImage(landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage);
+    var SDGRegionalImage = RegionalSDGImage(SDGImage, subRegions);
     
     var regionalData = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
     regionalData = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, regionalData);
@@ -539,7 +547,6 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
 
     var SDGData = calculateSDG(landCoverChange, countryGeometry);
-    var SDGRegionalImage = RegionalSDGImage(regionalData)
 
     return [
         landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage,
