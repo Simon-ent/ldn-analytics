@@ -52,13 +52,13 @@ function Label(text) {
     return output
 }
 
-function IndicatorLabel(text) {
-    var output = ui.Label({
-        value: text,
-        style: Styles.INDICATOR_STYLE
-    })
-    return output
-}
+// function IndicatorLabel(text) {
+//     var output = ui.Label({
+//         value: text,
+//         style: Styles.INDICATOR_STYLE
+//     })
+//     return output
+// }
 
 // Updates the map overlay using the currently-selected region.
 function updateOverlay() {
@@ -227,9 +227,8 @@ function loadCountry(country, startYear, targetYear) {
     })
 
     // Regional Land Cover Tiles
-    // Thoughts on -1 to 1 vs -0.2 to 0.2, the latter makes all changes much more easily identified?
     var SDGRegionalImage = LDNIndicatorData[7].clip(countryGeometry);
-    mapPanel.addLayer(SDGRegionalImage,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Sub National Degredation Status', true, 0.9)
+    mapPanel.addLayer(SDGRegionalImage,{min: -1, max: 1, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Sub National Degredation Status', true, 0.9)
 
     // Aggregated Raw Image
     var aggregatedSDGImage = LDNIndicatorData[6].clip(countryGeometry);
