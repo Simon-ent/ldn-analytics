@@ -212,39 +212,48 @@ function loadCountry(country, startYear, targetYear) {
      */
 
     var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions, countryGeometry)
+    // returns:
+    // 0 landCoverChange, 1 soilOrganicCarbonChange, 2 productivityTrajectoryImage,
+    // 3 landCoverTransitions, 4 soilOrganicCarbonChangeRaw, 5 productivityTrajectoryImageRaw,
+    // 6 SDGImage, 7 SDGRegionalImage,
+    // 8 outputDataSet, 9 SDGData
 
     // Data
-    app.datasets.regionalData = LDNIndicatorData[4];
-    app.datasets.nationalIndicators = LDNIndicatorData[5];
-    LDNIndicatorData[8].evaluate(function(SDGData) {
+    app.datasets.regionalData = LDNIndicatorData[8];
+    // app.datasets.nationalIndicators = LDNIndicatorData[5];
+    LDNIndicatorData[9].evaluate(function(SDGData) {
         SDGValue.setValue(SDGData + ' %')
         app.variables.SDGValue = SDGData
     })
 
-    // Land Cover (Layer 0)
+    // Regional Land Cover Tiles
+    // Thoughts on -1 to 1 vs -0.2 to 0.2, the latter makes all changes much more easily identified?
+    var SDGRegionalImage = LDNIndicatorData[7].clip(countryGeometry);
+    mapPanel.addLayer(SDGRegionalImage,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Sub National Degredation Status', true, 0.9)
+
+    // Aggregated Raw Image
+    var aggregatedSDGImage = LDNIndicatorData[6].clip(countryGeometry);
+    mapPanel.addLayer(aggregatedSDGImage, {min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Aggregated Indicators', false, 0.75);
+
+    // Land Cover
     var landCoverChange = LDNIndicatorData[0].clip(countryGeometry);
     app.images.landCover = landCoverChange;
-    mapPanel.addLayer(landCoverChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Land Cover', false, 0.75);
+    mapPanel.addLayer(landCoverChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Land Cover Change Classified', false, 0.75);
 
-    // Regional Land Cover Tiles (Layer 1)
-    // Thoughts on -1 to 1 vs -0.2 to 0.2, the latter makes all changes much more easily identified?
-    var regionalLandCoverChange = LDNIndicatorData[2].clip(countryGeometry);
-    mapPanel.addLayer(regionalLandCoverChange,{min: -0.20, max: 0.20, palette: ['fc8d59', 'ffffbf', '1a9850']}, 'Sub National Degredation Status', true, 0.9)
-
-    // Soil Organic Carbon (Layer 2)
+    // Soil Organic Carbon
     var soilOrganicCarbonChange = LDNIndicatorData[1].clip(countryGeometry);
     app.images.soilOrganicCarbon = soilOrganicCarbonChange;
-    mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change', false, 0.75);
+    mapPanel.addLayer(soilOrganicCarbonChange,{min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Soil Organic Carbon Change Classified', false, 0.75);
 
-    // Productivity Trajectory (Layer 3)
-    var productivityTrajectoryImage = LDNIndicatorData[3].clip(countryGeometry);
+    // Productivity Trajectory
+    var productivityTrajectoryImage = LDNIndicatorData[2].clip(countryGeometry);
     app.images.productivity = productivityTrajectoryImage;
-    mapPanel.addLayer(productivityTrajectoryImage, {min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Productivity Trajectory', false, 0.75)
+    mapPanel.addLayer(productivityTrajectoryImage, {min: -1, max: 1, palette: ['fc8d59', '#ffffbf', '1a9850']}, 'Productivity Trajectory Classified', false, 0.75)
 
-    // Regional Outlines (Layer 4)
+    // Regional Outlines
     mapPanel.addLayer(HelperFunctions.RegionsOverlay(ee.Image().byte(), regions, subRegions), {palette:['808080']}, 'Regions', true, 0.85);
 
-    // Selected Region Outline (Layer 5)
+    // Selected Region Outline
     mapPanel.addLayer(
         HelperFunctions.highlightRegion(
             app.datasets.regions.filter(
@@ -257,15 +266,15 @@ function loadCountry(country, startYear, targetYear) {
      * Analysis Layers
      */
 
-    // Fire Frequency (Layer 6)
+    // Fire Frequency
     var fireFrequency = AnalysisLayers.FireFrequencyAnalysis(startYear, targetYear).clip(countryGeometry);
     mapPanel.addLayer(fireFrequency, {min: 0, max: 1, palette: ['#ffeda0', '#de2d26']}, 'Fire Frequency', false, 0.5);
 
-    // Erosion Risk (Layer 7)
+    // Erosion Risk
     var erosionRisk = AnalysisLayers.ErosionRisk(startYear, targetYear).clip(countryGeometry);
     mapPanel.addLayer(erosionRisk, {min: 0, max: 15, palette: ['#ccece6', '#e31a1c']}, 'Erosion Risk', false, 0.75);
 
-    // Drought Risk (Layer 8,9,10)
+    // Drought Risk
     var droughtRisk = AnalysisLayers.DroughtRisk();
     var currentDroughtRisk = droughtRisk[0].clip(countryGeometry);
     var longTermDroughtRisk = droughtRisk[1].clip(countryGeometry);
@@ -276,7 +285,7 @@ function loadCountry(country, startYear, targetYear) {
     mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.9);
     // mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
 
-    // // Wildlife Corridors (Layer 11)
+    // // Wildlife Corridors 
     // var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
     // var WDPAParams = {
     // palette: ['2ed033', '5aff05', '67b9ff', '5844ff', '0a7618', '2c05ff'],

@@ -272,12 +272,7 @@ var productivityTrajectoryClassified = function(sigTrend) {
 
 var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, productivityTrajectory) {
     var remapImage = function(image) {
-        // var result = ee.Image(4)
-        //     .where(image.gt(0), 1) //improving
-        //     .where(image.eq(0), 0) //stable
-        //     .where(image.lt(0), -3) //degrading
-        var result = image.where(image.lt(0), -3)
-        return result
+        return image.where(image.lt(0), -3) // Remap degrading to -3
     }
     var landCoverChangeRemapped = remapImage(landCoverChange);
     var soilOrganicCarbonChangeRemapped = remapImage(soilOrganicCarbonChange)
@@ -299,31 +294,31 @@ var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, prod
  * Consolidated Regional Data
  */
 
-var RegionalScores = function(landCoverChange, subRegions) {
-    var regionScore = landCoverChange.reduceRegions({
-        collection: subRegions,
-        reducer: ee.Reducer.sum().combine(
-            ee.Reducer.count(), '', true),
-        scale: 500
-    });
-    var calculatePercentageDegraded = function(feature) {
-        var state = ee.Number(feature.get('sum'));
-        var area = ee.Number(feature.get('count'));
-        return feature.set('Degraded_State', state.divide(area), 'Pixel_Count', area)
-      }
+// var RegionalScores = function(landCoverChange, subRegions) {
+//     var regionScore = landCoverChange.reduceRegions({
+//         collection: subRegions,
+//         reducer: ee.Reducer.sum().combine(
+//             ee.Reducer.count(), '', true),
+//         scale: 500
+//     });
+//     var calculatePercentageDegraded = function(feature) {
+//         var state = ee.Number(feature.get('sum'));
+//         var area = ee.Number(feature.get('count'));
+//         return feature.set('Degraded_State', state.divide(area), 'Pixel_Count', area)
+//       }
       
-    regionScore = regionScore.map(calculatePercentageDegraded);
-    return regionScore
-}
+//     regionScore = regionScore.map(calculatePercentageDegraded);
+//     return regionScore
+// }
 
-var RegionalScoresImage = function(regionScores) {
-    var canvas = ee.Image().byte()
-    canvas = canvas.paint({
-        featureCollection: regionScores,
-        color: 'Degraded_State'
-    })
-    return canvas
-}
+// var RegionalScoresImage = function(regionScores) {
+//     var canvas = ee.Image().byte()
+//     canvas = canvas.paint({
+//         featureCollection: regionScores,
+//         color: 'Degraded_State'
+//     })
+//     return canvas
+// }
 
 /*
  * Table Data
@@ -408,28 +403,28 @@ function calculateSDG(landCoverChange, countryGeometry) {
     return SDGOutput
 }
 
-function calculateRegionalSDG(landCoverChange, subRegions) {
-    var degredationCount = landCoverChange.reduceRegions(
-        subRegions,
-        ee.Reducer.fixedHistogram(-1, 2, 3),
-        500
-    )
+// function calculateRegionalSDG(landCoverChange, subRegions) {
+//     var degredationCount = landCoverChange.reduceRegions(
+//         subRegions,
+//         ee.Reducer.fixedHistogram(-1, 2, 3),
+//         500
+//     )
     
-    var updateFeature = function(feature) {
-        var result = feature.getArray('histogram').get([0,1])
-        var pixelCount = feature.getNumber('Pixel_Count')
-        result = result.divide(pixelCount).multiply(100).toInt()
-        return feature.set({'Regional Degraded Land (%)': result})
-      }
+//     var updateFeature = function(feature) {
+//         var result = feature.getArray('histogram').get([0,1])
+//         var pixelCount = feature.getNumber('Pixel_Count')
+//         result = result.divide(pixelCount).multiply(100).toInt()
+//         return feature.set({'Regional Degraded Land (%)': result})
+//       }
       
-    degredationCount = degredationCount.map(updateFeature);
-    return degredationCount
-}
+//     degredationCount = degredationCount.map(updateFeature);
+//     return degredationCount
+// }
 
-function calculateNationalNetChange(regionalScores) {
-    var nationalIndicator = regionalScores.reduceColumns(ee.Reducer.sum(), ['Degraded_State']);
-    return ee.Number(nationalIndicator.get('sum')).format('%.2f')
-}
+// function calculateNationalNetChange(regionalScores) {
+//     var nationalIndicator = regionalScores.reduceColumns(ee.Reducer.sum(), ['Degraded_State']);
+//     return ee.Number(nationalIndicator.get('sum')).format('%.2f')
+// }
 
 function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
     // Load data with information on "bulk density" of soil, that is how many kg of soil exist under an m3 of soil
@@ -491,19 +486,30 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         var improving = result.get([2,1]);
         var total = degraded.add(stable.add(improving));
         var netDegraded = improving.add(degraded.multiply(-1))
+        var netDegradedPercent = netDegraded.divide(total).multiply(100).toInt();
         var indicators = ee.Dictionary({
             // 'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
             'Regional Degraded Land (%)': degraded.divide(total).multiply(100).toInt(),
-            // 'Pixel_Count': total.toInt(),
-            // 'Degraded Count': degraded.toInt()
+            'Degraded Land Area': degraded.toInt(),
+            'Net Degredation (%)': netDegradedPercent
         })
         var regionIndicators = ee.Dictionary(null).set(targetYear, indicators)
+        
 
-        return feature.set('regionIndicators', regionIndicators, 'Pixel_Count', total.toInt())
+        return feature.set('regionIndicators', regionIndicators, 'Pixel_Count', total.toInt(), 'Degraded_State', netDegradedPercent)
     }
       
     var regionalIndicators = classifiedHistogram.map(updateFeature);
     return regionalIndicators
+}
+
+var RegionalSDGImage = function(regionalData) {
+    var canvas = ee.Image().byte()
+    canvas = canvas.paint({
+        featureCollection: regionalData,
+        color: 'Degraded_State'
+    })
+    return canvas
 }
 
 /*
@@ -515,37 +521,31 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransitions = LandCoverTransitions(landCoverStartImage, landCoverEndImage);
     var landCoverChange = LandCoverChangeImage(landCoverTransitions);
+
     var soilOrganicCarbonChangeRaw = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
     var soilOrganicCarbonChange = SoilOrganicCarbonChangeClassified(soilOrganicCarbonChangeRaw);
-    var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
-    var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
+    // var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
+    // var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
 
-    var productivityTrajectoryImageRaw = productivityTrajectory()
-    var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw)
+    var productivityTrajectoryImageRaw = productivityTrajectory();
+    var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw);
+
+    var SDGImage = aggregatedSDGImage(landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage);
     
-    var outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
-    outputDataSet = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, outputDataSet);
-    outputDataSet = calculateLandCoverTransitions(landCoverTransitions, targetYear, outputDataSet);
-    // outputDataSet = RegionalScores(landCoverChange, outputDataSet);
-    // outputDataSet = calculateRegionalSDG(landCoverChange, outputDataSet);
-    outputDataSet = RegionalIndicators(landCoverChange, outputDataSet, targetYear)
-    outputDataSet = socialCarbonCost(soilOrganicCarbonChange, outputDataSet, targetYear) //must come after RegionalIndicators
-
-    var indicatorData = ee.Dictionary({
-        'SDG 15.3.1': 2, //calculateSDG(landCoverChange, countryGeometry),
-        'National Net Change': 2 //calculateNationalNetChange(outputDataSet) //2
-    })
-    var nationalIndicators = ee.Feature(null).set(targetYear, indicatorData)
+    var regionalData = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverStartImage), startYear, subRegions);
+    regionalData = generateLandCoverTypeSummaryFeature(remapLandCoverYear2(landCoverEndImage), targetYear, regionalData);
+    regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
+    regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
+    regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
 
     var SDGData = calculateSDG(landCoverChange, countryGeometry);
+    var SDGRegionalImage = RegionalSDGImage(regionalData)
 
-    var SDGImage = aggregatedSDGImage(landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage)
-
-    return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
-        productivityTrajectoryImage,
-        outputDataSet, nationalIndicators, 
-        soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw,
-        SDGData, SDGImage
+    return [
+        landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage,
+        landCoverTransitions, soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw,
+        SDGImage, SDGRegionalImage,
+        regionalData, SDGData
     ]
 }
 
