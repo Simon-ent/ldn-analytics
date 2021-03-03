@@ -46,6 +46,9 @@ var LandCoverChangeImage = function(transitions) {
     // remaps transitions according to Earth trends
     // http://trends.earth/docs/en/training/tutorial_run_all_subindicators.html
     // Step 7
+
+    transitions = transitions.updateMask(transitions.eq(77));
+
     var remapped_transitions = transitions.remap(
         [11,12,13,14,15,16,17,
         21,22,23,24,25,26,27,
@@ -287,7 +290,7 @@ var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, prod
         .where(subIndicatorAggregation.gt(0), 1);//improving
 
     SDGImage = SDGImage.updateMask(SDGImage.lt(4))
-    
+
     return SDGImage
 }
 
