@@ -389,24 +389,18 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
 
 function calculateSDG(aggregatedChange, countryGeometry) {
     var pixelCount = aggregatedChange.reduceRegion({
-        reducer: ee.Reducer.fixedHistogram(-1, 2, 3),
+        reducer: ee.Reducer.frequencyHistogram(),
         geometry: countryGeometry,
         scale: 500,
         bestEffort: true,
         tileScale: 4
-    }).get('remapped');
-    var degredationCount = ee.Array(pixelCount).get([0,1])
-    var totalPixel = aggregatedChange.reduceRegion({
-        reducer: ee.Reducer.count(),
-        geometry: countryGeometry,
-        scale: 500,
-        bestEffort: true,
-        tileScale: 4
-    }).get('remapped');
+    }).get('constant');
 
-    var SDG = ee.Number(degredationCount).divide(totalPixel)
-    var SDGOutput = SDG.multiply(100).format('%.0f') 
-    return SDGOutput
+    pixelCount = ee.Dictionary(pixelCount)
+    var degredationCount = pixelCount.getNumber('-1', 0)
+    var total = degredationCount.add(pixelCount.getNumber('0', 0).add(pixelCount.getNumber('1', 0)))
+    var SDG = degredationCount.divide(total).multiply(100).toInt()
+    return SDG
 }
 
 // function calculateRegionalSDG(landCoverChange, subRegions) {
