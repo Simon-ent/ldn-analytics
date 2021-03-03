@@ -397,8 +397,8 @@ function calculateSDG(aggregatedChange, countryGeometry) {
     }).get('constant');
 
     pixelCount = ee.Dictionary(pixelCount)
-    var degredationCount = pixelCount.getNumber('-1', 0)
-    var total = degredationCount.add(pixelCount.getNumber('0', 0).add(pixelCount.getNumber('1', 0)))
+    var degredationCount = pixelCount.getNumber('-1')
+    var total = degredationCount.add(pixelCount.getNumber('0').add(pixelCount.getNumber('1')))
     var SDG = degredationCount.divide(total).multiply(100).toInt()
     return SDG
 }
