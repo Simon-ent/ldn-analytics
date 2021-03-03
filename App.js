@@ -205,6 +205,7 @@ function loadCountry(country, startYear, targetYear) {
     var countryGeometry = countries.filter(ee.Filter.eq('ADM0_NAME', country));
     var regions = worldRegions.filter(ee.Filter.eq('ADM0_NAME', country));
     var subRegions = worldSubRegions.filter(ee.Filter.eq('ADM0_NAME', country));
+    var yieldsData = countryYields.filter(ee.Filter.eq('Country', country)).first();
     // app.datasets.countryGeometry = countryGeometry;
     app.datasets.regions = regions;
     app.datasets.subRegions = subRegions;
@@ -215,7 +216,7 @@ function loadCountry(country, startYear, targetYear) {
      * LDN Indicators
      */
 
-    var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions, countryGeometry)
+    var LDNIndicatorData = LDNIndicatorFunctions.LDNIndicatorData(startYear, targetYear, subRegions, countryGeometry, yieldsData)
     // returns:
     // 0 landCoverChange, 1 soilOrganicCarbonChange, 2 productivityTrajectoryImage,
     // 3 landCoverTransitions, 4 soilOrganicCarbonChangeRaw, 5 productivityTrajectoryImageRaw,

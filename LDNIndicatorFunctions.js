@@ -455,8 +455,7 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
     return regionalIndicators
 }
 
-var cropYields = function(regionalData, country, targetYear) {
-    var yieldsData = countryYields.filter(ee.Filter.eq('Country', country)).first();
+var cropYields = function(regionalData, yieldsData, targetYear) {
     var maizeAreaFraction = yieldsData.getNumber('Maizeaf');
     var maizeYieldRate = yieldsData.getNumber('Maizey')
     var maizePrice = 187;
@@ -508,7 +507,7 @@ var RegionalSDGImage = function(SDGImage, subRegions) {
  * Outputs
  */
 
-exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGeometry) {
+exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGeometry, yieldsData) {
     var landCoverStartImage = landCoverCollection.filterDate(startYear + '-01-01', startYear + '-12-31').first()
     var landCoverEndImage = landCoverCollection.filterDate(targetYear + '-01-01', targetYear + '-12-31').first()
     var landCoverTransitions = LandCoverTransitions(landCoverStartImage, landCoverEndImage);
@@ -528,7 +527,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
     regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
-    regionalData = cropYields(regionalData, country, targetYear)
+    regionalData = cropYields(regionalData, yieldsData, targetYear)
 
     var SDGData = calculateSDG(SDGImage, countryGeometry);
 
