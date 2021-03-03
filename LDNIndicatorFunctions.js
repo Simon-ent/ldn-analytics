@@ -47,7 +47,7 @@ var LandCoverChangeImage = function(transitions) {
     // http://trends.earth/docs/en/training/tutorial_run_all_subindicators.html
     // Step 7
 
-    transitions = transitions.updateMask(transitions.eq(77));
+    transitions = transitions.updateMask(transitions.neq(77));
 
     var remapped_transitions = transitions.remap(
         [11,12,13,14,15,16,17,
