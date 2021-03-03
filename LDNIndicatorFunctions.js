@@ -527,7 +527,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
     regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
-    regionalData = cropYields(regionalData, yieldsData, targetYear)
+    // regionalData = cropYields(regionalData, yieldsData, targetYear)
 
     var SDGData = calculateSDG(SDGImage, countryGeometry);
 
