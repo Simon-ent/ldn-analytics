@@ -468,21 +468,21 @@ var cropYields = function(regionalData, country, targetYear) {
     var ricePrice = 506;
 
     regionalData = regionalData.map(function(feature) {
-        var landCover = ee.Dictionary(feature.get('landCover')).get('landCover')
-        var cropland = ee.Dictionary(landCover).getNumber('Croplands')
-        var maizeYield = cropland.multiply(maizeAreaFraction.multiply(maizeYieldRate)).toInt()
-        var maizeValue = maizeYield.multiply(maizePrice)
-        var wheatYield = cropland.multiply(wheatAreaFraction.multiply(wheatYieldRate)).toInt()
-        var wheatValue = wheatYield.multiply(wheatPrice)
-        var riceYield = cropland.multiply(riceAreaFraction.multiply(riceYieldRate)).toInt()
-        var riceValue = riceYield.multiply(ricePrice)
+        var landCover = ee.Dictionary(feature.get('landCover')).get('landCover');
+        var cropland = ee.Dictionary(landCover).getNumber('Croplands');
+        var maizeYield = cropland.multiply(maizeAreaFraction.multiply(maizeYieldRate)).toInt();
+        var maizeValue = maizeYield.multiply(maizePrice);
+        var wheatYield = cropland.multiply(wheatAreaFraction.multiply(wheatYieldRate)).toInt();
+        var wheatValue = wheatYield.multiply(wheatPrice);
+        var riceYield = cropland.multiply(riceAreaFraction.multiply(riceYieldRate)).toInt();
+        var riceValue = riceYield.multiply(ricePrice);
 
-        var regionIndicators = ee.Dictionary(feature.get('regionIndicators'))
-        var indicators = ee.Dictionary(regionIndicators.get(targetYear))
+        var regionIndicators = ee.Dictionary(feature.get('regionIndicators'));
+        var indicators = ee.Dictionary(regionIndicators.get(targetYear));
         indicators = indicators.set('Maize Yield', maizeYield, 'Maize Value ($)', maizeValue,
                                     'Wheat Yield', wheatYield, 'Wheat Value ($)', wheatValue,
-                                    'Rice Yield', ricePrice, 'Rice Value ($)', riceValue)
-        regionIndicators = regionIndicators.set(targetYear, indicators)
+                                    'Rice Yield', ricePrice, 'Rice Value ($)', riceValue);
+        regionIndicators = regionIndicators.set(targetYear, indicators);
         return feature.set('regionIndicators', regionIndicators)
     })
     return regionalData
@@ -528,7 +528,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
     regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
-    regionalData = cropYields(regionalData, targetYear)
+    regionalData = cropYields(regionalData, country, targetYear)
 
     var SDGData = calculateSDG(SDGImage, countryGeometry);
 
