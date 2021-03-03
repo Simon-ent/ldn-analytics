@@ -267,6 +267,28 @@ var productivityTrajectoryClassified = function(sigTrend) {
     return trajectoryRemaped
 }
 
+var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, productivityTrajectory) {
+    var remapImage = function(image) {
+        var result = ee.Image(4)
+            .where(image.gt(0), 1) //improving
+            .where(image.eq(0), 0) //stable
+            .where(image.lt(0), -3) //degrading
+        return result
+    }
+    var landCoverChangeRemapped = remapImage(landCoverChange);
+    var soilOrganicCarbonChangeRemapped = remapImage(soilOrganicCarbonChange)
+    var productivityTrajectoryRemapped = remapImage(productivityTrajectory)
+
+    var subIndicatorAggregation = landCoverChangeRemapped.add(soilOrganicCarbonChangeRemapped.add(productivityTrajectoryRemapped))
+
+    var SDGImage  = ee.Image(4)
+        .where(subIndicatorAggregation.lt(0), -1)//degrading
+        .where(subIndicatorAggregation.eq(0), 0)//stable
+        .where(subIndicatorAggregation.gt(0), 1);//improving
+
+    SDGImage = SDGImage.updateMask(SDGImage.lt(4))
+
+}
 
 /*
  * Consolidated Regional Data
@@ -512,11 +534,13 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
 
     var SDGData = calculateSDG(landCoverChange, countryGeometry);
 
+    var SDGImage = aggregatedSDGImage(landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage)
+
     return [landCoverChange, soilOrganicCarbonChange, regionalLandCoverChangeImage,
         productivityTrajectoryImage,
         outputDataSet, nationalIndicators, 
         soilOrganicCarbonChangeRaw, productivityTrajectoryImageRaw,
-        SDGData
+        SDGData, SDGImage
     ]
 }
 
