@@ -11,6 +11,8 @@ var landCoverCollection = ee.ImageCollection("MODIS/006/MCD12Q1")
 var soilCarbonTop = ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02")
   .select(['b0']);
 
+var countryYields = ee.FeatureCollection('users/ee-simon-ent/CountryYields');
+
 /*
 *   Land Cover
 */
@@ -264,9 +266,6 @@ var productivityTrajectoryClassified = function(sigTrend) {
     // the masking is to remove water bodies from being flaged as degrading.
     trajectoryRemaped = trajectoryRemaped.updateMask(trajectoryRemaped.lt(4));
 
-    // Map.addLayer(trajectoryRemaped.updateMask(trajectoryRemaped.lt(4)),
-    // {min: 0, max: 3, palette: ['ffffbf', '#1a9850', 'fc8d59']},'trajectory');
-
     return trajectoryRemaped
 }
 
@@ -289,36 +288,6 @@ var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, prod
 
     return SDGImage
 }
-
-/*
- * Consolidated Regional Data
- */
-
-// var RegionalScores = function(landCoverChange, subRegions) {
-//     var regionScore = landCoverChange.reduceRegions({
-//         collection: subRegions,
-//         reducer: ee.Reducer.sum().combine(
-//             ee.Reducer.count(), '', true),
-//         scale: 500
-//     });
-//     var calculatePercentageDegraded = function(feature) {
-//         var state = ee.Number(feature.get('sum'));
-//         var area = ee.Number(feature.get('count'));
-//         return feature.set('Degraded_State', state.divide(area), 'Pixel_Count', area)
-//       }
-      
-//     regionScore = regionScore.map(calculatePercentageDegraded);
-//     return regionScore
-// }
-
-// var RegionalScoresImage = function(regionScores) {
-//     var canvas = ee.Image().byte()
-//     canvas = canvas.paint({
-//         featureCollection: regionScores,
-//         color: 'Degraded_State'
-//     })
-//     return canvas
-// }
 
 /*
  * Table Data
@@ -403,29 +372,6 @@ function calculateSDG(aggregatedChange, countryGeometry) {
     return SDG
 }
 
-// function calculateRegionalSDG(landCoverChange, subRegions) {
-//     var degredationCount = landCoverChange.reduceRegions(
-//         subRegions,
-//         ee.Reducer.fixedHistogram(-1, 2, 3),
-//         500
-//     )
-    
-//     var updateFeature = function(feature) {
-//         var result = feature.getArray('histogram').get([0,1])
-//         var pixelCount = feature.getNumber('Pixel_Count')
-//         result = result.divide(pixelCount).multiply(100).toInt()
-//         return feature.set({'Regional Degraded Land (%)': result})
-//       }
-      
-//     degredationCount = degredationCount.map(updateFeature);
-//     return degredationCount
-// }
-
-// function calculateNationalNetChange(regionalScores) {
-//     var nationalIndicator = regionalScores.reduceColumns(ee.Reducer.sum(), ['Degraded_State']);
-//     return ee.Number(nationalIndicator.get('sum')).format('%.2f')
-// }
-
 function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
     // Load data with information on "bulk density" of soil, that is how many kg of soil exist under an m3 of soil
     // multiply by 10 given that density is given in "Soil bulk density in x 10 kg / m3"
@@ -509,6 +455,39 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
     return regionalIndicators
 }
 
+var cropYields = function(regionalData, country, targetYear) {
+    var yieldsData = countryYields.filter(ee.Filter.eq('Country', country)).first();
+    var maizeAreaFraction = yieldsData.getNumber('Maizeaf');
+    var maizeYieldRate = yieldsData.getNumber('Maizey')
+    var maizePrice = 187;
+    var wheatAreaFraction = yieldsData.getNumber('Wheataf');
+    var wheatYieldRate = yieldsData.getNumber('Wheaty');
+    var wheatPrice = 209;
+    var riceAreaFraction = yieldsData.getNumber('Riceaf');
+    var riceYieldRate = yieldsData.getNumber('Ricey');
+    var ricePrice = 506;
+
+    regionalData = regionalData.map(function(feature) {
+        var landCover = ee.Dictionary(feature.get('landCover')).get('landCover')
+        var cropland = ee.Dictionary(landCover).getNumber('Croplands')
+        var maizeYield = cropland.multiply(maizeAreaFraction.multiply(maizeYieldRate)).toInt()
+        var maizeValue = maizeYield.multiply(maizePrice)
+        var wheatYield = cropland.multiply(wheatAreaFraction.multiply(wheatYieldRate)).toInt()
+        var wheatValue = wheatYield.multiply(wheatPrice)
+        var riceYield = cropland.multiply(riceAreaFraction.multiply(riceYieldRate)).toInt()
+        var riceValue = riceYield.multiply(ricePrice)
+
+        var regionIndicators = ee.Dictionary(feature.get('regionIndicators'))
+        var indicators = ee.Dictionary(regionIndicators.get(targetYear))
+        indicators = indicators.set('Maize Yield', maizeYield, 'Maize Value ($)', maizeValue,
+                                    'Wheat Yield', wheatYield, 'Wheat Value ($)', wheatValue,
+                                    'Rice Yield', ricePrice, 'Rice Value ($)', riceValue)
+        regionIndicators = regionIndicators.set(targetYear, indicators)
+        return feature.set('regionIndicators', regionIndicators)
+    })
+    return regionalData
+}
+
 var RegionalSDGImage = function(SDGImage, subRegions) {
     var regionalData = SDGImage.reduceRegions({
       collection: subRegions, 
@@ -537,8 +516,6 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
 
     var soilOrganicCarbonChangeRaw = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
     var soilOrganicCarbonChange = SoilOrganicCarbonChangeClassified(soilOrganicCarbonChangeRaw);
-    // var regionalLandCoverChange = RegionalScores(landCoverChange, subRegions);
-    // var regionalLandCoverChangeImage = RegionalScoresImage(regionalLandCoverChange);
 
     var productivityTrajectoryImageRaw = productivityTrajectory();
     var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw);
@@ -551,6 +528,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     regionalData = calculateLandCoverTransitions(landCoverTransitions, targetYear, regionalData);
     regionalData = RegionalIndicators(SDGImage, regionalData, targetYear)
     regionalData = socialCarbonCost(soilOrganicCarbonChange, regionalData, targetYear) //must come after RegionalIndicators
+    regionalData = cropYields(regionalData, targetYear)
 
     var SDGData = calculateSDG(SDGImage, countryGeometry);
 

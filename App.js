@@ -4,6 +4,7 @@
 var countries = ee.FeatureCollection("FAO/GAUL/2015/level0");
 var worldRegions = ee.FeatureCollection("FAO/GAUL/2015/level1");
 var worldSubRegions = ee.FeatureCollection("FAO/GAUL/2015/level2");
+var countryYields = ee.FeatureCollection('users/ee-simon-ent/CountryYields');
 
 /* 
  *   Function Imports
@@ -195,11 +196,7 @@ function regionalChartsBuilder() {
         // });
 
     regionalChartsPanel.add(regionalIndicatorsTable)
-    
-    // regionalChartsPanel.add(Label('Social Cost of Carbon ($)'))
-    // currentRegion.get('Social Carbon Cost').evaluate(function(result){
-    //   regionalChartsPanel.add(IndicatorLabel(result))
-    // });
+
 }
 
 function loadCountry(country, startYear, targetYear) {
