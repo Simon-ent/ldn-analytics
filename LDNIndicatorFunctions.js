@@ -287,7 +287,8 @@ var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, prod
         .where(subIndicatorAggregation.gt(0), 1);//improving
 
     SDGImage = SDGImage.updateMask(SDGImage.lt(4))
-
+    
+    return SDGImage
 }
 
 /*
