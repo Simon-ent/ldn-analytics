@@ -37,6 +37,7 @@ var app = {
         scenarioList: null,
         transitionsList: null,
         currentScenario: null,
+        SDGValue: null
     }
 };
 
@@ -228,6 +229,7 @@ function loadCountry(country, startYear, targetYear) {
     app.datasets.regionalData = LDNIndicatorData[8];
     // app.datasets.nationalIndicators = LDNIndicatorData[5];
     LDNIndicatorData[9].evaluate(function(SDGData) {
+        print(SDGData)
         SDGValue.setValue(SDGData + ' %')
         app.variables.SDGValue = SDGData
     })

@@ -387,8 +387,8 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
     return netTranistions
 }
 
-function calculateSDG(landCoverChange, countryGeometry) {
-    var pixelCount = landCoverChange.reduceRegion({
+function calculateSDG(aggregatedChange, countryGeometry) {
+    var pixelCount = aggregatedChange.reduceRegion({
         reducer: ee.Reducer.fixedHistogram(-1, 2, 3),
         geometry: countryGeometry,
         scale: 500,
@@ -396,7 +396,7 @@ function calculateSDG(landCoverChange, countryGeometry) {
         tileScale: 4
     }).get('remapped');
     var degredationCount = ee.Array(pixelCount).get([0,1])
-    var totalPixel = landCoverChange.reduceRegion({
+    var totalPixel = aggregatedChange.reduceRegion({
         reducer: ee.Reducer.count(),
         geometry: countryGeometry,
         scale: 500,
@@ -405,7 +405,7 @@ function calculateSDG(landCoverChange, countryGeometry) {
     }).get('remapped');
 
     var SDG = ee.Number(degredationCount).divide(totalPixel)
-    var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') 
+    var SDGOutput = SDG.multiply(100).format('%.0f') 
     return SDGOutput
 }
 
