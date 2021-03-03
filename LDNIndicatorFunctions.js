@@ -272,10 +272,11 @@ var productivityTrajectoryClassified = function(sigTrend) {
 
 var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, productivityTrajectory) {
     var remapImage = function(image) {
-        var result = ee.Image(4)
-            .where(image.gt(0), 1) //improving
-            .where(image.eq(0), 0) //stable
-            .where(image.lt(0), -3) //degrading
+        // var result = ee.Image(4)
+        //     .where(image.gt(0), 1) //improving
+        //     .where(image.eq(0), 0) //stable
+        //     .where(image.lt(0), -3) //degrading
+        var result = image.where(image.lt(0), -3)
         return result
     }
     var landCoverChangeRemapped = remapImage(landCoverChange);
