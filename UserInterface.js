@@ -58,7 +58,8 @@ exports.generateLandingPage = function(app, showBackButton, landingPageStart, re
     
     var computedCountryList = ee.List(countries.reduceColumns(ee.Reducer.toList(), ['ADM0_NAME'])
         .get('list'))
-        .distinct();
+        .distinct()
+        .sort();
     
     computedCountryList.evaluate(function(countryList) {
       countrySelect.items().reset(countryList);
