@@ -327,9 +327,10 @@ var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, prod
 function generateLandCoverTypeSummaryFeature(baseImage, name, subRegions) {
     var regionalData =
         baseImage.reduceRegions({
-            'collection': subRegions,
-            'reducer': ee.Reducer.frequencyHistogram(),
-            'scale': 500
+            collection: subRegions,
+            reducer: ee.Reducer.frequencyHistogram(),
+            scale: 500,
+            tileScale: 4
         })
         .map(function(feature) {
             // map through feature collection and unpack histogram values
@@ -355,7 +356,8 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
     var transitionsCount = transitions.reduceRegions({
         collection: subRegions,
         reducer: ee.Reducer.frequencyHistogram(),
-        scale: 500
+        scale: 500,
+        tileScale: 4
     })
     var netTranistions = transitionsCount.map(function(feature) {
         var histogramResults = ee.Dictionary(feature.get('histogram'));
@@ -386,17 +388,21 @@ function calculateLandCoverTransitions(transitions, name, subRegions) {
 }
 
 function calculateSDG(landCoverChange, countryGeometry) {
-    var pixelCount = landCoverChange.reduceRegion(
-        ee.Reducer.fixedHistogram(-1, 2, 3),
-        countryGeometry,
-        500
-    ).get('remapped');
+    var pixelCount = landCoverChange.reduceRegion({
+        reducer: ee.Reducer.fixedHistogram(-1, 2, 3),
+        geometry: countryGeometry,
+        scale: 500,
+        bestEffort: true,
+        tileScale: 4
+    }).get('remapped');
     var degredationCount = ee.Array(pixelCount).get([0,1])
-    var totalPixel = landCoverChange.reduceRegion(
-        ee.Reducer.count(),
-        countryGeometry,
-        500
-    ).get('remapped');
+    var totalPixel = landCoverChange.reduceRegion({
+        reducer: ee.Reducer.count(),
+        geometry: countryGeometry,
+        scale: 500,
+        bestEffort: true,
+        tileScale: 4
+    }).get('remapped');
 
     var SDG = ee.Number(degredationCount).divide(totalPixel)
     var SDGOutput = ee.Number(SDG).multiply(100).format('%.0f') 
@@ -457,7 +463,12 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
     var SCC = 44;
     var CarbonSCC = CarbonTons.multiply(SCC).multiply(3.66);
 
-    var regionalCarbonCost = CarbonSCC.reduceRegions(subRegions, ee.Reducer.sum(), 500)
+    var regionalCarbonCost = CarbonSCC.reduceRegions({
+        collection: subRegions, 
+        reducer: ee.Reducer.sum(), 
+        scale: 500,
+        tileScale: 4
+    })
 
     var updateFeature = function(feature) {
         var socialCarbonCost = ee.Number(feature.get('sum'));
@@ -477,7 +488,8 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
     var classifiedHistogram = aggregatedChange.reduceRegions({
         collection: subRegions,
         reducer: ee.Reducer.fixedHistogram(-1, 2, 3),
-        scale: 500
+        scale: 500,
+        tileScale: 4
     });
     var updateFeature = function(feature) {
         var result = feature.getArray('histogram')

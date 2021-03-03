@@ -93,7 +93,9 @@ function regionalChartsBuilder() {
         reducer: ee.Reducer.fixedHistogram(-1,2,3),
         geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
         scale: 500,
-        maxPixels: 1e9
+        maxPixels: 1e9,
+        bestEffort: true,
+        tileScale: 4
     });
 
     var LCArray = ee.Array(landCoverHistogram.get('remapped'));
@@ -102,7 +104,9 @@ function regionalChartsBuilder() {
         reducer: ee.Reducer.fixedHistogram(-1,2,3),
         geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
         scale: 500,
-        maxPixels: 1e9
+        maxPixels: 1e9,
+        bestEffort: true,
+        tileScale: 4
     });
     var SOCArray = ee.Array(SOCHistogram.get('constant'));
 
@@ -110,7 +114,9 @@ function regionalChartsBuilder() {
         reducer: ee.Reducer.fixedHistogram(-1,2,3),
         geometry: subRegions.filter(ee.Filter.eq('ADM2_NAME', regionNameText)),
         scale: 500,
-        maxPixels: 1e9
+        maxPixels: 1e9,
+        bestEffort: true,
+        tileScale: 4
     });
     var ProductivityArray = ee.Array(ProductivityHistogram.get('constant'));
 
