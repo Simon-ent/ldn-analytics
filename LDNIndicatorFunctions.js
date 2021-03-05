@@ -142,6 +142,8 @@ function productivityTrajectory(startYear, targetYear){
     // the sequence of years
     // NOTE this should NOT the changed by the user!
     // var years = ee.List.sequence(2002, 2018);
+    startYear = ee.Number(startYear);
+    targetYear = ee.Number(targetYear);
     var years = ee.List.sequence(startYear, targetYear);
 
     // Group by year and then reduce within groups by mean();
