@@ -135,13 +135,14 @@ var SoilOrganicCarbonChangeClassified = function(varSoilCarbon) {
  * Sub indicator TRAJECTORY
  */
 
-function productivityTrajectory(){
+function productivityTrajectory(startYear, targetYear){
     // Import annual NDVI
     var modis = ee.ImageCollection("MODIS/006/MOD13A1").select('NDVI');
 
     // the sequence of years
     // NOTE this should NOT the changed by the user!
-    var years = ee.List.sequence(2002, 2018);
+    // var years = ee.List.sequence(2002, 2018);
+    var years = ee.List.sequence(startYear, targetYear);
 
     // Group by year and then reduce within groups by mean();
     // the result is an ImageCollection with one image for each year.
