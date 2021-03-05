@@ -669,7 +669,7 @@ exports.LDNIndicatorData = function(startYear, targetYear, subRegions, countryGe
     var soilOrganicCarbonChangeRaw = SoilOrganicCarbonChange(landCoverTransitions, soilCarbonTop, startYear, targetYear);
     var soilOrganicCarbonChange = SoilOrganicCarbonChangeClassified(soilOrganicCarbonChangeRaw);
 
-    var productivityTrajectoryImageRaw = productivityTrajectory();
+    var productivityTrajectoryImageRaw = productivityTrajectory(startYear, targetYear);
     var productivityTrajectoryImage = productivityTrajectoryClassified(productivityTrajectoryImageRaw);
 
     var SDGImage = aggregatedSDGImage(landCoverChange, soilOrganicCarbonChange, productivityTrajectoryImage);
