@@ -135,185 +135,46 @@ var SoilOrganicCarbonChangeClassified = function(varSoilCarbon) {
  * Sub indicator TRAJECTORY
  */
 
-function productivityTrajectory(startYear, targetYear){
-    // Import annual NDVI
-    var modis = ee.ImageCollection("MODIS/006/MOD13A1").select('NDVI');
+// function productivityTrajectory(startYear, targetYear){
+//     // Import annual NDVI
+//     var modis = ee.ImageCollection("MODIS/006/MOD13A1").select('NDVI');
 
-    // the sequence of years
-    // NOTE this should NOT the changed by the user!
-    // var years = ee.List.sequence(2002, 2018);
-    startYear = parseInt(startYear);
-    targetYear = parseInt(targetYear);
-    var years = ee.List.sequence(startYear, targetYear);
+//     // the sequence of years
+//     // NOTE this should NOT the changed by the user!
+//     // var years = ee.List.sequence(2002, 2018);
+//     startYear = parseInt(startYear);
+//     targetYear = parseInt(targetYear);
+//     var years = ee.List.sequence(startYear, targetYear);
 
-    // Group by year and then reduce within groups by mean();
-    // the result is an ImageCollection with one image for each year.
-    var ndviYear = ee.ImageCollection.fromImages(
-        years.map(function (m) {
-            return modis.filter(ee.Filter.calendarRange(m, m, 'year'))
-                        .mean()
-                        .set('year', m);
-    }));
-
-    //Join collection to itself with a temporal filter
-    //Temporal filter
-    var afterFilter = ee.Filter.lessThan({
-        leftField: 'system:index',
-        rightField: 'system:index'
-    });
-
-    //Joins both collections
-    var joined = ee.ImageCollection(ee.Join.saveAll('after').apply({
-    primary: ndviYear,
-    secondary: ndviYear,
-    condition: afterFilter
-    }));
-
-    // STEP1 - make Kendall trend test
-    // Determines the sign of the ndviYear slopes, positive (improving) or negative (degrading)
-    // based on the sum of the e sums of the signs of all 
-    // the ndviYear pair at time t and t+1
-
-    // Sets function to determine the sums of the ndviYear pairs
-    var sign = function(i, j) { // i and j are images
-    return ee.Image(j).neq(i) // Zero case
-        .multiply(ee.Image(j).subtract(i).clamp(-1, 1)).int();
-    };
-
-    // Apply kendall test to retrieve positive and negative trends
-    // This results will then need to be overlayed with the significance value p
-    var kendall = ee.ImageCollection(joined.map(function(current) {
-    var afterCollection = ee.ImageCollection.fromImages(current.get('after'));
-    return afterCollection.map(function(image) {
-        return ee.Image(sign(current, image)).unmask(0);
-    });
-    }).flatten()).reduce('sum', 2);
-
-    //STEP2 - determines the variance of Kendall slopes
-    // Function to determnine values that are in a group
-    var groups = ndviYear.map(function(i) {
-    var matches = ndviYear.map(function(j) {
-        return i.eq(j); // i and j are images.
-    }).sum();
-    return i.multiply(matches.gt(1));
-    });
-
-    // Function to compute group sizes
-    var group = function(array) {
-    var length = array.arrayLength(0);
-    // Array of indices
-    var indices = ee.Image([1])
-        .arrayRepeat(0, length)
-        .arrayAccum(0, ee.Reducer.sum())
-        .toArray(1);
-    var sorted = array.arraySort();
-    var left = sorted.arraySlice(0, 1);
-    var right = sorted.arraySlice(0, 0, -1);
-    // Make indices of the end of runs.
-    var mask = left.neq(right)
-        .arrayCat(ee.Image(ee.Array([[1]])), 0);
-    var runIndices = indices.arrayMask(mask);
-    // Subtract the indices to get run lengths.
-    var groupSizes = runIndices.arraySlice(0, 1)
-        .subtract(runIndices.arraySlice(0, 0, -1));
-    return groupSizes;
-    };
-
-    var factors = function(image) {
-    return image.expression('b() * (b() - 1) * (b() * 2 + 5)');
-    };
-
-    var groupSizes = group(groups.toArray());
-    var groupFactors = factors(groupSizes);
-    var groupFactorSum = groupFactors.arrayReduce('sum', [0])
-        .arrayGet([0, 0]);
-
-    var count = joined.count();
-    // Make Kedall variance 
-    var kendallVariance = factors(count)
-        .subtract(groupFactorSum)
-        .divide(18)
-        .float();
-
-    // STEP 3 - Computes a standard normal Kendall statistics
-    // Subset the cases of zero, positive and negative from Kendal statistics
-    var zero = kendall.multiply(kendall.eq(0));
-    var pos = kendall.multiply(kendall.gt(0)).subtract(1);
-    var neg = kendall.multiply(kendall.lt(0)).add(1);
-
-    // Divide the statistics by the standard deviation
-    var z = zero
-        .add(pos.divide(kendallVariance.sqrt()))
-        .add(neg.divide(kendallVariance.sqrt()));
-
-    // Compute the Cumulate distribution functions
-    function eeCdf(z) {
-    return ee.Image(0.5)
-        .multiply(ee.Image(1).add(ee.Image(z).divide(ee.Image(2).sqrt()).erf()));
-    }
-
-    function invCdf(p) {
-    return ee.Image(2).sqrt()
-        .multiply(ee.Image(p).multiply(2).subtract(1).erfInv());
-    }
-
-    // Compute P-values.
-    var p = ee.Image(1).subtract(eeCdf(z.abs()));
-
-    // Pixels where trend is significant have p values below 0.05
-    var sigPixels =p.lte(0.025);
-
-    // Multiplies the significant pixels with the Kendall trends from STEP 1
-    // This makes non-sig pixels 0 (stable) and all the others get the original
-    // value of the Kendal trend, either positive or negative
-    var sigTrend = kendall.multiply(sigPixels);
-
-    return sigTrend
-}
-
-var productivityTrajectoryClassified = function(sigTrend) {
-
-    // Remaps the significant production trends according to the earth trends logic
-    var trajectoryRemaped = ee.Image(4)
-            .where(sigTrend.gt(0), 1)//improving
-            .where(sigTrend.lt(0), -1)//degrading
-            .where(sigTrend.eq(0), 0);//stable
-
-    // the masking is to remove water bodies from being flaged as degrading.
-    trajectoryRemaped = trajectoryRemaped.updateMask(trajectoryRemaped.lt(4));
-
-    return trajectoryRemaped
-}
-
-// /**
-//  * Productivity
-//  * Sub indicator TRAJECTORY
-//  */
-
-// function productivityTrajectory(){
-//     // Import annual NPP and filter time and bounds
-//     var NPP = ee.ImageCollection("MODIS/006/MOD17A3HGF").select('Npp')
-//     .filterDate('2002-01-01', '2019-01-01');
+//     // Group by year and then reduce within groups by mean();
+//     // the result is an ImageCollection with one image for each year.
+//     var ndviYear = ee.ImageCollection.fromImages(
+//         years.map(function (m) {
+//             return modis.filter(ee.Filter.calendarRange(m, m, 'year'))
+//                         .mean()
+//                         .set('year', m);
+//     }));
 
 //     //Join collection to itself with a temporal filter
 //     //Temporal filter
 //     var afterFilter = ee.Filter.lessThan({
-//     leftField: 'system:time_start',
-//     rightField: 'system:time_start'
+//         leftField: 'system:index',
+//         rightField: 'system:index'
 //     });
+
 //     //Joins both collections
 //     var joined = ee.ImageCollection(ee.Join.saveAll('after').apply({
-//     primary: NPP,
-//     secondary: NPP,
+//     primary: ndviYear,
+//     secondary: ndviYear,
 //     condition: afterFilter
 //     }));
 
 //     // STEP1 - make Kendall trend test
-//     // Determines the sign of the NPP slopes, positive (improving) or negative (degrading)
+//     // Determines the sign of the ndviYear slopes, positive (improving) or negative (degrading)
 //     // based on the sum of the e sums of the signs of all 
-//     // the NPP pair at time t and t+1
+//     // the ndviYear pair at time t and t+1
 
-//     // Sets function to determine the sums of the NPP pairs
+//     // Sets function to determine the sums of the ndviYear pairs
 //     var sign = function(i, j) { // i and j are images
 //     return ee.Image(j).neq(i) // Zero case
 //         .multiply(ee.Image(j).subtract(i).clamp(-1, 1)).int();
@@ -330,8 +191,8 @@ var productivityTrajectoryClassified = function(sigTrend) {
 
 //     //STEP2 - determines the variance of Kendall slopes
 //     // Function to determnine values that are in a group
-//     var groups = NPP.map(function(i) {
-//     var matches = NPP.map(function(j) {
+//     var groups = ndviYear.map(function(i) {
+//     var matches = ndviYear.map(function(j) {
 //         return i.eq(j); // i and j are images.
 //     }).sum();
 //     return i.multiply(matches.gt(1));
@@ -423,6 +284,145 @@ var productivityTrajectoryClassified = function(sigTrend) {
 
 //     return trajectoryRemaped
 // }
+
+/**
+ * Productivity
+ * Sub indicator TRAJECTORY
+ */
+
+function productivityTrajectory(startYear, targetYear){
+    // Import annual NPP and filter time and bounds
+    var NPP = ee.ImageCollection("MODIS/006/MOD17A3HGF").select('Npp')
+    .filterDate(startYear + '-01-01', targetYear + '-01-01');
+
+    //Join collection to itself with a temporal filter
+    //Temporal filter
+    var afterFilter = ee.Filter.lessThan({
+    leftField: 'system:time_start',
+    rightField: 'system:time_start'
+    });
+    //Joins both collections
+    var joined = ee.ImageCollection(ee.Join.saveAll('after').apply({
+    primary: NPP,
+    secondary: NPP,
+    condition: afterFilter
+    }));
+
+    // STEP1 - make Kendall trend test
+    // Determines the sign of the NPP slopes, positive (improving) or negative (degrading)
+    // based on the sum of the e sums of the signs of all 
+    // the NPP pair at time t and t+1
+
+    // Sets function to determine the sums of the NPP pairs
+    var sign = function(i, j) { // i and j are images
+    return ee.Image(j).neq(i) // Zero case
+        .multiply(ee.Image(j).subtract(i).clamp(-1, 1)).int();
+    };
+
+    // Apply kendall test to retrieve positive and negative trends
+    // This results will then need to be overlayed with the significance value p
+    var kendall = ee.ImageCollection(joined.map(function(current) {
+    var afterCollection = ee.ImageCollection.fromImages(current.get('after'));
+    return afterCollection.map(function(image) {
+        return ee.Image(sign(current, image)).unmask(0);
+    });
+    }).flatten()).reduce('sum', 2);
+
+    //STEP2 - determines the variance of Kendall slopes
+    // Function to determnine values that are in a group
+    var groups = NPP.map(function(i) {
+    var matches = NPP.map(function(j) {
+        return i.eq(j); // i and j are images.
+    }).sum();
+    return i.multiply(matches.gt(1));
+    });
+
+    // Function to compute group sizes
+    var group = function(array) {
+    var length = array.arrayLength(0);
+    // Array of indices
+    var indices = ee.Image([1])
+        .arrayRepeat(0, length)
+        .arrayAccum(0, ee.Reducer.sum())
+        .toArray(1);
+    var sorted = array.arraySort();
+    var left = sorted.arraySlice(0, 1);
+    var right = sorted.arraySlice(0, 0, -1);
+    // Make indices of the end of runs.
+    var mask = left.neq(right)
+        .arrayCat(ee.Image(ee.Array([[1]])), 0);
+    var runIndices = indices.arrayMask(mask);
+    // Subtract the indices to get run lengths.
+    var groupSizes = runIndices.arraySlice(0, 1)
+        .subtract(runIndices.arraySlice(0, 0, -1));
+    return groupSizes;
+    };
+
+    var factors = function(image) {
+    return image.expression('b() * (b() - 1) * (b() * 2 + 5)');
+    };
+
+    var groupSizes = group(groups.toArray());
+    var groupFactors = factors(groupSizes);
+    var groupFactorSum = groupFactors.arrayReduce('sum', [0])
+        .arrayGet([0, 0]);
+
+    var count = joined.count();
+    // Make Kedall variance 
+    var kendallVariance = factors(count)
+        .subtract(groupFactorSum)
+        .divide(18)
+        .float();
+
+    // STEP 3 - Computes a standard normal Kendall statistics
+    // Subset the cases of zero, positive and negative from Kendal statistics
+    var zero = kendall.multiply(kendall.eq(0));
+    var pos = kendall.multiply(kendall.gt(0)).subtract(1);
+    var neg = kendall.multiply(kendall.lt(0)).add(1);
+
+    // Divide the statistics by the standard deviation
+    var z = zero
+        .add(pos.divide(kendallVariance.sqrt()))
+        .add(neg.divide(kendallVariance.sqrt()));
+
+    // Compute the Cumulate distribution functions
+    function eeCdf(z) {
+    return ee.Image(0.5)
+        .multiply(ee.Image(1).add(ee.Image(z).divide(ee.Image(2).sqrt()).erf()));
+    }
+
+    function invCdf(p) {
+    return ee.Image(2).sqrt()
+        .multiply(ee.Image(p).multiply(2).subtract(1).erfInv());
+    }
+
+    // Compute P-values.
+    var p = ee.Image(1).subtract(eeCdf(z.abs()));
+
+    // Pixels where trend is significant have p values below 0.05
+    var sigPixels =p.lte(0.025);
+
+    // Multiplies the significant pixels with the Kendall trends from STEP 1
+    // This makes non-sig pixels 0 (stable) and all the others get the original
+    // value of the Kendal trend, either positive or negative
+    var sigTrend = kendall.multiply(sigPixels);
+
+    return sigTrend
+}
+
+var productivityTrajectoryClassified = function(sigTrend) {
+
+    // Remaps the significant production trends according to the earth trends logic
+    var trajectoryRemaped = ee.Image(4)
+            .where(sigTrend.gt(0), 1)//improving
+            .where(sigTrend.lt(0), -1)//degrading
+            .where(sigTrend.eq(0), 0);//stable
+
+    // the masking is to remove water bodies from being flaged as degrading.
+    trajectoryRemaped = trajectoryRemaped.updateMask(trajectoryRemaped.lt(4));
+
+    return trajectoryRemaped
+}
 
 var aggregatedSDGImage = function(landCoverChange, soilOrganicCarbonChange, productivityTrajectory) {
     var remapImage = function(image) {
