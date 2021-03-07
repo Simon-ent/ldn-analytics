@@ -312,7 +312,7 @@ function loadCountry(country, startYear, targetYear) {
 
 function updateSatelliteImage() {
     var region = app.variables.region;
-    var latestSatelliteImage = ui.Map.Layer(AnalysisLayers.SatelliteImage(region), {min: 0.0,  max: 0.4}, 'Latest Satellite Image (32 day average)');
+    var latestSatelliteImage = ui.Map.Layer(AnalysisLayers.SatelliteImage(region), {min: 0.0,  max: 0.4}, 'Latest Satellite Image (32 day average)', false);
     mapPanel.layers().set(11, latestSatelliteImage);
 }
 
