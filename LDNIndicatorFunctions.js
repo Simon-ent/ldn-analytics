@@ -633,9 +633,9 @@ var cropYields = function(regionalData, yieldsData, targetYear) {
 
         var regionIndicators = ee.Dictionary(feature.get('regionIndicators'));
         var indicators = ee.Dictionary(regionIndicators.get(targetYear));
-        indicators = indicators.combine({'Crop: Maize Yield': maizeYield, 'Crop: Maize Total Revenue ($)': maizeValue,
-                                    'Crop: Wheat Yield': wheatYield, 'Crop: Wheat Total Revenue ($)': wheatValue,
-                                    'Crop: Rice Yield': riceYield, 'Crop: Rice Total Revenue ($)': riceValue});
+        indicators = indicators.combine({'Crop: Maize Production (tons)': maizeYield, 'Crop: Maize Total Revenue ($)': maizeValue, 'Crop: Maize Yield (tons/Ha)': maizeYieldRate,
+                                    'Crop: Wheat Production (tons)': wheatYield, 'Crop: Wheat Total Revenue ($)': wheatValue, 'Crop: Wheat Yield (tons/Ha)': wheatYieldRate,
+                                    'Crop: Rice Production (tons)': riceYield, 'Crop: Rice Total Revenue ($)': riceValue, 'Crop: Rice Yield (tons/Ha)': riceYieldRate,});
         regionIndicators = regionIndicators.set(targetYear, indicators);
         return feature.set('regionIndicators', regionIndicators)
     })
