@@ -637,6 +637,7 @@ var regionalEditDataPanel = ui.Panel([
     ui.Panel([
         ui.Label('Total Land Area', {fontSize: '16px', margin: '8px', padding: '6px 0'}), TotalLandArea
     ],
+    ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
         ui.Label('Tree_Cover to Grasslands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2GrassText
     ], 
