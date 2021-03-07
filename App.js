@@ -623,6 +623,7 @@ regionalEditPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_2,
 }));
 
+var TotalLandArea = ui.Label('Loading', {fontSize: '16px', margin: '8px', padding: '6px 0'});
 var Tree2GrassText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Tree2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Tree2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
@@ -633,6 +634,9 @@ var Bare2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Bare2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 
 var regionalEditDataPanel = ui.Panel([
+    ui.Panel([
+        ui.Label('Total Land Area', {fontSize: '16px', margin: '8px', padding: '6px 0'}), TotalLandArea
+    ],
     ui.Panel([
         ui.Label('Tree_Cover to Grasslands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2GrassText
     ], 
@@ -675,6 +679,7 @@ function setRegionalEditData(currentScenario) {
     var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
 
     scenarioTransitionData.evaluate(function(data) {
+        TotalLandArea.setValue(currentRegion.get('Pixel_Count'));
         Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
         Tree2CropText.setValue(data['Tree_Cover to Croplands']);
         Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
