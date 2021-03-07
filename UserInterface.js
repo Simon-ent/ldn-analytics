@@ -40,10 +40,11 @@ exports.generateLandingPage = function(app, showBackButton, landingPageStart, re
     }));
     
     introPanel.add(ui.Label({
-      value: 'Welcome to LDN Analytics, an online open access software tool to help decision makers combat land degradation with informed land use decisions. Contributing to: SDG 15: Life on land. Specifically SDG target 15.3: to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and striving to achieve a land degradation world, by 2030',
+      value: 'Welcome to LDN Analytics, an online open access software tool to help decision makers combat land degradation with informed land use decisions. \nContributing to: SDG 15: Life on land. \nSpecifically SDG target 15.3: to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and striving to achieve a land degradation world, by 2030',
       style: {
         fontWeight: 'lighter',
-        margin: '0 0 20px 0'
+        margin: '0 0 20px 0',
+        whiteSpace: 'pre'
       }
     }));
     
