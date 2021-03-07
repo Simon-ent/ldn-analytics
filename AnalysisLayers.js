@@ -219,3 +219,47 @@ exports.DroughtRisk = function() {
     return [CurrentYearPDSI, LongTermPDSI, LongTermPDSIRemaped]
 
 }
+
+/**
+ * Latest Satellite Image
+ */
+
+exports.SatelliteImage = function(region) {
+    // NOTE: filtering with a roi at the start makes the process much more efficient
+    // maybe we can use the bounds of the region/country the user selects as roi?
+
+    // Loads landsat imagery
+    var collection = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA')
+        .filterBounds(region);
+
+    // Sort the collection in order to get the X most recent scenes
+    // I take 10 as an arbitrary number, but the idea is to have not only
+    // one scene because it might be very cloudy.
+    var recent = collection.sort('system:time_start', false).limit(4);
+
+    // Get the date range of images in the collection
+    // Not entirely necessary but could be nice to feedback to the user
+    // some idea of the time range that the image refers to
+    var range = recent.reduceColumns(ee.Reducer.minMax(), ["system:time_start"]);
+    // print('Date range: ', ee.Date(range.get('min')), ee.Date(range.get('max')));
+
+    //Masking function for the sub-collection
+    // reads the BQA band and filters for cirrus, clouds etc...
+    var maskClouds = function(image){
+        var quality = image.select("BQA");
+        var cloud01 = quality.eq(6896);
+        var cloud02 = quality.eq(5324);
+        var cloud03 = quality.eq(2800);
+        var mask = cloud01.or(cloud02).or(cloud03).not();
+        return image.updateMask(mask);
+    };
+
+    // Apply the function over the sub collection
+    var filteredLandsat = recent.map(maskClouds);
+
+    // Set true color visuals
+    // I imagine that for the user the best a true color image than false.
+    var trueColor = filteredLandsat.select(['B4', 'B3', 'B2']);
+
+    return trueColor.mean()
+}

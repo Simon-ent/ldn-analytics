@@ -290,6 +290,10 @@ function loadCountry(country, startYear, targetYear) {
     mapPanel.addLayer(longTermDroughtRisk, droughtRiskPalette, 'Long Term Drought Risk', false, 0.9);
     // mapPanel.addLayer(longTermDroughtRiskClassified, droughtRiskPalette, 'Classified Long Term Drought Risk', false, 0.9);
 
+    // Satellite Image
+    var latestSatelliteImage = AnalysisLayers.SatelliteImage(app.variables.region);
+    mapPanel.addLayer(latestSatelliteImage, {min: 0.0,  max: 0.4}, 'Latest Satellite Image (32 day average)', false)
+
     // // Wildlife Corridors 
     // var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
     // var WDPAParams = {
@@ -306,6 +310,12 @@ function loadCountry(country, startYear, targetYear) {
     mapPanel.onClick(handleMapClick);
 }
 
+function updateSatelliteImage() {
+    var region = app.variables.region;
+    var latestSatelliteImage = ui.Map.Layer(AnalysisLayers.SatelliteImage(region), {min: 0.0,  max: 0.4}, 'Latest Satellite Image (32 day average)');
+    mapPanel.layers().set(11, latestSatelliteImage);
+}
+
 function updateUI() {
     introPanel2.style().set('shown', false);
     countryPanel.style().set('shown', true);
@@ -315,6 +325,7 @@ function updateUI() {
     app.variables.regionNameText = regionNameText;
     regionalChartsBuilder();
     updateScenarioUIList();
+    updateSatelliteImage();
     // createIndicatorsChart();
 }
 
