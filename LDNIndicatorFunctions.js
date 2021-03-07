@@ -569,7 +569,7 @@ function socialCarbonCost(soilOrganicCarbonChange, subRegions, targetYear) {
         var socialCarbonCost = ee.Number(feature.get('sum'));
         var regionIndicators = ee.Dictionary(feature.get('regionIndicators'))
         var indicators = ee.Dictionary(regionIndicators.get(targetYear))
-        indicators = indicators.set('Social Carbon Cost ($)', socialCarbonCost.toInt())
+        indicators = indicators.set('Marginal Damage Cost of Carbon Emissions ($)', socialCarbonCost.toInt())
         regionIndicators = regionIndicators.set(targetYear, indicators)
         return feature.set('regionIndicators', regionIndicators)
       }
@@ -596,9 +596,9 @@ var RegionalIndicators = function(aggregatedChange, subRegions, targetYear) {
         var netDegradedPercent = netDegraded.divide(total).multiply(100).toInt();
         var indicators = ee.Dictionary({
             // 'Degraded_State': netDegraded.divide(total).multiply(100).toInt(),
-            'Regional Degraded Land (%)': degraded.divide(total).multiply(100).toInt(),
-            'Degraded Land Area': degraded.toInt(),
-            'Net Degredation (%)': netDegradedPercent
+            'Sub National SDG 15.3.1 (%)': degraded.divide(total).multiply(100).toInt(),
+            'Degraded Land Area (km2)': degraded.toInt(),
+            'Net Change in Land Productivity (%)': netDegradedPercent
         })
         var regionIndicators = ee.Dictionary(null).set(targetYear, indicators)
         
@@ -633,9 +633,9 @@ var cropYields = function(regionalData, yieldsData, targetYear) {
 
         var regionIndicators = ee.Dictionary(feature.get('regionIndicators'));
         var indicators = ee.Dictionary(regionIndicators.get(targetYear));
-        indicators = indicators.combine({'Crop: Maize Yield': maizeYield, 'Crop: Maize Value ($)': maizeValue,
-                                    'Crop: Wheat Yield': wheatYield, 'Crop: Wheat Value ($)': wheatValue,
-                                    'Crop: Rice Yield': riceYield, 'Crop: Rice Value ($)': riceValue});
+        indicators = indicators.combine({'Crop: Maize Yield': maizeYield, 'Crop: Maize Total Revenue ($)': maizeValue,
+                                    'Crop: Wheat Yield': wheatYield, 'Crop: Wheat Total Revenue ($)': wheatValue,
+                                    'Crop: Rice Yield': riceYield, 'Crop: Rice Total Revenue ($)': riceValue});
         regionIndicators = regionIndicators.set(targetYear, indicators);
         return feature.set('regionIndicators', regionIndicators)
     })
