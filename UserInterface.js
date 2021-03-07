@@ -44,7 +44,8 @@ exports.generateLandingPage = function(app, showBackButton, landingPageStart, re
       style: {
         fontWeight: 'lighter',
         margin: '0 0 20px 0',
-        whiteSpace: 'pre'
+        // whiteSpace: 'pre',
+        maxWidth: '600px'
       }
     }));
     
