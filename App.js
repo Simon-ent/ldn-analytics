@@ -294,6 +294,10 @@ function loadCountry(country, startYear, targetYear) {
     var latestSatelliteImage = AnalysisLayers.SatelliteImage(app.variables.region);
     mapPanel.addLayer(latestSatelliteImage, {min: 0.0,  max: 0.4}, 'Latest Satellite Image (32 day average)', false)
 
+    // Hansen Global Forest Change v1.7 (2000-2019)
+    var forestChange = AnalysisLayers.TreeCoverDensityImage().clip(countryGeometry);
+    mapPanel.addLayer(forestChange, {min: 1, max: 100, palette: ['black', 'green']}, "Forest Change 2000-2019", false, 0.9);
+
     // // Wildlife Corridors 
     // var WDPA = ee.FeatureCollection('WCMC/WDPA/current/polygons');
     // var WDPAParams = {

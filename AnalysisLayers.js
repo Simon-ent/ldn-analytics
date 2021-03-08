@@ -263,3 +263,14 @@ exports.SatelliteImage = function(region) {
 
     return trueColor.mean()
 }
+
+exports.TreeCoverDensityImage() {
+    //Load Hansen Global Forest Change v1.7 (2000-2019)
+    //Attribution 4.0 International (CC BY 4.0)
+    //You are free to: Share — copy and redistribute the material in any medium or format
+    // Adapt — remix, transform, and build upon the material for any purpose, even commercially.
+    var gfc2019 = ee.Image('UMD/hansen/global_forest_change_2019_v1_7');
+    // selects tree cover in reference year 2000
+    var canopyCover = gfc2019.select(['treecover2000']);
+    return canopyCover
+}
