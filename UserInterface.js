@@ -32,7 +32,7 @@ exports.generateLandingPage = function(app, showBackButton, landingPageStart, re
     landingPage.add(introPanel)
   
     introPanel.add(ui.Label({
-      value: 'LDN Analytics Tool',
+      value: 'LDN Analytics',
       style: {
         fontSize: '24px',
         margin: '0 auto 10px auto',
