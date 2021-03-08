@@ -623,7 +623,7 @@ regionalEditPanel.add(ui.Label({
     style: Styles.HEADER_STYLE_2,
 }));
 
-var TotalLandArea = ui.Label('Loading', {fontSize: '16px', margin: '8px', padding: '6px 0'});
+// var TotalLandArea = ui.Label('Loading...', {fontSize: '16px', margin: '8px 8px 8px auto', padding: '6px 0'});
 var Tree2GrassText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Tree2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Tree2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
@@ -634,10 +634,10 @@ var Bare2CropText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 var Bare2ArtificialText = ui.Textbox({style: {margin: '8px 8px 8px auto'}});
 
 var regionalEditDataPanel = ui.Panel([
-    ui.Panel([
-        ui.Label('Total Land Area', {fontSize: '16px', margin: '8px', padding: '6px 0'}), TotalLandArea
-    ],
-    ui.Panel.Layout.flow('horizontal')),
+    // ui.Panel([
+    //     ui.Label('Total Land Area', {fontSize: '16px', margin: '8px', padding: '6px 0'}), TotalLandArea
+    // ],
+    // ui.Panel.Layout.flow('horizontal')),
     ui.Panel([
         ui.Label('Tree_Cover to Grasslands', {fontSize: '16px', margin: '8px', padding: '6px 0'}), Tree2GrassText
     ], 
@@ -674,13 +674,13 @@ var regionalEditDataPanel = ui.Panel([
 regionalEditPanel.add(regionalEditDataPanel)
 
 function setRegionalEditData(currentScenario) {
-    // var currentScenario = app.variables.currentScenario;
+    var currentScenario = app.variables.currentScenario;
     var currentRegion = ee.FeatureCollection(app.datasets.regionalData).filter(ee.Filter.eq('ADM2_NAME', app.variables.regionNameText)).first();
     var transitionsData = ee.Dictionary(currentRegion.get('landCoverTransitions'));
     var scenarioTransitionData = ee.Dictionary(transitionsData.get(currentScenario));
 
     scenarioTransitionData.evaluate(function(data) {
-        TotalLandArea.setValue(currentRegion.get('Pixel_Count'));
+        // TotalLandArea.setValue(currentRegion.get('Pixel_Count').getInfo());
         Tree2GrassText.setValue(data['Tree_Cover to Grasslands']);
         Tree2CropText.setValue(data['Tree_Cover to Croplands']);
         Tree2ArtificialText.setValue(data['Tree_Cover to Artificial']);
