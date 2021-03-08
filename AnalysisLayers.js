@@ -264,7 +264,7 @@ exports.SatelliteImage = function(region) {
     return trueColor.mean()
 }
 
-exports.TreeCoverDensityImage() {
+exports.TreeCoverDensityImage = function() {
     //Load Hansen Global Forest Change v1.7 (2000-2019)
     //Attribution 4.0 International (CC BY 4.0)
     //You are free to: Share — copy and redistribute the material in any medium or format
